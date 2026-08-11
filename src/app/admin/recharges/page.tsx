@@ -5,7 +5,11 @@ import Badge from "@/components/dashboard/Badge";
 import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
 import { useAdminPendingCount } from "@/components/admin/admin-context";
 import { api, ApiError } from "@/lib/api";
-import { formatDateTimeFr, formatGnf, formatNumberFr } from "@/lib/format";
+import {
+  formatDateTimeShortFr,
+  formatGnf,
+  formatNumberFr,
+} from "@/lib/format";
 import { topUpMethodMeta } from "@/lib/status";
 import type {
   AdminTopUpRequestItem,
@@ -264,90 +268,206 @@ export default function AdminRechargesPage() {
       )}
 
       {items && items.length > 0 && (
-        <div className="overflow-hidden rounded-2xl border border-white/[0.09] bg-[#0C0D0F]">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[980px] border-collapse text-left text-[13.5px]">
-              <thead>
-                <tr className="border-b border-white/[0.07] text-[12px] tracking-[0.02em] text-[#70767D] uppercase">
-                  <th className="px-5 py-3 font-medium">Client</th>
-                  <th className="px-5 py-3 font-medium">Pack</th>
-                  <th className="px-5 py-3 font-medium">Crédits</th>
-                  <th className="px-5 py-3 font-medium">Montant</th>
-                  <th className="px-5 py-3 font-medium">Méthode</th>
-                  <th className="px-5 py-3 font-medium">Téléphone</th>
-                  <th className="px-5 py-3 font-medium">Référence</th>
-                  <th className="px-5 py-3 font-medium">Date</th>
-                  {statusFilter === "PENDING" && (
-                    <th className="px-5 py-3 font-medium">Actions</th>
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((item) => {
-                  const methodMeta = topUpMethodMeta(item.method);
-                  return (
-                    <tr
-                      key={item.id}
-                      className="border-b border-white/[0.05] last:border-b-0"
-                    >
-                      <td className="px-5 py-3.5">
-                        <div className="flex flex-col">
-                          <span className="text-[#EDEEF0]">
-                            {item.user.name}
-                          </span>
-                          <span className="text-[12px] text-[#70767D]">
-                            {item.user.email}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-5 py-3.5 text-[#C5CACF]">
-                        {formatPackLabel(item.packId)}
-                      </td>
-                      <td className="px-5 py-3.5 text-[#C5CACF]">
-                        {formatNumberFr(item.credits)}
-                      </td>
-                      <td className="px-5 py-3.5 font-mono text-[#EDEEF0]">
-                        {formatGnf(item.amountGnf)}
-                      </td>
-                      <td className="px-5 py-3.5">
-                        <Badge color={methodMeta.color} label={methodMeta.label} />
-                      </td>
-                      <td className="px-5 py-3.5 text-[#C5CACF]">
-                        {item.phoneNumber}
-                      </td>
-                      <td className="px-5 py-3.5 font-mono text-[#9BA1A8]">
-                        {item.transactionRef}
-                      </td>
-                      <td className="px-5 py-3.5 text-[#9BA1A8]">
-                        {formatDateTimeFr(item.createdAt)}
-                      </td>
-                      {statusFilter === "PENDING" && (
-                        <td className="px-5 py-3.5">
-                          <div className="flex gap-2">
-                            <button
-                              type="button"
-                              onClick={() => openApprove(item)}
-                              className="rounded-lg bg-[#35D07F]/15 px-3 py-1.5 text-[12.5px] font-medium text-[#35D07F] transition-opacity hover:opacity-90"
-                            >
-                              Approuver
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => openReject(item)}
-                              className="rounded-lg border border-[#E5484D]/30 px-3 py-1.5 text-[12.5px] font-medium text-[#FF9592] transition-opacity hover:opacity-90"
-                            >
-                              Rejeter
-                            </button>
+        <>
+          {/*
+           * >= md : tableau classique. En dessous, 9 colonnes ne tiennent
+           * jamais lisiblement — on bascule sur des cartes empilées (voir
+           * plus bas). La colonne Actions est collante à droite : à 1280px
+           * (fenêtre courante la plus étroite visée), le tableau dépasse la
+           * largeur du conteneur admin une fois la sidebar déduite, et sans
+           * ça seul le bouton « Approuver » restait visible — dangereux sur
+           * l'écran qui crédite réellement de l'argent.
+           */}
+          <div className="hidden overflow-hidden rounded-2xl border border-white/[0.09] bg-[#0C0D0F] md:block">
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse text-left text-[13.5px]">
+                <thead>
+                  <tr className="border-b border-white/[0.07] text-[12px] tracking-[0.02em] text-[#70767D] uppercase">
+                    <th className="px-4 py-3 font-medium">Client</th>
+                    <th className="px-3 py-3 font-medium whitespace-nowrap">
+                      Pack
+                    </th>
+                    <th className="px-3 py-3 font-medium whitespace-nowrap">
+                      Crédits
+                    </th>
+                    <th className="px-3 py-3 font-medium whitespace-nowrap">
+                      Montant
+                    </th>
+                    <th className="px-3 py-3 font-medium whitespace-nowrap">
+                      Méthode
+                    </th>
+                    <th className="px-3 py-3 font-medium whitespace-nowrap">
+                      Téléphone
+                    </th>
+                    <th className="px-3 py-3 font-medium whitespace-nowrap">
+                      Référence
+                    </th>
+                    <th className="px-3 py-3 font-medium whitespace-nowrap">
+                      Date
+                    </th>
+                    {statusFilter === "PENDING" && (
+                      <th className="sticky right-0 z-10 bg-[#0C0D0F] px-3 py-3 font-medium whitespace-nowrap shadow-[-8px_0_12px_-6px_rgba(0,0,0,0.55)]">
+                        Actions
+                      </th>
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.map((item) => {
+                    const methodMeta = topUpMethodMeta(item.method);
+                    return (
+                      <tr
+                        key={item.id}
+                        className="border-b border-white/[0.05] last:border-b-0"
+                      >
+                        <td className="px-4 py-3.5">
+                          <div className="flex flex-col">
+                            <span className="text-[#EDEEF0]">
+                              {item.user.name}
+                            </span>
+                            <span className="text-[12px] text-[#70767D]">
+                              {item.user.email}
+                            </span>
                           </div>
                         </td>
-                      )}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        <td className="px-3 py-3.5 text-[#C5CACF] whitespace-nowrap">
+                          {formatPackLabel(item.packId)}
+                        </td>
+                        <td className="px-3 py-3.5 text-[#C5CACF] whitespace-nowrap">
+                          {formatNumberFr(item.credits)}
+                        </td>
+                        <td className="px-3 py-3.5 font-mono whitespace-nowrap text-[#EDEEF0]">
+                          {formatGnf(item.amountGnf)}
+                        </td>
+                        <td className="px-3 py-3.5 whitespace-nowrap">
+                          <Badge
+                            color={methodMeta.color}
+                            label={methodMeta.label}
+                          />
+                        </td>
+                        <td className="px-3 py-3.5 text-[#C5CACF] whitespace-nowrap">
+                          {item.phoneNumber}
+                        </td>
+                        <td className="px-3 py-3.5 font-mono whitespace-nowrap text-[#9BA1A8]">
+                          {item.transactionRef}
+                        </td>
+                        <td className="px-3 py-3.5 whitespace-nowrap text-[#9BA1A8]">
+                          {formatDateTimeShortFr(item.createdAt)}
+                        </td>
+                        {statusFilter === "PENDING" && (
+                          <td className="sticky right-0 z-10 bg-[#0C0D0F] px-3 py-3.5 shadow-[-8px_0_12px_-6px_rgba(0,0,0,0.55)]">
+                            <div className="flex gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => openApprove(item)}
+                                className="rounded-lg bg-[#35D07F]/15 px-2.5 py-1.5 text-[12.5px] font-medium whitespace-nowrap text-[#35D07F] transition-opacity hover:opacity-90"
+                              >
+                                Approuver
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => openReject(item)}
+                                className="rounded-lg border border-[#E5484D]/30 px-2.5 py-1.5 text-[12.5px] font-medium whitespace-nowrap text-[#FF9592] transition-opacity hover:opacity-90"
+                              >
+                                Rejeter
+                              </button>
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+
+          {/* < md : une carte par demande, actions pleine largeur empilées. */}
+          <div className="flex flex-col gap-3 md:hidden">
+            {items.map((item) => {
+              const methodMeta = topUpMethodMeta(item.method);
+              return (
+                <div
+                  key={item.id}
+                  className="rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-4"
+                >
+                  <div className="mb-3 flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 flex-col">
+                      <span className="truncate text-[14px] font-medium text-[#EDEEF0]">
+                        {item.user.name}
+                      </span>
+                      <span className="truncate text-[12px] text-[#70767D]">
+                        {item.user.email}
+                      </span>
+                    </div>
+                    <Badge color={methodMeta.color} label={methodMeta.label} />
+                  </div>
+
+                  <dl className="grid grid-cols-2 gap-x-3 gap-y-2.5 text-[13px]">
+                    <div>
+                      <dt className="text-[11px] tracking-[0.02em] text-[#70767D] uppercase">
+                        Montant
+                      </dt>
+                      <dd className="font-mono text-[#EDEEF0]">
+                        {formatGnf(item.amountGnf)}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-[11px] tracking-[0.02em] text-[#70767D] uppercase">
+                        Crédits
+                      </dt>
+                      <dd className="text-[#C5CACF]">
+                        {formatNumberFr(item.credits)} ·{" "}
+                        {formatPackLabel(item.packId)}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-[11px] tracking-[0.02em] text-[#70767D] uppercase">
+                        Téléphone
+                      </dt>
+                      <dd className="text-[#C5CACF]">{item.phoneNumber}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-[11px] tracking-[0.02em] text-[#70767D] uppercase">
+                        Date
+                      </dt>
+                      <dd className="text-[#9BA1A8]">
+                        {formatDateTimeShortFr(item.createdAt)}
+                      </dd>
+                    </div>
+                    <div className="col-span-2">
+                      <dt className="text-[11px] tracking-[0.02em] text-[#70767D] uppercase">
+                        Référence
+                      </dt>
+                      <dd className="font-mono break-all text-[#9BA1A8]">
+                        {item.transactionRef}
+                      </dd>
+                    </div>
+                  </dl>
+
+                  {statusFilter === "PENDING" && (
+                    <div className="mt-4 flex flex-col gap-2">
+                      <button
+                        type="button"
+                        onClick={() => openApprove(item)}
+                        className="w-full rounded-lg bg-[#35D07F]/15 px-3 py-2 text-[13px] font-medium text-[#35D07F] transition-opacity hover:opacity-90"
+                      >
+                        Approuver
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => openReject(item)}
+                        className="w-full rounded-lg border border-[#E5484D]/30 px-3 py-2 text-[13px] font-medium text-[#FF9592] transition-opacity hover:opacity-90"
+                      >
+                        Rejeter
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </>
       )}
 
       <ConfirmDialog
