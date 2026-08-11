@@ -35,14 +35,24 @@ export default function Topbar({ user }: { user: User }) {
           {user.email}
         </Link>
       </div>
-      <button
-        type="button"
-        onClick={handleLogout}
-        disabled={loggingOut}
-        className="shrink-0 rounded-lg border border-white/[0.14] px-3.5 py-2 text-[13.5px] font-medium text-[#EDEEF0] transition-opacity disabled:opacity-60"
-      >
-        {loggingOut ? "Déconnexion…" : "Déconnexion"}
-      </button>
+      <div className="flex shrink-0 items-center gap-3">
+        {user.role === "ADMIN" && (
+          <Link
+            href="/admin"
+            className="rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2 text-[13.5px] font-medium text-[#F5A623] transition-opacity hover:opacity-90"
+          >
+            Espace admin
+          </Link>
+        )}
+        <button
+          type="button"
+          onClick={handleLogout}
+          disabled={loggingOut}
+          className="rounded-lg border border-white/[0.14] px-3.5 py-2 text-[13.5px] font-medium text-[#EDEEF0] transition-opacity disabled:opacity-60"
+        >
+          {loggingOut ? "Déconnexion…" : "Déconnexion"}
+        </button>
+      </div>
     </header>
   );
 }

@@ -1,8 +1,16 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 /**
  * Dialog de confirmation sobre, maison — remplace `window.confirm` pour les
- * actions destructrices (révocation de clé, suppression de domaine).
+ * actions destructrices (révocation de clé, suppression de domaine) et pour
+ * les actions sensibles côté admin (approbation/rejet d'une recharge).
+ *
+ * `children`, s'il est fourni, s'affiche entre la description et les
+ * boutons — utile pour un champ complémentaire (ex. motif de rejet).
+ * `confirmDisabled` permet de désactiver le bouton de confirmation tant que
+ * ce champ n'est pas valide, sans bloquer le bouton d'annulation.
  */
 export default function ConfirmDialog({
   open,
@@ -12,6 +20,8 @@ export default function ConfirmDialog({
   cancelLabel = "Annuler",
   loading = false,
   danger = false,
+  confirmDisabled = false,
+  children,
   onConfirm,
   onCancel,
 }: {
@@ -22,6 +32,8 @@ export default function ConfirmDialog({
   cancelLabel?: string;
   loading?: boolean;
   danger?: boolean;
+  confirmDisabled?: boolean;
+  children?: ReactNode;
   onConfirm: () => void;
   onCancel: () => void;
 }) {
@@ -49,6 +61,7 @@ export default function ConfirmDialog({
         <p className="mb-6 text-[14px] leading-relaxed text-[#9BA1A8] text-pretty">
           {description}
         </p>
+        {children && <div className="mb-6">{children}</div>}
         <div className="flex justify-end gap-3">
           <button
             type="button"
@@ -61,7 +74,7 @@ export default function ConfirmDialog({
           <button
             type="button"
             onClick={onConfirm}
-            disabled={loading}
+            disabled={loading || confirmDisabled}
             className={`rounded-lg px-4 py-2 text-[13.5px] font-semibold transition-opacity disabled:opacity-60 ${
               danger
                 ? "bg-[#E5484D] text-[#FFF5F5]"

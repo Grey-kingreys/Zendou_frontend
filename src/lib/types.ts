@@ -145,3 +145,32 @@ export interface BalanceSummary {
   totalPurchased: number;
   totalConsumed: number;
 }
+
+// --- Admin : recharges Mobile Money ----------------------------------------
+
+export type TopUpStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type TopUpMethod = "ORANGE_MONEY" | "MTN_MOMO";
+
+export interface AdminTopUpRequestUser {
+  id: string;
+  email: string;
+  name: string;
+}
+
+export interface AdminTopUpRequestItem {
+  id: string;
+  user: AdminTopUpRequestUser;
+  packId: string;
+  credits: number;
+  amountGnf: number;
+  method: TopUpMethod;
+  phoneNumber: string;
+  transactionRef: string;
+  status: TopUpStatus;
+  createdAt: string;
+}
+
+export interface AdminTopUpRequestReviewResult {
+  id: string;
+  status: TopUpStatus;
+}

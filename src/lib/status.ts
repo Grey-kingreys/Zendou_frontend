@@ -1,4 +1,4 @@
-import type { DomainStatus, EmailStatus } from "./types";
+import type { DomainStatus, EmailStatus, TopUpMethod } from "./types";
 import type { BadgeColor } from "@/components/dashboard/Badge";
 
 export function domainStatusMeta(status: DomainStatus): {
@@ -38,6 +38,18 @@ export function emailStatusMeta(status: EmailStatus): {
       return { label: "Échec", color: "red" };
     case "SUPPRESSED":
       return { label: "Supprimé", color: "gray" };
+  }
+}
+
+export function topUpMethodMeta(method: TopUpMethod): {
+  label: string;
+  color: BadgeColor;
+} {
+  switch (method) {
+    case "ORANGE_MONEY":
+      return { label: "Orange Money", color: "orange" };
+    case "MTN_MOMO":
+      return { label: "MTN MoMo", color: "blue" };
   }
 }
 

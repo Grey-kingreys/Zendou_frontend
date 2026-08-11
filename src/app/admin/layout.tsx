@@ -1,0 +1,94 @@
+"use client";
+
+import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import AdminSidebar from "@/components/admin/AdminSidebar";
+import AdminMobileNav from "@/components/admin/AdminMobileNav";
+import AdminTopbar from "@/components/admin/AdminTopbar";
+import { AdminPendingCountContext } from "@/components/admin/admin-context";
+import { api } from "@/lib/api";
+import type { AdminTopUpRequestItem, User } from "@/lib/types";
+
+/**
+ * Garde de session + de rôle pour l'espace admin (`/admin/*`).
+ *
+ * IMPORTANT — cette garde est purement cosmétique. Elle évite d'afficher une
+ * interface admin à un compte qui n'en a pas l'usage, mais elle ne protège
+ * rien : la vraie barrière est l'`AdminGuard` du backend
+ * (backend/src/billing/admin/admin.guard.ts), qui renvoie 403 sur toutes les
+ * routes `/v1/admin/*` pour tout compte dont le rôle n'est pas ADMIN. Un
+ * client qui contournerait ce garde (devtools, appel direct à l'API...) se
+ * heurterait de toute façon à ce 403 — le front ne fait que masquer une
+ * interface qui ne lui servirait à rien.
+ */
+export default function AdminLayout({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const [checking, setChecking] = useState(true);
+  const [pendingCount, setPendingCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    api
+      .get<User>("/v1/auth/me")
+      .then((data) => {
+        if (!active) return;
+        if (data.role !== "ADMIN") {
+          // Compte authentifié mais pas admin : renvoi silencieux vers son
+          // propre espace, pas d'écran d'erreur.
+          router.replace("/dashboard");
+          return;
+        }
+        setUser(data);
+        setChecking(false);
+      })
+      .catch(() => {
+        if (!active) return;
+        // 401 (pas connecté) ou erreur réseau/serveur : pas de session
+        // confirmée, retour à la connexion.
+        router.replace("/connexion");
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [router]);
+
+  const refreshPendingCount = useCallback(() => {
+    api
+      .get<AdminTopUpRequestItem[]>("/v1/admin/topup-requests?status=PENDING")
+      .then((data) => setPendingCount(data.length))
+      .catch(() => {
+        // La pastille est un confort d'affichage — une erreur ici ne doit
+        // pas bloquer le reste de l'espace admin.
+      });
+  }, []);
+
+  useEffect(() => {
+    if (user) refreshPendingCount();
+  }, [user, refreshPendingCount]);
+
+  if (checking || !user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#08090A]">
+        <p className="text-sm text-[#9BA1A8]">Chargement…</p>
+      </div>
+    );
+  }
+
+  return (
+    <AdminPendingCountContext.Provider
+      value={{ pendingCount, refreshPendingCount }}
+    >
+      <div className="flex min-h-screen bg-[#08090A]">
+        <AdminSidebar />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <AdminTopbar user={user} />
+          <AdminMobileNav />
+          <main className="flex-1 px-6 py-8 sm:px-8">{children}</main>
+        </div>
+      </div>
+    </AdminPendingCountContext.Provider>
+  );
+}
