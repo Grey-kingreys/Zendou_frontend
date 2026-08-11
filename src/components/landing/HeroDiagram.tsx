@@ -35,7 +35,26 @@ export default function HeroDiagram() {
           className="absolute inset-0 block h-full w-full"
         >
           <defs>
-            <linearGradient id="zdbeam" x1="0" y1="0" x2="1" y2="0">
+            <linearGradient
+              id="zdbeam-left"
+              gradientUnits="userSpaceOnUse"
+              x1="150"
+              y1="0"
+              x2="520"
+              y2="0"
+            >
+              <stop offset="0%" stopColor="#5B7CFA" stopOpacity="0" />
+              <stop offset="50%" stopColor="#8AA4FF" />
+              <stop offset="100%" stopColor="#5B7CFA" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient
+              id="zdbeam-right"
+              gradientUnits="userSpaceOnUse"
+              x1="680"
+              y1="0"
+              x2="1050"
+              y2="0"
+            >
               <stop offset="0%" stopColor="#5B7CFA" stopOpacity="0" />
               <stop offset="50%" stopColor="#8AA4FF" />
               <stop offset="100%" stopColor="#5B7CFA" stopOpacity="0" />
@@ -50,7 +69,7 @@ export default function HeroDiagram() {
             <path d="M680,180 C800,180 870,312 1050,312" />
           </g>
           <g
-            stroke="url(#zdbeam)"
+            stroke="url(#zdbeam-left)"
             strokeWidth="2"
             strokeLinecap="round"
             strokeDasharray="46 520"
@@ -67,6 +86,13 @@ export default function HeroDiagram() {
               d="M150,312 C330,312 400,180 520,180"
               className="[animation:zd-beam_3.2s_linear_infinite_1.1s]"
             />
+          </g>
+          <g
+            stroke="url(#zdbeam-right)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeDasharray="46 520"
+          >
             <path
               d="M680,180 C800,180 870,48 1050,48"
               className="[animation:zd-beam_3.2s_linear_infinite_1.6s]"
