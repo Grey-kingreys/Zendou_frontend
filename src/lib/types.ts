@@ -10,6 +10,7 @@ export interface User {
   role: UserRole;
   status: UserStatus;
   createdAt: string;
+  dailySendLimit: number;
 }
 
 export interface LoginPayload {
@@ -118,4 +119,29 @@ export interface PaginatedEmails {
   page: number;
   limit: number;
   totalPages: number;
+}
+
+// --- Réputation -----------------------------------------------------------
+
+export type ReputationVerdict = "OK" | "WARNING" | "SUSPEND";
+
+export interface ReputationOverview {
+  sent: number;
+  bounces: number;
+  hardBounces: number;
+  transientBounces: number;
+  complaints: number;
+  bounceRate: number;
+  complaintRate: number;
+  verdict: ReputationVerdict;
+  dailySendLimit: number;
+  status: UserStatus;
+}
+
+// --- Facturation ------------------------------------------------------------
+
+export interface BalanceSummary {
+  balance: number;
+  totalPurchased: number;
+  totalConsumed: number;
 }

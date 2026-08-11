@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import type { User } from "@/lib/types";
@@ -27,7 +28,12 @@ export default function Topbar({ user }: { user: User }) {
         <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[linear-gradient(150deg,#8AA4FF,#3D5CE8)] font-heading text-xs font-bold text-[#0B0B0C] sm:hidden">
           Z
         </div>
-        <span className="truncate text-sm text-[#9BA1A8]">{user.email}</span>
+        <Link
+          href="/dashboard/profil"
+          className="truncate text-sm text-[#9BA1A8] transition-colors hover:text-[#EDEEF0]"
+        >
+          {user.email}
+        </Link>
       </div>
       <button
         type="button"
