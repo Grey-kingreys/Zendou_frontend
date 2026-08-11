@@ -24,3 +24,98 @@ export interface RegisterPayload {
   company?: string;
   declaredUsage?: string;
 }
+
+// --- Clés API ---------------------------------------------------------
+
+export interface ApiKeySummary {
+  id: string;
+  name: string;
+  prefix: string;
+  createdAt: string;
+  lastUsedAt: string | null;
+  revokedAt: string | null;
+}
+
+/** Réponse à la création : `key` (clé complète) n'apparaît qu'ici. */
+export interface CreateApiKeyResponse {
+  id: string;
+  name: string;
+  prefix: string;
+  key: string;
+  createdAt: string;
+}
+
+// --- Domaines -----------------------------------------------------------
+
+export type DomainStatus =
+  | "PENDING"
+  | "VERIFIED"
+  | "FAILED"
+  | "TEMPORARY_FAILURE";
+
+export interface DomainSummary {
+  id: string;
+  name: string;
+  status: DomainStatus;
+  verifiedAt: string | null;
+  createdAt: string;
+}
+
+export interface DnsRecord {
+  type: "CNAME" | "TXT";
+  name: string;
+  value: string;
+}
+
+export interface RecommendedDnsRecord extends DnsRecord {
+  purpose: "SPF" | "DMARC";
+  note: string;
+}
+
+export interface DomainDetail extends DomainSummary {
+  dkimRecords: DnsRecord[];
+  recommendedRecords: RecommendedDnsRecord[];
+}
+
+export interface DomainCheckResult {
+  id: string;
+  status: DomainStatus;
+  verifiedAt: string | null;
+}
+
+// --- Journal des envois ---------------------------------------------------
+
+export type EmailStatus =
+  | "QUEUED"
+  | "SENT"
+  | "DELIVERED"
+  | "BOUNCED"
+  | "COMPLAINED"
+  | "REJECTED"
+  | "FAILED"
+  | "SUPPRESSED";
+
+export interface EmailListItem {
+  publicId: string;
+  fromAddress: string;
+  toAddress: string;
+  subject: string;
+  status: EmailStatus;
+  queuedAt: string;
+  sentAt: string | null;
+  deliveredAt: string | null;
+  lastEventAt: string | null;
+}
+
+export interface EmailDetail extends EmailListItem {
+  errorMessage: string | null;
+  sesMessageId: string | null;
+}
+
+export interface PaginatedEmails {
+  items: EmailListItem[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
