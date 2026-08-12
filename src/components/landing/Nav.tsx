@@ -45,13 +45,13 @@ export default function Nav() {
           </a>
         </div>
 
-        <div className="flex items-center gap-3 text-sm md:gap-4">
+        <div className="flex items-center gap-1 text-sm sm:gap-3 md:gap-4">
           <Link href="/connexion" className="hidden text-[#9BA1A8] md:inline">
             Connexion
           </Link>
           <Link
             href="/inscription"
-            className="rounded-lg bg-[#F2F3F4] px-4 py-[9px] font-semibold text-[#0B0B0C]"
+            className="rounded-lg bg-[#F2F3F4] px-2.5 py-[9px] font-semibold text-[#0B0B0C] sm:px-4"
           >
             Créer un compte
           </Link>
