@@ -79,7 +79,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   return (
     <AdminPendingCountContext.Provider
-      value={{ pendingCount, refreshPendingCount }}
+      value={{ pendingCount, refreshPendingCount, adminUser: user }}
     >
       <div className="flex min-h-screen bg-[#08090A]">
         <AdminSidebar />

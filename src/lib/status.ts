@@ -1,4 +1,11 @@
-import type { DomainStatus, EmailStatus, TopUpMethod } from "./types";
+import type {
+  AdminAccountRole,
+  AdminAccountStatus,
+  AdminActionType,
+  DomainStatus,
+  EmailStatus,
+  TopUpMethod,
+} from "./types";
 import type { BadgeColor } from "@/components/dashboard/Badge";
 
 export function domainStatusMeta(status: DomainStatus): {
@@ -50,6 +57,75 @@ export function topUpMethodMeta(method: TopUpMethod): {
       return { label: "Orange Money", color: "orange" };
     case "MTN_MOMO":
       return { label: "MTN MoMo", color: "blue" };
+  }
+}
+
+export function adminAccountStatusMeta(status: AdminAccountStatus): {
+  label: string;
+  color: BadgeColor;
+} {
+  switch (status) {
+    case "ACTIVE":
+      return { label: "Actif", color: "green" };
+    case "SUSPENDED":
+      return { label: "Suspendu", color: "red" };
+  }
+}
+
+export function adminAccountRoleMeta(role: AdminAccountRole): {
+  label: string;
+  color: BadgeColor;
+} {
+  switch (role) {
+    case "CUSTOMER":
+      return { label: "Client", color: "gray" };
+    case "ADMIN":
+      return { label: "Admin", color: "orange" };
+  }
+}
+
+export const ADMIN_ACCOUNT_STATUS_OPTIONS: {
+  value: AdminAccountStatus;
+  label: string;
+}[] = [
+  { value: "ACTIVE", label: "Actif" },
+  { value: "SUSPENDED", label: "Suspendu" },
+];
+
+export const ADMIN_ACCOUNT_ROLE_OPTIONS: {
+  value: AdminAccountRole;
+  label: string;
+}[] = [
+  { value: "CUSTOMER", label: "Client" },
+  { value: "ADMIN", label: "Admin" },
+];
+
+/**
+ * `recentActions` peut aussi remonter des types écrits ailleurs dans l'admin
+ * (revue des recharges : APPROVE_TOPUP / REJECT_TOPUP) — le journal d'audit
+ * d'un compte n'est pas limité aux 4 actions de cet écran.
+ */
+export function adminActionTypeMeta(type: AdminActionType): {
+  label: string;
+  color: BadgeColor;
+} {
+  switch (type) {
+    case "SUSPEND_USER":
+      return { label: "Suspension", color: "red" };
+    case "REACTIVATE_USER":
+      return { label: "Réactivation", color: "green" };
+    case "ADJUST_QUOTA":
+      return { label: "Quota modifié", color: "blue" };
+    case "GRANT_CREDITS":
+      return { label: "Mouvement de crédits", color: "orange" };
+    case "PROMOTE_ADMIN":
+      return { label: "Promotion admin", color: "blue" };
+    case "DEMOTE_ADMIN":
+      return { label: "Rétrogradation", color: "gray" };
+    case "APPROVE_TOPUP":
+      return { label: "Recharge approuvée", color: "green" };
+    case "REJECT_TOPUP":
+      return { label: "Recharge rejetée", color: "red" };
   }
 }
 
