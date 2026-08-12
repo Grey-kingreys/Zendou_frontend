@@ -48,6 +48,20 @@ export interface CreateApiKeyResponse {
   createdAt: string;
 }
 
+/**
+ * Réponse à la rotation d'une clé API : `id`, `name` et `createdAt` sont
+ * inchangés par rapport à la clé d'origine ; `prefix` et `key` (clé complète,
+ * n'apparaît qu'ici) sont nouveaux. `rotatedAt` trace le geste.
+ */
+export interface RotateApiKeyResponse {
+  id: string;
+  name: string;
+  prefix: string;
+  key: string;
+  createdAt: string;
+  rotatedAt: string;
+}
+
 // --- Domaines -----------------------------------------------------------
 
 export type DomainStatus =
