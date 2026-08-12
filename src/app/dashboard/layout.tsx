@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Sidebar from "@/components/dashboard/Sidebar";
 import MobileNav from "@/components/dashboard/MobileNav";
 import Topbar from "@/components/dashboard/Topbar";
+import UnconfirmedEmailBanner from "@/components/dashboard/UnconfirmedEmailBanner";
+import { DashboardUserContext } from "@/components/dashboard/dashboard-context";
 import { api } from "@/lib/api";
 import type { User } from "@/lib/types";
 
@@ -44,13 +46,18 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#08090A]">
-      <Sidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <Topbar user={user} />
-        <MobileNav />
-        <main className="flex-1 px-6 py-8 sm:px-8">{children}</main>
+    <DashboardUserContext.Provider value={user}>
+      <div className="flex min-h-screen bg-[#08090A]">
+        <Sidebar />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <Topbar user={user} />
+          <MobileNav />
+          <main className="flex-1 px-6 py-8 sm:px-8">
+            {user.emailVerifiedAt === null && <UnconfirmedEmailBanner />}
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </DashboardUserContext.Provider>
   );
 }

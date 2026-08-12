@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
+import { useDashboardUser } from "@/components/dashboard/dashboard-context";
 import { api, ApiError } from "@/lib/api";
 import { EMAIL_STATUS_OPTIONS, emailStatusMeta } from "@/lib/status";
 import type { ApiKeySummary, DomainSummary, EmailStatus } from "@/lib/types";
@@ -18,6 +19,7 @@ interface Overview {
 }
 
 export default function DashboardOverviewPage() {
+  const user = useDashboardUser();
   const [overview, setOverview] = useState<Overview | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -110,7 +112,7 @@ export default function DashboardOverviewPage() {
       </div>
 
       {isEmpty ? (
-        <FirstSteps />
+        <FirstSteps confirmed={user.emailVerifiedAt !== null} />
       ) : (
         <>
           <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -205,7 +207,7 @@ function StatCard({
   );
 }
 
-function FirstSteps() {
+function FirstSteps({ confirmed }: { confirmed: boolean }) {
   return (
     <div className="rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-8">
       <h2 className="mb-1.5 font-heading text-lg font-semibold text-[#EDEEF0]">
@@ -236,7 +238,16 @@ function FirstSteps() {
           </Link>
         </Step>
         <Step number={3} title="Envoyez un premier email">
-          Un simple appel REST suffit :
+          {confirmed ? (
+            "Un simple appel REST suffit :"
+          ) : (
+            <>
+              Confirmez d’abord votre adresse email : tant que ce
+              n’est pas fait, l’API refuse les envois avec une erreur 403.
+              Utilisez le bandeau en haut de page pour renvoyer le lien de
+              confirmation. Une fois confirmé, un simple appel REST suffit :
+            </>
+          )}
         </Step>
       </ol>
 

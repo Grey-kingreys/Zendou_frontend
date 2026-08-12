@@ -11,6 +11,8 @@ export interface User {
   status: UserStatus;
   createdAt: string;
   dailySendLimit: number;
+  /** `null` tant que l'adresse email n'a pas été confirmée (lien reçu par email). */
+  emailVerifiedAt: string | null;
 }
 
 export interface LoginPayload {

@@ -24,6 +24,10 @@ export default function DashboardClesApiPage() {
   const [name, setName] = useState("");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
+  // 403 spécifique : compte pas encore confirmé (voir le bandeau du
+  // tableau de bord). Distingué de createError pour afficher un message
+  // qui renvoie vers la confirmation plutôt que le texte brut de l'API.
+  const [createForbidden, setCreateForbidden] = useState(false);
 
   const [revealedSecret, setRevealedSecret] = useState<RevealedSecret | null>(
     null
@@ -83,6 +87,7 @@ export default function DashboardClesApiPage() {
   async function handleCreate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setCreateError(null);
+    setCreateForbidden(false);
     setCreating(true);
 
     try {
@@ -94,11 +99,17 @@ export default function DashboardClesApiPage() {
       setName("");
       loadKeys();
     } catch (err) {
-      setCreateError(
-        err instanceof ApiError
-          ? err.message
-          : "Impossible de joindre le serveur."
-      );
+      if (err instanceof ApiError && err.status === 403) {
+        // Contrat API : la création de clé renvoie 403 tant que le compte
+        // n'est pas confirmé — pas une erreur générique.
+        setCreateForbidden(true);
+      } else {
+        setCreateError(
+          err instanceof ApiError
+            ? err.message
+            : "Impossible de joindre le serveur."
+        );
+      }
     } finally {
       setCreating(false);
     }
@@ -196,6 +207,7 @@ export default function DashboardClesApiPage() {
             onClick={() => {
               setFormOpen((open) => !open);
               setCreateError(null);
+              setCreateForbidden(false);
             }}
             className="shrink-0 rounded-lg bg-[#5B7CFA] px-4 py-2.5 text-[13.5px] font-semibold text-[#F7F9FF] transition-opacity hover:opacity-90"
           >
@@ -284,7 +296,14 @@ export default function DashboardClesApiPage() {
               {creating ? "Création…" : "Créer la clé"}
             </button>
           </div>
-          {createError && (
+          {createForbidden && (
+            <p className="mt-3 rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[13.5px] text-[#F5C177]">
+              Confirmez votre adresse email avant de créer une clé API —
+              utilisez le bandeau en haut de page pour renvoyer le lien de
+              confirmation.
+            </p>
+          )}
+          {createError && !createForbidden && (
             <p className="mt-3 rounded-lg border border-[#E5484D]/30 bg-[#E5484D]/10 px-3.5 py-2.5 text-[13.5px] text-[#FF9592]">
               {createError}
             </p>
