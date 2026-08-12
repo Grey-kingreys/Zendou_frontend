@@ -137,6 +137,7 @@ export default function InscriptionPage() {
           required
           minLength={8}
           hint="8 caractères minimum"
+          revealable
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />
