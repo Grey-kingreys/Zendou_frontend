@@ -355,6 +355,7 @@ export default function DashboardProfilPage() {
                 type="password"
                 autoComplete="current-password"
                 required
+                revealable
                 value={currentPassword}
                 onChange={(event) => setCurrentPassword(event.target.value)}
               />
@@ -366,6 +367,7 @@ export default function DashboardProfilPage() {
                 required
                 minLength={8}
                 hint="8 caractères minimum"
+                revealable
                 value={newPassword}
                 onChange={(event) => setNewPassword(event.target.value)}
               />
@@ -376,6 +378,7 @@ export default function DashboardProfilPage() {
                 autoComplete="new-password"
                 required
                 minLength={8}
+                revealable
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
               />

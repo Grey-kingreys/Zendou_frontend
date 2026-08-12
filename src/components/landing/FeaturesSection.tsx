@@ -15,7 +15,7 @@ const FEATURES = [
     icon: "▤",
     iconFont: "text-[15px]",
     title: "Tableau de bord",
-    body: "Chaque envoi tracé : livré, ouvert, bounce, plainte. Webhooks pour brancher tes propres alertes.",
+    body: "Chaque envoi tracé : livré, bounce, plainte. Webhooks pour brancher tes propres alertes.",
   },
   {
     icon: "₵",

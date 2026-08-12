@@ -64,6 +64,7 @@ export default function ConnexionPage() {
           name="password"
           autoComplete="current-password"
           required
+          revealable
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />
