@@ -37,6 +37,18 @@ body {
   }
 }
 
+/* Connecteur vertical du diagramme hero < lg (HeroDiagram.tsx) : pattern
+   10/30 (longueur 40) sur un segment de 32px, dashoffset 40 → -40 (2 tours
+   pleins, boucle sans à-coup). */
+@keyframes zd-beam-v {
+  from {
+    stroke-dashoffset: 40;
+  }
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
 @keyframes zd-pulse {
   0%,
   100% {
