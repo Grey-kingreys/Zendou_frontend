@@ -133,7 +133,7 @@ export default function DashboardDomainesPage() {
               value={name}
               onChange={(event) => setName(event.target.value)}
               placeholder="boutique-awa.gn"
-              className="w-full flex-1 rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 font-mono text-[14.5px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none transition-colors focus:border-[#5B7CFA] focus:ring-1 focus:ring-[#5B7CFA]"
+              className="w-full flex-1 rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 font-mono text-[16px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none transition-colors focus:border-[#5B7CFA] focus:ring-1 focus:ring-[#5B7CFA]"
             />
             <button
               type="submit"

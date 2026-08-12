@@ -497,7 +497,7 @@ export default function AdminRechargesPage() {
               onChange={(event) => setRejectReason(event.target.value)}
               rows={3}
               placeholder="Ex. : référence introuvable sur le relevé Orange Money."
-              className="w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[13.5px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none focus:border-[#5B7CFA]"
+              className="w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[16px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none focus:border-[#5B7CFA]"
             />
           </div>
         )}

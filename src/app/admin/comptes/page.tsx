@@ -103,7 +103,7 @@ export default function AdminComptesPage() {
               setPage(1);
               setLoading(true);
             }}
-            className="rounded-lg border border-white/[0.09] bg-[#0E1013] px-3 py-2 text-[13.5px] text-[#EDEEF0] outline-none focus:border-[#5B7CFA]"
+            className="rounded-lg border border-white/[0.09] bg-[#0E1013] px-3 py-2 text-[16px] text-[#EDEEF0] outline-none focus:border-[#5B7CFA]"
           >
             <option value="">Tous</option>
             {ADMIN_ACCOUNT_STATUS_OPTIONS.map((option) => (
@@ -124,7 +124,7 @@ export default function AdminComptesPage() {
               setPage(1);
               setLoading(true);
             }}
-            className="rounded-lg border border-white/[0.09] bg-[#0E1013] px-3 py-2 text-[13.5px] text-[#EDEEF0] outline-none focus:border-[#5B7CFA]"
+            className="rounded-lg border border-white/[0.09] bg-[#0E1013] px-3 py-2 text-[16px] text-[#EDEEF0] outline-none focus:border-[#5B7CFA]"
           >
             <option value="">Tous</option>
             {ADMIN_ACCOUNT_ROLE_OPTIONS.map((option) => (
@@ -143,7 +143,7 @@ export default function AdminComptesPage() {
             value={qInput}
             onChange={(event) => setQInput(event.target.value)}
             placeholder="Nom ou email…"
-            className="w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2 text-[13.5px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none focus:border-[#5B7CFA]"
+            className="w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2 text-[16px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none focus:border-[#5B7CFA]"
           />
         </div>
       </div>

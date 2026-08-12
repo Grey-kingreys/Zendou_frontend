@@ -666,7 +666,7 @@ export default function AdminCompteDetailPage() {
                 value={creditDelta}
                 onChange={(event) => setCreditDelta(event.target.value)}
                 placeholder="Ex. 5000 ou -2000"
-                className="w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[13.5px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none focus:border-[#5B7CFA]"
+                className="w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[16px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none focus:border-[#5B7CFA]"
               />
             </div>
             <div>
@@ -682,7 +682,7 @@ export default function AdminCompteDetailPage() {
                 onChange={(event) => setCreditReason(event.target.value)}
                 rows={3}
                 placeholder="Ex. geste commercial suite à un incident de livraison."
-                className="w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[13.5px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none focus:border-[#5B7CFA]"
+                className="w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[16px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none focus:border-[#5B7CFA]"
               />
             </div>
           </div>
@@ -702,7 +702,7 @@ export default function AdminCompteDetailPage() {
               onChange={(event) => setSuspendReason(event.target.value)}
               rows={3}
               placeholder="Ex. taux de bounce anormal détecté sur les dernières 24 h."
-              className="w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[13.5px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none focus:border-[#5B7CFA]"
+              className="w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[16px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none focus:border-[#5B7CFA]"
             />
           </div>
         )}
@@ -721,7 +721,7 @@ export default function AdminCompteDetailPage() {
               onChange={(event) => setReactivateReason(event.target.value)}
               rows={3}
               placeholder="Ex. cause de la suspension corrigée par le client."
-              className="w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[13.5px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none focus:border-[#5B7CFA]"
+              className="w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[16px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none focus:border-[#5B7CFA]"
             />
           </div>
         )}
@@ -742,7 +742,7 @@ export default function AdminCompteDetailPage() {
               step={1}
               value={quotaValue}
               onChange={(event) => setQuotaValue(event.target.value)}
-              className="w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[13.5px] text-[#EDEEF0] outline-none focus:border-[#5B7CFA]"
+              className="w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[16px] text-[#EDEEF0] outline-none focus:border-[#5B7CFA]"
             />
           </div>
         )}
