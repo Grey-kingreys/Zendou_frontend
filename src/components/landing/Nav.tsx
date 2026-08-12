@@ -25,7 +25,7 @@ export default function Nav() {
           <div className="flex h-[26px] w-[26px] items-center justify-center rounded-lg bg-[linear-gradient(150deg,#8AA4FF,#3D5CE8)] font-heading text-sm font-bold text-[#0B0B0C]">
             Z
           </div>
-          <span className="font-heading text-lg font-semibold tracking-[-0.02em]">
+          <span className="font-heading text-lg font-semibold tracking-[-0.02em] max-[359px]:hidden">
             Zendou
           </span>
         </div>
