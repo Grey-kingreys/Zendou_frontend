@@ -2,6 +2,7 @@ import type {
   AdminAccountRole,
   AdminAccountStatus,
   AdminActionType,
+  DnsRecordCheckStatus,
   DomainStatus,
   EmailStatus,
   TopUpMethod,
@@ -21,6 +22,21 @@ export function domainStatusMeta(status: DomainStatus): {
       return { label: "Échec", color: "red" };
     case "TEMPORARY_FAILURE":
       return { label: "Échec temporaire", color: "red" };
+  }
+}
+
+/** Pastille d'un enregistrement DNS individuel (diagnostic DKIM/SPF/DMARC). */
+export function dnsRecordCheckStatusMeta(status: DnsRecordCheckStatus): {
+  label: string;
+  color: BadgeColor;
+} {
+  switch (status) {
+    case "ok":
+      return { label: "Conforme", color: "green" };
+    case "introuvable":
+      return { label: "Introuvable", color: "red" };
+    case "valeur_differente":
+      return { label: "Valeur différente", color: "orange" };
   }
 }
 

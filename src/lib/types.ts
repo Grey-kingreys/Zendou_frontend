@@ -100,6 +100,54 @@ export interface DomainCheckResult {
   verifiedAt: string | null;
 }
 
+// --- Domaines : diagnostic DNS (GET /v1/domains/:id/dns-check) ------------
+
+export type DnsRecordCheckStatus = "ok" | "introuvable" | "valeur_differente";
+
+/** Erreurs DNS classiques nommées par le backend, DKIM uniquement. */
+export type DkimDnsDiagnostic =
+  | "proxy_cloudflare"
+  | "domaine_duplique"
+  | "cname_aplati";
+
+export interface DkimDnsRecordCheck {
+  token: string;
+  /** Nom interrogé : `<token>._domainkey.<domaine>`. */
+  name: string;
+  status: DnsRecordCheckStatus;
+  attendu: string;
+  trouve: string | null;
+  ttl: number | null;
+  diagnostic?: DkimDnsDiagnostic;
+  /** Explication en français du diagnostic ciblé, fournie par le backend. */
+  message?: string;
+}
+
+/** Vérification SPF ou DMARC (enregistrement TXT). */
+export interface TxtDnsRecordCheck {
+  name: string;
+  status: DnsRecordCheckStatus;
+  attendu: string;
+  trouve: string | null;
+  ttl: number | null;
+}
+
+export interface DomainDnsCheckResult {
+  domainId: string;
+  domainName: string;
+  checkedAt: string;
+  /**
+   * Dernier statut connu côté SES (aucun appel SES déclenché par cet
+   * endpoint) — sert à distinguer « enregistrements corrects, en attente de
+   * la validation d'Amazon » d'un véritable écart : les deux peuvent
+   * diverger légitimement le temps qu'AWS refasse son propre contrôle.
+   */
+  sesStatus: DomainStatus;
+  dkim: DkimDnsRecordCheck[];
+  spf: TxtDnsRecordCheck;
+  dmarc: TxtDnsRecordCheck;
+}
+
 // --- Journal des envois ---------------------------------------------------
 
 export type EmailStatus =

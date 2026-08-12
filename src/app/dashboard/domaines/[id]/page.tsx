@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import Badge from "@/components/dashboard/Badge";
 import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
 import CopyField from "@/components/dashboard/CopyField";
+import DnsDiagnostic from "@/components/dashboard/DnsDiagnostic";
 import { api, ApiError } from "@/lib/api";
 import { formatDateTimeFr } from "@/lib/format";
 import { domainStatusMeta } from "@/lib/status";
@@ -277,6 +278,8 @@ export default function DashboardDomainDetailPage() {
           ))}
         </div>
       </section>
+
+      <DnsDiagnostic domainId={id} />
 
       <ConfirmDialog
         open={deleteOpen}
