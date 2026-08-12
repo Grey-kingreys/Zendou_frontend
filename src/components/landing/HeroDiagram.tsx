@@ -8,6 +8,64 @@ function jitter(base: number) {
   return Math.max(150, base + Math.round((Math.random() - 0.5) * 46));
 }
 
+/**
+ * Faisceau vertical du diagramme compact (< lg). Même principe que les
+ * faisceaux du SVG desktop (dégradé + trait animé en pointillés) mais sur un
+ * segment court : dégradé en userSpaceOnUse pour éviter le piège de la bbox
+ * de hauteur nulle (cf. 73afd40 sur les faisceaux horizontaux).
+ */
+function MobileBeamConnector({
+  gradientId,
+  animationClassName,
+}: {
+  gradientId: string;
+  animationClassName: string;
+}) {
+  return (
+    <svg
+      width="2"
+      height="32"
+      viewBox="0 0 2 32"
+      className="block"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient
+          id={gradientId}
+          gradientUnits="userSpaceOnUse"
+          x1="1"
+          y1="0"
+          x2="1"
+          y2="32"
+        >
+          <stop offset="0%" stopColor="#5B7CFA" stopOpacity="0" />
+          <stop offset="50%" stopColor="#8AA4FF" />
+          <stop offset="100%" stopColor="#5B7CFA" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <line
+        x1="1"
+        y1="0"
+        x2="1"
+        y2="32"
+        stroke="rgba(255,255,255,0.12)"
+        strokeWidth="2"
+      />
+      <line
+        x1="1"
+        y1="0"
+        x2="1"
+        y2="32"
+        stroke={`url(#${gradientId})`}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeDasharray="10 30"
+        className={animationClassName}
+      />
+    </svg>
+  );
+}
+
 export default function HeroDiagram() {
   const [ms, setMs] = useState<number[]>([...BASES]);
 
@@ -172,7 +230,10 @@ export default function HeroDiagram() {
           </div>
         </div>
 
-        <div className="h-8 w-px bg-white/[0.12]" />
+        <MobileBeamConnector
+          gradientId="zdbeam-mobile-top"
+          animationClassName="[animation:zd-beam-v_1.8s_linear_infinite]"
+        />
 
         <div className="relative flex min-h-[92px] w-full max-w-[220px] flex-col items-center justify-center gap-1.5 rounded-[18px] border border-[rgba(91,124,250,0.35)] bg-[#0E1013] py-4 shadow-[0_0_60px_rgba(91,124,250,0.18)]">
           <div className="absolute -inset-3.5 rounded-[26px] border border-[rgba(91,124,250,0.16)] [animation:zd-pulse_3s_ease-in-out_infinite]" />
@@ -185,7 +246,10 @@ export default function HeroDiagram() {
           </div>
         </div>
 
-        <div className="h-8 w-px bg-white/[0.12]" />
+        <MobileBeamConnector
+          gradientId="zdbeam-mobile-bottom"
+          animationClassName="[animation:zd-beam-v_1.8s_linear_infinite_.6s]"
+        />
 
         <div className="grid w-full max-w-sm grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="flex min-h-[58px] flex-col justify-center rounded-xl border border-white/[0.09] bg-[#0E1013] px-3.5 py-3">
