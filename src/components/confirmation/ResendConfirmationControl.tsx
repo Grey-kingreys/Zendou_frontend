@@ -22,8 +22,14 @@ type ResendState =
  * Cas 422 (adresse en liste de suppression) : un rebond dur antérieur
  * signifie qu'aucun email ne pourra plus jamais arriver à cette adresse.
  * Renvoyer ne changera rien, donc on ne réaffiche pas le bouton — on explique
- * le problème et on renvoie vers le profil pour corriger l'adresse. On ne
- * reste jamais sur un message « email envoyé » dans ce cas.
+ * le problème. IMPORTANT : l'email n'est pas modifiable une fois le compte
+ * créé (voir backend/src/auth/dto/update-profile.dto.ts, qui l'exclut
+ * explicitement) — il n'existe donc aucun moyen de « corriger » l'adresse
+ * depuis le profil. Le seul recours réel est de créer un nouveau compte
+ * avec la bonne adresse ; ça ne coûte rien puisque les crédits ne sont
+ * accordés qu'à la confirmation, jamais à un compte resté non confirmé. On
+ * ne reste jamais sur un message « email envoyé » dans ce cas, et on ne
+ * renvoie jamais vers une action que le produit ne sait pas faire.
  */
 export default function ResendConfirmationControl({
   buttonLabel = "Renvoyer l'email",
@@ -67,15 +73,17 @@ export default function ResendConfirmationControl({
         <p className="mb-1.5 font-medium">Cette adresse email est invalide</p>
         <p className="mb-3 leading-relaxed text-pretty">
           Un envoi précédent vers cette adresse a définitivement échoué
-          (rebond dur) : aucun email ne pourra plus jamais lui parvenir tant
-          qu&rsquo;elle reste en liste de suppression. Corrigez votre adresse
-          depuis votre profil, puis redemandez une confirmation.
+          (rebond dur) : elle est en liste de suppression, aucun email ne
+          pourra plus jamais lui parvenir. L&rsquo;adresse d&rsquo;un compte
+          existant ne peut pas être modifiée : créez un nouveau compte avec
+          la bonne adresse. Un compte non confirmé ne reçoit aucun crédit,
+          vous ne perdez donc rien à recommencer.
         </p>
         <Link
-          href="/dashboard/profil"
+          href="/inscription"
           className="font-medium text-[#FF9592] underline underline-offset-2"
         >
-          Aller à mon profil
+          Créer un nouveau compte
         </Link>
       </div>
     );
