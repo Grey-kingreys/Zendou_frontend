@@ -24,6 +24,8 @@ export interface RegisterPayload {
   name: string;
   company?: string;
   declaredUsage?: string;
+  /** Jeton Cloudflare Turnstile — envoyé uniquement si le widget est actif (voir /inscription). */
+  captchaToken?: string;
 }
 
 // --- Clés API ---------------------------------------------------------

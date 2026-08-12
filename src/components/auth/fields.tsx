@@ -68,16 +68,18 @@ export function FormError({ message }: { message: string }) {
 export function SubmitButton({
   loading,
   loadingLabel,
+  disabled = false,
   children,
 }: {
   loading: boolean;
   loadingLabel: string;
+  disabled?: boolean;
   children: ReactNode;
 }) {
   return (
     <button
       type="submit"
-      disabled={loading}
+      disabled={loading || disabled}
       className="w-full rounded-[9px] bg-[#5B7CFA] py-[13px] text-[15px] font-semibold text-[#F7F9FF] transition-opacity disabled:opacity-60"
     >
       {loading ? loadingLabel : children}

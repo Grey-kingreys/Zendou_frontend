@@ -36,6 +36,12 @@ WORKDIR /app
 ARG NEXT_PUBLIC_API_URL=http://localhost:4000
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
+# Même règle que ci-dessus : clé de site Cloudflare Turnstile, publique,
+# inlinée au build. Absente -> aucun widget rendu (captcha désactivé côté
+# frontend, voir src/app/inscription/page.tsx).
+ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
+ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
