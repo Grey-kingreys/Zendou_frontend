@@ -30,7 +30,7 @@ export default function Topbar({ user }: { user: User }) {
         </div>
         <Link
           href="/dashboard/profil"
-          className="truncate text-sm text-[#9BA1A8] transition-colors hover:text-[#EDEEF0]"
+          className="hidden truncate text-sm text-[#9BA1A8] transition-colors hover:text-[#EDEEF0] sm:block"
         >
           {user.email}
         </Link>

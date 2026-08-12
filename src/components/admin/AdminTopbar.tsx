@@ -28,7 +28,9 @@ export default function AdminTopbar({ user }: { user: User }) {
         <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[linear-gradient(150deg,#FFC876,#F5A623)] font-heading text-xs font-bold text-[#0B0B0C] sm:hidden">
           Z
         </div>
-        <span className="truncate text-sm text-[#9BA1A8]">{user.email}</span>
+        <span className="hidden truncate text-sm text-[#9BA1A8] sm:block">
+          {user.email}
+        </span>
       </div>
       <div className="flex shrink-0 items-center gap-3">
         <Link

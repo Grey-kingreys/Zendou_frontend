@@ -3,7 +3,7 @@
 import { useState, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from "react";
 
 const controlClass =
-  "w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[15px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none transition-colors focus:border-[#5B7CFA] focus:ring-1 focus:ring-[#5B7CFA]";
+  "w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[16px] text-[#EDEEF0] placeholder:text-[#5E646B] outline-none transition-colors focus:border-[#5B7CFA] focus:ring-1 focus:ring-[#5B7CFA]";
 
 const labelClass = "mb-1.5 block text-[13px] font-medium text-[#C5CACF]";
 
