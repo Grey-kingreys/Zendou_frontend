@@ -176,3 +176,84 @@ export interface AdminTopUpRequestReviewResult {
   id: string;
   status: TopUpStatus;
 }
+
+// --- Admin : comptes clients ------------------------------------------------
+
+export type AdminAccountRole = "CUSTOMER" | "ADMIN";
+export type AdminAccountStatus = "ACTIVE" | "SUSPENDED";
+
+export interface AdminUserListItem {
+  id: string;
+  email: string;
+  name: string;
+  company: string | null;
+  role: AdminAccountRole;
+  status: AdminAccountStatus;
+  dailySendLimit: number;
+  createdAt: string;
+  suspendedAt: string | null;
+  creditBalance: number;
+  emailsSent30d: number;
+}
+
+export interface PaginatedAdminUsers {
+  items: AdminUserListItem[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export type AdminActionType =
+  | "SUSPEND_USER"
+  | "REACTIVATE_USER"
+  | "ADJUST_QUOTA"
+  | "GRANT_CREDITS"
+  | "PROMOTE_ADMIN"
+  | "DEMOTE_ADMIN"
+  | "APPROVE_TOPUP"
+  | "REJECT_TOPUP";
+
+export interface AdminActionItem {
+  id: string;
+  type: AdminActionType;
+  reason: string | null;
+  details: unknown;
+  createdAt: string;
+  admin: { id: string; email: string; name: string };
+}
+
+/** Détail d'un compte : la ligne de liste, enrichie du contexte du dossier. */
+export interface AdminUserDetail extends AdminUserListItem {
+  suspensionReason: string | null;
+  reputationResetAt: string | null;
+  declaredUsage: string | null;
+  domainsCount: number;
+  verifiedDomainsCount: number;
+  activeApiKeysCount: number;
+  recentActions: AdminActionItem[];
+}
+
+/** Réponse commune à `.../suspend` et `.../reactivate`. */
+export interface AdminUserActionResult {
+  id: string;
+  status: AdminAccountStatus;
+  suspendedAt: string | null;
+  suspensionReason: string | null;
+  reputationResetAt: string | null;
+  actionId: string;
+}
+
+export interface AdminQuotaResult {
+  id: string;
+  dailySendLimit: number;
+  previousDailySendLimit: number;
+  actionId: string;
+}
+
+export interface AdminCreditResult {
+  id: string;
+  delta: number;
+  creditBalance: number;
+  actionId: string;
+}
