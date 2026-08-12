@@ -36,6 +36,22 @@ function errorMessage(err: unknown): string {
   return err instanceof ApiError ? err.message : "Impossible de joindre le serveur.";
 }
 
+// Accorde "(crédit(s) )<participe>(s)" au singulier/pluriel français : le
+// singulier s'applique à 0 et à 1, le pluriel à partir de 2, ex. "0 crédit
+// acheté" / "1 crédit acheté" / "2 crédits achetés". `withNoun` permet de ne
+// nommer "crédit(s)" qu'une seule fois dans une liste de plusieurs items.
+function formatCreditItem(
+  count: number,
+  participle: string,
+  withNoun: boolean
+): string {
+  const singular = count === 0 || count === 1;
+  const noun = withNoun ? ` crédit${singular ? "" : "s"}` : "";
+  return `${count.toLocaleString("fr-FR")}${noun} ${participle}${
+    singular ? "" : "s"
+  }`;
+}
+
 interface ProfileFormValues {
   name: string;
   company: string;
@@ -447,9 +463,33 @@ export default function DashboardProfilPage() {
                     {balanceError}
                   </span>
                 ) : balance ? (
-                  <span className="font-mono text-[14px] text-[#EDEEF0]">
-                    {balance.balance.toLocaleString("fr-FR")} crédits
-                  </span>
+                  <div>
+                    <span className="font-mono text-[14px] text-[#EDEEF0]">
+                      {balance.balance.toLocaleString("fr-FR")} crédits
+                    </span>
+                    {typeof balance.totalPurchased === "number" &&
+                      typeof balance.totalGifted === "number" &&
+                      typeof balance.totalConsumed === "number" &&
+                      (balance.totalPurchased !== 0 ||
+                        balance.totalGifted !== 0 ||
+                        balance.totalConsumed !== 0) && (
+                        <p className="mt-1 text-[12.5px] text-[#9BA1A8]">
+                          {`Historique depuis la création du compte : ${formatCreditItem(
+                            balance.totalPurchased,
+                            "acheté",
+                            true
+                          )} · ${formatCreditItem(
+                            balance.totalGifted,
+                            "offert",
+                            false
+                          )} · ${formatCreditItem(
+                            balance.totalConsumed,
+                            "consommé",
+                            false
+                          )}.`}
+                        </p>
+                      )}
+                  </div>
                 ) : (
                   <span className="text-[13px] text-[#9BA1A8]">
                     Chargement…
