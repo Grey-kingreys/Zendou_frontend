@@ -70,8 +70,8 @@ export default function FacturationPage() {
         de la requête — pas à la livraison. Un email bloqué par la liste de
         suppression (statut <code>suppressed</code>) n&rsquo;est jamais
         facturé. Votre solde est simplement la somme de tous les mouvements
-        de crédits de votre compte : recharges approuvées moins envois
-        facturés.
+        de crédits de votre compte : recharges approuvées et crédits offerts,
+        moins envois facturés.
       </p>
 
       <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
@@ -219,7 +219,7 @@ export default function FacturationPage() {
                 GET /v1/billing/balance
               </td>
               <td className="px-5 py-3 text-[#9BA1A8]">
-                Solde actuel, total acheté, total consommé.
+                Solde actuel, total acheté, total offert, total consommé.
               </td>
             </tr>
             <tr className="border-b border-white/[0.05]">

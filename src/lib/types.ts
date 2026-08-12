@@ -206,9 +206,16 @@ export interface ReputationOverview {
 
 // --- Facturation ------------------------------------------------------------
 
+/**
+ * Solde de crédits : `totalPurchased` = crédits payés (recharges TOPUP) ;
+ * `totalGifted` = crédits offerts (bienvenue, crédits accordés à la main
+ * par un administrateur), jamais encaissés. Identité :
+ * `balance === totalPurchased + totalGifted - totalConsumed`.
+ */
 export interface BalanceSummary {
   balance: number;
   totalPurchased: number;
+  totalGifted: number;
   totalConsumed: number;
 }
 
