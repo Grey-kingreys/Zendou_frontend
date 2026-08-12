@@ -8,8 +8,8 @@ export default function CtaSection() {
           Envoyez votre premier email ce soir.
         </h2>
         <p className="mx-auto mb-8 max-w-[500px] text-[17px] leading-[1.65] text-[#9BA1A8] text-pretty">
-          Compte créé en une minute, 1 000 emails offerts chaque mois, aucune
-          carte demandée.
+          Compte créé en une minute, 1 000 emails offerts, aucune carte
+          demandée.
         </p>
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
