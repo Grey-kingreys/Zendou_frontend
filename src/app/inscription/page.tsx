@@ -84,7 +84,7 @@ export default function InscriptionPage() {
   return (
     <AuthCard
       title="Créer un compte"
-      description="1 000 emails offerts chaque mois, aucune carte demandée."
+      description="1 000 emails offerts, aucune carte demandée."
       footer={
         <>
           Déjà un compte ?{" "}

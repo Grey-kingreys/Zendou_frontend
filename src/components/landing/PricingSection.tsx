@@ -32,7 +32,7 @@ export default function PricingSection() {
             0 <span className="text-[15px] font-normal text-[#70767D]">GNF</span>
           </div>
           <div className="mb-[26px] font-mono text-[12.5px] text-[#70767D]">
-            1 000 emails / mois
+            1 000 emails offerts
           </div>
           <div className="mb-7 flex flex-col gap-2.5 text-sm text-[#A8AEB4]">
             <span>1 domaine vérifié</span>

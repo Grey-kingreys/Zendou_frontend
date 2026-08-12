@@ -91,7 +91,7 @@ export default function FacturationPage() {
             <tr className="border-b border-white/[0.05]">
               <td className="px-5 py-3 text-[#EDEEF0]">Découverte</td>
               <td className="px-5 py-3 font-mono text-[#9BA1A8]">1 000</td>
-              <td className="px-5 py-3 text-[#9BA1A8]">Offert à l&rsquo;inscription</td>
+              <td className="px-5 py-3 text-[#9BA1A8]">Offert à la confirmation de l&rsquo;email</td>
               <td className="px-5 py-3 text-[#70767D]">Non</td>
             </tr>
             <tr className="border-b border-white/[0.05]">
