@@ -4,8 +4,17 @@ import { useEffect, useState, type FormEvent } from "react";
 import Badge from "@/components/dashboard/Badge";
 import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
 import { api, ApiError } from "@/lib/api";
-import { formatDateTimeFr } from "@/lib/format";
-import type { ApiKeySummary, CreateApiKeyResponse } from "@/lib/types";
+import { formatDateTimeShortFr } from "@/lib/format";
+import type {
+  ApiKeySummary,
+  CreateApiKeyResponse,
+  RotateApiKeyResponse,
+} from "@/lib/types";
+
+/** Union du secret révélé une seule fois : à la création ou après rotation. */
+type RevealedSecret =
+  | { kind: "created"; data: CreateApiKeyResponse }
+  | { kind: "rotated"; data: RotateApiKeyResponse };
 
 export default function DashboardClesApiPage() {
   const [keys, setKeys] = useState<ApiKeySummary[] | null>(null);
@@ -16,7 +25,7 @@ export default function DashboardClesApiPage() {
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
 
-  const [revealedKey, setRevealedKey] = useState<CreateApiKeyResponse | null>(
+  const [revealedSecret, setRevealedSecret] = useState<RevealedSecret | null>(
     null
   );
 
@@ -24,6 +33,14 @@ export default function DashboardClesApiPage() {
     null
   );
   const [revoking, setRevoking] = useState(false);
+
+  const [rotateTarget, setRotateTarget] = useState<ApiKeySummary | null>(
+    null
+  );
+  const [rotating, setRotating] = useState(false);
+
+  const [purgeTarget, setPurgeTarget] = useState<ApiKeySummary | null>(null);
+  const [purging, setPurging] = useState(false);
 
   async function loadKeys() {
     try {
@@ -72,7 +89,7 @@ export default function DashboardClesApiPage() {
       const created = await api.post<CreateApiKeyResponse>("/v1/api-keys", {
         name: name.trim(),
       });
-      setRevealedKey(created);
+      setRevealedSecret({ kind: "created", data: created });
       setFormOpen(false);
       setName("");
       loadKeys();
@@ -106,6 +123,61 @@ export default function DashboardClesApiPage() {
     }
   }
 
+  /**
+   * Rotation : régénère le secret sur place (coupure immédiate de l'ancienne
+   * valeur, sans période de grâce — voir le texte du dialogue de
+   * confirmation ci-dessous). 409 si la clé est révoquée : impossible en
+   * temps normal puisque le bouton n'est pas proposé sur une clé révoquée,
+   * mais peut survenir en cas de course avec un autre onglet — le message
+   * de l'API est alors affiché tel quel via `err.message`.
+   */
+  async function handleRotate() {
+    if (!rotateTarget) return;
+    setRotating(true);
+    try {
+      const rotated = await api.post<RotateApiKeyResponse>(
+        `/v1/api-keys/${rotateTarget.id}/rotate`
+      );
+      setRevealedSecret({ kind: "rotated", data: rotated });
+      setRotateTarget(null);
+      loadKeys();
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : "Impossible de joindre le serveur."
+      );
+      setRotateTarget(null);
+    } finally {
+      setRotating(false);
+    }
+  }
+
+  /**
+   * Suppression définitive : réservée aux clés déjà révoquées (le bouton
+   * n'est proposé que dans ce cas). 409 si la clé est encore active malgré
+   * tout — course avec un autre onglet — le message de l'API est alors
+   * affiché tel quel via `err.message`.
+   */
+  async function handlePurge() {
+    if (!purgeTarget) return;
+    setPurging(true);
+    try {
+      await api.del(`/v1/api-keys/${purgeTarget.id}/purge`);
+      setPurgeTarget(null);
+      loadKeys();
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : "Impossible de joindre le serveur."
+      );
+      setPurgeTarget(null);
+    } finally {
+      setPurging(false);
+    }
+  }
+
   return (
     <div className="mx-auto max-w-[880px]">
       <div className="mb-8 flex items-start justify-between gap-4">
@@ -118,7 +190,7 @@ export default function DashboardClesApiPage() {
             d’envoi.
           </p>
         </div>
-        {!revealedKey && (
+        {!revealedSecret && (
           <button
             type="button"
             onClick={() => {
@@ -132,10 +204,12 @@ export default function DashboardClesApiPage() {
         )}
       </div>
 
-      {revealedKey && (
+      {revealedSecret && (
         <div className="mb-6 rounded-2xl border border-[#5B7CFA]/35 bg-[linear-gradient(180deg,rgba(91,124,250,0.08),rgba(91,124,250,0.01))] p-6">
           <p className="mb-1 font-heading text-base font-semibold text-[#EDEEF0]">
-            Clé « {revealedKey.name} » créée
+            {revealedSecret.kind === "created"
+              ? `Clé « ${revealedSecret.data.name} » créée`
+              : `Clé « ${revealedSecret.data.name} » réinitialisée`}
           </p>
           <p className="mb-4 text-[13.5px] text-[#9BA1A8]">
             Copiez-la maintenant : elle ne sera plus jamais affichée en
@@ -143,22 +217,31 @@ export default function DashboardClesApiPage() {
           </p>
           <div className="mb-4 flex flex-col gap-2 rounded-lg border border-white/[0.09] bg-[#0E1013] p-4 sm:flex-row sm:items-center sm:justify-between">
             <code className="min-w-0 flex-1 truncate font-mono text-[14px] text-[#EDEEF0]">
-              {revealedKey.key}
+              {revealedSecret.data.key}
             </code>
             <button
               type="button"
-              onClick={() => navigator.clipboard.writeText(revealedKey.key)}
+              onClick={() =>
+                navigator.clipboard.writeText(revealedSecret.data.key)
+              }
               className="shrink-0 rounded-lg border border-white/[0.14] px-3.5 py-2 text-[13px] font-medium text-[#EDEEF0] transition-opacity hover:opacity-90"
             >
               Copier
             </button>
           </div>
+          {revealedSecret.kind === "rotated" && (
+            <p className="mb-4 rounded-lg border border-[#E5484D]/30 bg-[#E5484D]/10 px-3.5 py-2.5 text-[13px] text-[#FF9592]">
+              L’ancienne clé a cessé de fonctionner immédiatement. Déployez
+              cette nouvelle valeur pour rétablir l’application qui
+              l’utilise.
+            </p>
+          )}
           <p className="mb-5 rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[13px] text-[#F5C177]">
             Cette clé ne sera plus affichée. Conservez-la maintenant.
           </p>
           <button
             type="button"
-            onClick={() => setRevealedKey(null)}
+            onClick={() => setRevealedSecret(null)}
             className="rounded-lg bg-[#5B7CFA] px-4 py-2.5 text-[13.5px] font-semibold text-[#F7F9FF] transition-opacity hover:opacity-90"
           >
             J’ai copié la clé
@@ -166,7 +249,7 @@ export default function DashboardClesApiPage() {
         </div>
       )}
 
-      {formOpen && !revealedKey && (
+      {formOpen && !revealedSecret && (
         <form
           onSubmit={handleCreate}
           className="mb-6 rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-6"
@@ -232,63 +315,180 @@ export default function DashboardClesApiPage() {
       )}
 
       {keys !== null && keys.length > 0 && (
-        <div className="overflow-hidden rounded-2xl border border-white/[0.09] bg-[#0C0D0F]">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] border-collapse text-left text-[13.5px]">
-              <thead>
-                <tr className="border-b border-white/[0.07] text-[12px] tracking-[0.02em] text-[#70767D] uppercase">
-                  <th className="px-5 py-3 font-medium">Nom</th>
-                  <th className="px-5 py-3 font-medium">Préfixe</th>
-                  <th className="px-5 py-3 font-medium">Créée le</th>
-                  <th className="px-5 py-3 font-medium">
-                    Dernière utilisation
-                  </th>
-                  <th className="px-5 py-3 font-medium">Statut</th>
-                  <th className="px-5 py-3 font-medium" />
-                </tr>
-              </thead>
-              <tbody>
-                {keys.map((key) => (
-                  <tr
-                    key={key.id}
-                    className="border-b border-white/[0.05] last:border-b-0"
-                  >
-                    <td className="px-5 py-3.5 font-medium text-[#EDEEF0]">
-                      {key.name}
-                    </td>
-                    <td className="px-5 py-3.5 font-mono text-[#9BA1A8]">
-                      {key.prefix}…
-                    </td>
-                    <td className="px-5 py-3.5 text-[#9BA1A8]">
-                      {formatDateTimeFr(key.createdAt)}
-                    </td>
-                    <td className="px-5 py-3.5 text-[#9BA1A8]">
-                      {formatDateTimeFr(key.lastUsedAt)}
-                    </td>
-                    <td className="px-5 py-3.5">
-                      {key.revokedAt ? (
-                        <Badge color="red" label="Révoquée" />
-                      ) : (
-                        <Badge color="green" label="Active" />
-                      )}
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
-                      {!key.revokedAt && (
-                        <button
-                          type="button"
-                          onClick={() => setRevokeTarget(key)}
-                          className="rounded-lg border border-white/[0.14] px-3 py-1.5 text-[12.5px] font-medium text-[#EDEEF0] transition-opacity hover:opacity-90"
-                        >
-                          Révoquer
-                        </button>
-                      )}
-                    </td>
+        <>
+          {/*
+           * >= md : tableau classique avec colonne Actions collante à
+           * droite (voir commit 948d191 sur /admin/recharges) — chaque
+           * ligne active peut porter deux boutons (Réinitialiser,
+           * Révoquer) et le préfixe/les dates sont en police fixe, donc le
+           * tableau peut dépasser son conteneur ; sans colonne collante, le
+           * dernier bouton finit hors champ. En dessous de md, cartes
+           * empilées avec actions en pleine largeur.
+           */}
+          <div className="hidden overflow-hidden rounded-2xl border border-white/[0.09] bg-[#0C0D0F] md:block">
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse text-left text-[13.5px]">
+                <thead>
+                  <tr className="border-b border-white/[0.07] text-[12px] tracking-[0.02em] text-[#70767D] uppercase">
+                    <th className="px-4 py-3 font-medium">Nom</th>
+                    <th className="px-3 py-3 font-medium whitespace-nowrap">
+                      Préfixe
+                    </th>
+                    <th className="px-3 py-3 font-medium whitespace-nowrap">
+                      Créée le
+                    </th>
+                    <th className="px-3 py-3 font-medium whitespace-nowrap">
+                      Dernière utilisation
+                    </th>
+                    <th className="px-3 py-3 font-medium whitespace-nowrap">
+                      Statut
+                    </th>
+                    <th className="sticky right-0 z-10 bg-[#0C0D0F] px-3 py-3 font-medium whitespace-nowrap shadow-[-8px_0_12px_-6px_rgba(0,0,0,0.55)]">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {keys.map((key) => (
+                    <tr
+                      key={key.id}
+                      className="border-b border-white/[0.05] last:border-b-0"
+                    >
+                      <td className="px-4 py-3.5 font-medium text-[#EDEEF0]">
+                        {key.name}
+                      </td>
+                      <td className="px-3 py-3.5 font-mono whitespace-nowrap text-[#9BA1A8]">
+                        {key.prefix}…
+                      </td>
+                      <td className="px-3 py-3.5 whitespace-nowrap text-[#9BA1A8]">
+                        {formatDateTimeShortFr(key.createdAt)}
+                      </td>
+                      <td className="px-3 py-3.5 whitespace-nowrap text-[#9BA1A8]">
+                        {formatDateTimeShortFr(key.lastUsedAt)}
+                      </td>
+                      <td className="px-3 py-3.5 whitespace-nowrap">
+                        {key.revokedAt ? (
+                          <Badge color="red" label="Révoquée" />
+                        ) : (
+                          <Badge color="green" label="Active" />
+                        )}
+                      </td>
+                      <td className="sticky right-0 z-10 bg-[#0C0D0F] px-3 py-3.5 shadow-[-8px_0_12px_-6px_rgba(0,0,0,0.55)]">
+                        <div className="flex justify-end gap-1.5">
+                          {!key.revokedAt && (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => setRotateTarget(key)}
+                                className="rounded-lg border border-white/[0.14] px-3 py-1.5 text-[12.5px] font-medium whitespace-nowrap text-[#EDEEF0] transition-opacity hover:opacity-90"
+                              >
+                                Réinitialiser
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setRevokeTarget(key)}
+                                className="rounded-lg border border-white/[0.14] px-3 py-1.5 text-[12.5px] font-medium whitespace-nowrap text-[#EDEEF0] transition-opacity hover:opacity-90"
+                              >
+                                Révoquer
+                              </button>
+                            </>
+                          )}
+                          {key.revokedAt && (
+                            <button
+                              type="button"
+                              onClick={() => setPurgeTarget(key)}
+                              className="rounded-lg border border-[#E5484D]/30 px-3 py-1.5 text-[12.5px] font-medium whitespace-nowrap text-[#FF9592] transition-opacity hover:opacity-90"
+                            >
+                              Supprimer
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+
+          {/* < md : une carte par clé, actions pleine largeur empilées. */}
+          <div className="flex flex-col gap-3 md:hidden">
+            {keys.map((key) => (
+              <div
+                key={key.id}
+                className="rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-4"
+              >
+                <div className="mb-3 flex items-start justify-between gap-3">
+                  <span className="min-w-0 truncate text-[14px] font-medium text-[#EDEEF0]">
+                    {key.name}
+                  </span>
+                  {key.revokedAt ? (
+                    <Badge color="red" label="Révoquée" />
+                  ) : (
+                    <Badge color="green" label="Active" />
+                  )}
+                </div>
+
+                <dl className="grid grid-cols-2 gap-x-3 gap-y-2.5 text-[13px]">
+                  <div>
+                    <dt className="text-[11px] tracking-[0.02em] text-[#70767D] uppercase">
+                      Préfixe
+                    </dt>
+                    <dd className="truncate font-mono text-[#C5CACF]">
+                      {key.prefix}…
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-[11px] tracking-[0.02em] text-[#70767D] uppercase">
+                      Créée le
+                    </dt>
+                    <dd className="text-[#9BA1A8]">
+                      {formatDateTimeShortFr(key.createdAt)}
+                    </dd>
+                  </div>
+                  <div className="col-span-2">
+                    <dt className="text-[11px] tracking-[0.02em] text-[#70767D] uppercase">
+                      Dernière utilisation
+                    </dt>
+                    <dd className="text-[#9BA1A8]">
+                      {formatDateTimeShortFr(key.lastUsedAt)}
+                    </dd>
+                  </div>
+                </dl>
+
+                {!key.revokedAt && (
+                  <div className="mt-4 flex flex-col gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setRotateTarget(key)}
+                      className="w-full rounded-lg border border-white/[0.14] px-3 py-2 text-[13px] font-medium text-[#EDEEF0] transition-opacity hover:opacity-90"
+                    >
+                      Réinitialiser
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setRevokeTarget(key)}
+                      className="w-full rounded-lg border border-white/[0.14] px-3 py-2 text-[13px] font-medium text-[#EDEEF0] transition-opacity hover:opacity-90"
+                    >
+                      Révoquer
+                    </button>
+                  </div>
+                )}
+                {key.revokedAt && (
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      onClick={() => setPurgeTarget(key)}
+                      className="w-full rounded-lg border border-[#E5484D]/30 px-3 py-2 text-[13px] font-medium text-[#FF9592] transition-opacity hover:opacity-90"
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       <ConfirmDialog
@@ -300,6 +500,28 @@ export default function DashboardClesApiPage() {
         loading={revoking}
         onConfirm={handleRevoke}
         onCancel={() => setRevokeTarget(null)}
+      />
+
+      <ConfirmDialog
+        open={rotateTarget !== null}
+        title="Réinitialiser cette clé ?"
+        description={`La clé « ${rotateTarget?.name ?? ""} » sera immédiatement remplacée par une nouvelle valeur : l’ancienne clé cesse de fonctionner à l’instant où vous confirmez, sans période de grâce. L’application qui l’utilise sera coupée tant que la nouvelle valeur n’est pas déployée.`}
+        confirmLabel="Réinitialiser"
+        danger
+        loading={rotating}
+        onConfirm={handleRotate}
+        onCancel={() => setRotateTarget(null)}
+      />
+
+      <ConfirmDialog
+        open={purgeTarget !== null}
+        title="Supprimer définitivement cette clé ?"
+        description={`La clé « ${purgeTarget?.name ?? ""} » sera supprimée définitivement, y compris son historique d’utilisation. Cette action est irréversible.`}
+        confirmLabel="Supprimer"
+        danger
+        loading={purging}
+        onConfirm={handlePurge}
+        onCancel={() => setPurgeTarget(null)}
       />
     </div>
   );
