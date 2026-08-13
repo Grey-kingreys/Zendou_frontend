@@ -5,8 +5,10 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import Badge from "@/components/dashboard/Badge";
 import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
+import CopyAllButton from "@/components/dashboard/CopyAllButton";
 import CopyField from "@/components/dashboard/CopyField";
 import DnsDiagnostic from "@/components/dashboard/DnsDiagnostic";
+import DnsProviderGuide from "@/components/dashboard/DnsProviderGuide";
 import { api, ApiError } from "@/lib/api";
 import {
   buildSummary,
@@ -19,10 +21,18 @@ import {
 import { formatDateTimeFr } from "@/lib/format";
 import { domainStatusMeta } from "@/lib/status";
 import type {
+  DnsRecord,
   DomainCheckResult,
   DomainDetail,
   DomainDnsCheckResult,
 } from "@/lib/types";
+
+/** Texte tabulé (type, nom, valeur) pour le bouton « Tout copier » (B12). */
+function buildDkimCopyText(records: DnsRecord[]): string {
+  const header = "Type\tNom\tValeur";
+  const rows = records.map((record) => `${record.type}\t${record.name}\t${record.value}`);
+  return [header, ...rows].join("\n");
+}
 
 export default function DashboardDomainDetailPage() {
   const params = useParams<{ id: string }>();
@@ -343,9 +353,12 @@ export default function DashboardDomainDetailPage() {
       />
 
       <section className="mb-8">
-        <h2 className="mb-1.5 font-heading text-base font-semibold text-[#EDEEF0]">
-          1. Enregistrements DKIM (obligatoires)
-        </h2>
+        <div className="mb-1.5 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-heading text-base font-semibold text-[#EDEEF0]">
+            1. Enregistrements DKIM (obligatoires)
+          </h2>
+          <CopyAllButton text={buildDkimCopyText(domain.dkimRecords)} />
+        </div>
         <p className="mb-4 text-[13.5px] text-[#9BA1A8] text-pretty">
           Publiez ces 3 enregistrements CNAME chez votre registrar DNS. Une
           fois propagés, Amazon SES vérifie automatiquement le domaine.
@@ -423,6 +436,16 @@ export default function DashboardDomainDetailPage() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="mb-8">
+        <h2 className="mb-1.5 font-heading text-base font-semibold text-[#EDEEF0]">
+          Publier ces enregistrements
+        </h2>
+        <p className="mb-4 text-[13.5px] text-[#9BA1A8] text-pretty">
+          Marche à suivre chez les fournisseurs DNS les plus courants.
+        </p>
+        <DnsProviderGuide />
       </section>
 
       <ConfirmDialog
