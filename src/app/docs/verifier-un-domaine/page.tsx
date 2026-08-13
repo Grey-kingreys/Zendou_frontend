@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "Vérifier un domaine — Documentation Zendou",
   description:
     "Ajoutez votre domaine, publiez les enregistrements DKIM, SPF et DMARC, et comprenez pourquoi ils comptent pour la délivrabilité.",
+  alternates: { canonical: "/docs/verifier-un-domaine" },
 };
 
 const EXAMPLE_DKIM_ROWS = [

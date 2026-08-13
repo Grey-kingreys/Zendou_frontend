@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Facturation — Documentation Zendou",
   description:
     "Crédits, packs, recharge par Orange Money ou MTN MoMo, et limite journalière d'envoi de l'API Zendou.",
+  alternates: { canonical: "/docs/facturation" },
 };
 
 const TOPUP_REQUEST_EXAMPLE = `curl -X POST https://api.zendou.dev/v1/billing/topup-requests \\

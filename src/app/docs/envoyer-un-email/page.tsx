@@ -7,9 +7,10 @@ import DocsTable from "@/components/docs/DocsTable";
 import Callout from "@/components/docs/Callout";
 
 export const metadata: Metadata = {
-  title: "Envoyer un email — Documentation Zendou",
+  title: "Envoyer un email transactionnel — Documentation Zendou",
   description:
-    "Référence complète de POST /v1/emails : paramètres, exemple de requête et de réponse, codes d'erreur et cycle de vie d'un envoi.",
+    "Référence complète de POST /v1/emails pour envoyer un email transactionnel avec Zendou : paramètres, exemple de requête et de réponse, codes d'erreur et cycle de vie d'un envoi.",
+  alternates: { canonical: "/docs/envoyer-un-email" },
 };
 
 const REQUEST_EXAMPLE = `curl -X POST https://api.zendou.dev/v1/emails \\

@@ -1,67 +1,29 @@
-"use client";
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import DashboardLayoutClient from "./DashboardLayoutClient";
 
-import { useEffect, useState, type ReactNode } from "react";
-import { useRouter } from "next/navigation";
-import Sidebar from "@/components/dashboard/Sidebar";
-import MobileNav from "@/components/dashboard/MobileNav";
-import Topbar from "@/components/dashboard/Topbar";
-import { DashboardUserContext } from "@/components/dashboard/dashboard-context";
-import { api } from "@/lib/api";
-import type { User } from "@/lib/types";
+/**
+ * Server Component uniquement pour porter le `noindex` (l'export
+ * `metadata` n'est supporté que dans les Server Components — voir
+ * node_modules/next/dist/docs/01-app/03-api-reference/04-functions/
+ * generate-metadata.md). La logique interactive (garde de session côté
+ * client) reste dans DashboardLayoutClient, inchangée.
+ *
+ * ⚠️ Pourquoi ce `noindex` n'est pas cosmétique : la garde de session de
+ * DashboardLayoutClient est **côté client** (elle tourne après hydratation).
+ * Un robot qui ne rend pas le JS reçoit donc la coquille HTML du tableau de
+ * bord **avant** la redirection vers /connexion. Sans `noindex`, une URL
+ * privée (ex. /dashboard/emails) pourrait être indexée sous le titre du
+ * site. `index: false, follow: false` sur ce layout s'applique à toutes les
+ * routes filles (/dashboard/*) car aucune ne redéfinit son propre `robots`.
+ */
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-  const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [checking, setChecking] = useState(true);
-
-  useEffect(() => {
-    let active = true;
-
-    api
-      .get<User>("/v1/auth/me")
-      .then((data) => {
-        if (!active) return;
-        if (data.emailVerifiedAt === null) {
-          // Compte pas encore confirmé : le tableau de bord reste fermé,
-          // direction l'écran dédié (garde vague 8 — voir
-          // /confirmez-votre-email). Ne pas appeler setChecking(false) ici :
-          // l'écran de chargement reste affiché pendant la navigation.
-          router.replace("/confirmez-votre-email");
-          return;
-        }
-        setUser(data);
-        setChecking(false);
-      })
-      .catch(() => {
-        if (!active) return;
-        // 401 (not logged in) or a network/server error: either way there is
-        // no confirmed session, so send the user back to the login page.
-        router.replace("/connexion");
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [router]);
-
-  if (checking || !user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#08090A]">
-        <p className="text-sm text-[#9BA1A8]">Chargement…</p>
-      </div>
-    );
-  }
-
-  return (
-    <DashboardUserContext.Provider value={user}>
-      <div className="flex min-h-screen bg-[#08090A]">
-        <Sidebar />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <Topbar user={user} />
-          <MobileNav />
-          <main className="flex-1 px-6 py-8 sm:px-8">{children}</main>
-        </div>
-      </div>
-    </DashboardUserContext.Provider>
-  );
+  return <DashboardLayoutClient>{children}</DashboardLayoutClient>;
 }
