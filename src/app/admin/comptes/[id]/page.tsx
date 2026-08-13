@@ -571,10 +571,13 @@ export default function AdminCompteDetailPage() {
               Supprimer le compte
             </h3>
             <p className="mb-4 text-[13px] leading-relaxed text-[#9BA1A8] text-pretty">
-              Suppression définitive, réservée aux comptes sans aucune donnée
-              (domaine, clé API, email, mouvement de crédit, demande de
-              recharge). Dans tous les autres cas, suspendez le compte plutôt
-              que de le supprimer.
+              Suppression définitive, réservée aux comptes sans activité
+              réelle (domaine, clé API, email envoyé par le client, demande
+              de recharge, crédit ajusté au-delà du bonus d’inscription). La
+              confirmation d’adresse — email de confirmation et crédit de
+              bienvenue — ne compte pas : un compte confirmé mais inactif
+              reste supprimable. Dans tous les autres cas, suspendez le
+              compte plutôt que de le supprimer.
             </p>
             {isSelf ? (
               <p className="rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[12.5px] text-[#F5C177]">
