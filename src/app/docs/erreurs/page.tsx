@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Erreurs — Documentation Zendou",
   description:
     "Référence de tous les codes HTTP renvoyés par l'API Zendou, la forme du corps d'erreur et leurs causes concrètes.",
+  alternates: { canonical: "/docs/erreurs" },
 };
 
 const ERROR_BODY_EXAMPLE = `{

@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "Clés API — Documentation Zendou",
   description:
     "Créer, stocker et révoquer une clé API Zendou : ce qu'il faut savoir avant de mettre une clé zd_live_… en production.",
+  alternates: { canonical: "/docs/cles-api" },
 };
 
 export default function ClesApiPage() {

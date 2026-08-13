@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Démarrage rapide — Documentation Zendou",
   description:
     "Vérifiez un domaine, créez une clé API et envoyez votre premier email transactionnel avec Zendou en trois étapes.",
+  alternates: { canonical: "/docs" },
 };
 
 const QUICKSTART_STEPS = [
