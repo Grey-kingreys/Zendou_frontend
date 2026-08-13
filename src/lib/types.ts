@@ -328,3 +328,38 @@ export interface AdminCreditResult {
   creditBalance: number;
   actionId: string;
 }
+
+/** Réponse de `DELETE /v1/admin/users/:id` : le compte a réellement disparu. */
+export interface AdminUserDeleteResult {
+  id: string;
+  email: string;
+  actionId: string;
+}
+
+// --- Admin : statistiques plateforme (GET /v1/admin/stats/emails) ---------
+
+/**
+ * Compteur ventilé système/client. `all` est toujours `system + client` —
+ * jamais un troisième chiffre calculé indépendamment côté backend.
+ */
+export interface AdminPlatformCounts {
+  all: number;
+  system: number;
+  client: number;
+}
+
+/**
+ * Répartition du total **plateforme** (système inclus) par statut, sur
+ * toute l'histoire. Les 8 valeurs de `EmailStatus` sont toujours présentes,
+ * même à zéro.
+ */
+export type AdminStatusBreakdown = Record<EmailStatus, number>;
+
+export interface AdminEmailStats {
+  total: AdminPlatformCounts;
+  today: AdminPlatformCounts;
+  last7d: AdminPlatformCounts;
+  last30d: AdminPlatformCounts;
+  byStatus: AdminStatusBreakdown;
+  generatedAt: string;
+}
