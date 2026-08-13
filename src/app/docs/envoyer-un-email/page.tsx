@@ -13,6 +13,16 @@ export const metadata: Metadata = {
   alternates: { canonical: "/docs/envoyer-un-email" },
 };
 
+const SANDBOX_REQUEST_EXAMPLE = `curl -X POST https://api.zendou.dev/v1/emails \\
+  -H "Authorization: Bearer zd_live_votre_cle" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "from": "adresse affichée sur /dashboard/cles-api",
+    "to": "vous@votre-adresse-de-compte.gn",
+    "subject": "Mon premier email Zendou",
+    "html": "<p>Ça marche déjà, avant même de vérifier un domaine.</p>"
+  }'`;
+
 const REQUEST_EXAMPLE = `curl -X POST https://api.zendou.dev/v1/emails \\
   -H "Authorization: Bearer zd_live_votre_cle" \\
   -H "Content-Type: application/json" \\
@@ -133,6 +143,14 @@ const ERROR_ROWS: {
   },
   {
     code: "403",
+    cause: "Envoi test vers un autre destinataire que son propre compte",
+    message:
+      "Depuis l'adresse de test, vous ne pouvez écrire qu'à l'adresse email de votre compte. Vérifiez un domaine pour écrire à vos utilisateurs.",
+    action:
+      "Envoyez à votre propre adresse de compte, ou vérifiez un domaine pour écrire à vos utilisateurs.",
+  },
+  {
+    code: "403",
     cause: "Compte suspendu",
     message: "Ce compte est suspendu",
     action:
@@ -216,6 +234,34 @@ export default function EnvoyerUnEmailPage() {
       </div>
 
       <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
+        Essayez tout de suite, sans domaine
+      </h2>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8] text-pretty">
+        Pas encore de domaine vérifié ? Zendou fournit une adresse
+        d&rsquo;expédition de test, prête à l&rsquo;emploi dès qu&rsquo;une
+        clé API existe — copiable sur{" "}
+        <Link href="/dashboard/cles-api" className="text-[#8AA4FF]">
+          Clés API
+        </Link>
+        . Elle n&rsquo;est pas reproduite ici : ainsi cette page reste
+        toujours exacte, même si Zendou change un jour de domaine
+        d&rsquo;expédition partagé.
+      </p>
+      <div className="mb-4">
+        <CodeBlock
+          code={SANDBOX_REQUEST_EXAMPLE}
+          label="curl — mode bac à sable"
+        />
+      </div>
+      <Callout variant="success" title="Une seule limite">
+        Depuis cette adresse, vous ne pouvez écrire qu&rsquo;à l&rsquo;adresse
+        email de votre propre compte — largement de quoi tester
+        l&rsquo;intégration de bout en bout dès aujourd&rsquo;hui.{" "}
+        <Link href="/dashboard/domaines">Vérifiez un domaine</Link> quand
+        vous passerez en production, pour écrire à vos utilisateurs.
+      </Callout>
+
+      <h2 className="mt-12 mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
         Paramètres du corps
       </h2>
       <div className="mb-8">

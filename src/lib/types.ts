@@ -13,6 +13,20 @@ export interface User {
   dailySendLimit: number;
   /** `null` tant que l'adresse email n'a pas été confirmée (lien reçu par email). */
   emailVerifiedAt: string | null;
+  /**
+   * Adresse d'expédition du mode bac à sable (`TEST_EMAIL_FROM` côté
+   * serveur, vague B20) : permet d'envoyer immédiatement, sans domaine
+   * vérifié, tant que le destinataire est l'adresse email de ce même
+   * compte. `null` quand le mode n'est pas configuré côté serveur.
+   *
+   * ⚠️ Champ demandé au backend, pas encore renvoyé par `GET`/`PATCH
+   * /v1/auth/me` au moment de l'écriture de ce commentaire (vague 11b) :
+   * en son absence le champ vaut simplement `undefined` ici, et toute l'UI
+   * qui en dépend se masque proprement plutôt que d'afficher une adresse
+   * devinée — voir /dashboard/cles-api. Ne jamais construire cette adresse
+   * côté client, même partiellement.
+   */
+  testSenderAddress?: string | null;
 }
 
 export interface LoginPayload {
