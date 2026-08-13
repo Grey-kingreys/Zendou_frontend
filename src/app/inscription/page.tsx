@@ -60,7 +60,11 @@ export default function InscriptionPage() {
 
     try {
       await api.post<User>("/v1/auth/register", payload);
-      router.push("/dashboard");
+      // Compte créé mais pas encore confirmé (vague 8) : le tableau de bord
+      // reste fermé jusqu'au clic sur le lien reçu par email — direction
+      // l'écran dédié plutôt que /dashboard, qui renverrait de toute façon
+      // ici via son garde (dashboard/layout.tsx).
+      router.push("/confirmez-votre-email");
     } catch (err) {
       if (err instanceof ApiError && err.status === 409) {
         setError("Un compte existe déjà avec cet email.");

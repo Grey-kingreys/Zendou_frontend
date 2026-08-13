@@ -2,7 +2,6 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { useDashboardUser } from "@/components/dashboard/dashboard-context";
 import { api, ApiError } from "@/lib/api";
 import { EMAIL_STATUS_OPTIONS, emailStatusMeta } from "@/lib/status";
 import type { ApiKeySummary, DomainSummary, EmailStatus } from "@/lib/types";
@@ -19,7 +18,6 @@ interface Overview {
 }
 
 export default function DashboardOverviewPage() {
-  const user = useDashboardUser();
   const [overview, setOverview] = useState<Overview | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -112,7 +110,7 @@ export default function DashboardOverviewPage() {
       </div>
 
       {isEmpty ? (
-        <FirstSteps confirmed={user.emailVerifiedAt !== null} />
+        <FirstSteps />
       ) : (
         <>
           <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -207,7 +205,7 @@ function StatCard({
   );
 }
 
-function FirstSteps({ confirmed }: { confirmed: boolean }) {
+function FirstSteps() {
   return (
     <div className="rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-8">
       <h2 className="mb-1.5 font-heading text-lg font-semibold text-[#EDEEF0]">
@@ -237,17 +235,12 @@ function FirstSteps({ confirmed }: { confirmed: boolean }) {
             Créer une clé
           </Link>
         </Step>
+        {/* Pas de branche « email pas encore confirmé » ici : le garde du
+            layout (dashboard/layout.tsx) redirige tout compte non confirmé
+            vers /confirmez-votre-email avant que cette page ne s'affiche —
+            on est donc toujours face à un compte confirmé. */}
         <Step number={3} title="Envoyez un premier email">
-          {confirmed ? (
-            "Un simple appel REST suffit :"
-          ) : (
-            <>
-              Confirmez d’abord votre adresse email : tant que ce
-              n’est pas fait, l’API refuse les envois avec une erreur 403.
-              Utilisez le bandeau en haut de page pour renvoyer le lien de
-              confirmation. Une fois confirmé, un simple appel REST suffit :
-            </>
-          )}
+          Un simple appel REST suffit :
         </Step>
       </ol>
 

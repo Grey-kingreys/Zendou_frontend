@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
 import Badge from "@/components/dashboard/Badge";
 import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
 import { api, ApiError } from "@/lib/api";
@@ -24,9 +25,13 @@ export default function DashboardClesApiPage() {
   const [name, setName] = useState("");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
-  // 403 spécifique : compte pas encore confirmé (voir le bandeau du
-  // tableau de bord). Distingué de createError pour afficher un message
-  // qui renvoie vers la confirmation plutôt que le texte brut de l'API.
+  // 403 spécifique : compte pas encore confirmé. En pratique inatteignable
+  // depuis la vague 8 — le garde du tableau de bord (dashboard/layout.tsx)
+  // redirige déjà tout compte non confirmé vers /confirmez-votre-email avant
+  // que cet écran ne soit rendu — mais conservé en défense en profondeur si
+  // jamais ce garde était contourné. Distingué de createError pour afficher
+  // un message qui renvoie vers l'écran de confirmation plutôt que le texte
+  // brut de l'API.
   const [createForbidden, setCreateForbidden] = useState(false);
 
   const [revealedSecret, setRevealedSecret] = useState<RevealedSecret | null>(
@@ -298,9 +303,13 @@ export default function DashboardClesApiPage() {
           </div>
           {createForbidden && (
             <p className="mt-3 rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[13.5px] text-[#F5C177]">
-              Confirmez votre adresse email avant de créer une clé API —
-              utilisez le bandeau en haut de page pour renvoyer le lien de
-              confirmation.
+              Confirmez votre adresse email avant de créer une clé API.{" "}
+              <Link
+                href="/confirmez-votre-email"
+                className="font-medium underline underline-offset-2"
+              >
+                Renvoyer le lien de confirmation
+              </Link>
             </p>
           )}
           {createError && !createForbidden && (
