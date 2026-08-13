@@ -49,3 +49,17 @@ export function formatNumberFr(value: number): string {
 export function formatGnf(value: number): string {
   return `${formatNumberFr(value)} GNF`;
 }
+
+/**
+ * Accorde un mot (ou une expression) au singulier ou au pluriel selon
+ * `count` — piège classique en français : l'accord après zéro suit la même
+ * règle que le pluriel normal ("0 email", jamais "0 emails"). `plural` peut
+ * être omis quand un simple "s" suffit.
+ */
+export function pluralizeFr(
+  count: number,
+  singular: string,
+  plural: string = `${singular}s`
+): string {
+  return count > 1 ? plural : singular;
+}
