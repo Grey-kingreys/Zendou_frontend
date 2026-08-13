@@ -4,6 +4,8 @@ import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import Badge from "@/components/dashboard/Badge";
 import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
+import CopyField from "@/components/dashboard/CopyField";
+import { useDashboardUser } from "@/components/dashboard/dashboard-context";
 import { api, ApiError } from "@/lib/api";
 import { formatDateTimeShortFr } from "@/lib/format";
 import type {
@@ -18,6 +20,7 @@ type RevealedSecret =
   | { kind: "rotated"; data: RotateApiKeyResponse };
 
 export default function DashboardClesApiPage() {
+  const user = useDashboardUser();
   const [keys, setKeys] = useState<ApiKeySummary[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -220,6 +223,46 @@ export default function DashboardClesApiPage() {
           </button>
         )}
       </div>
+
+      {/*
+       * Mode bac à sable (B20, façon Resend) : envoyer immédiatement, sans
+       * domaine vérifié, depuis l'adresse de test de Zendou — à condition
+       * d'écrire à sa propre adresse de compte. `testSenderAddress` vient de
+       * `GET /v1/auth/me` (partagé via `useDashboardUser`) ; tant que le
+       * backend ne renvoie pas ce champ, il est `undefined` et ce bloc reste
+       * simplement invisible plutôt que d'afficher une adresse devinée.
+       */}
+      {user.testSenderAddress && (
+        <div className="mb-6 rounded-2xl border border-[#35D07F]/25 bg-[linear-gradient(180deg,rgba(53,208,127,0.06),rgba(53,208,127,0.01))] p-6">
+          <div className="mb-2 flex flex-wrap items-center gap-2.5">
+            <h2 className="font-heading text-base font-semibold text-[#EDEEF0]">
+              Envoyez tout de suite, sans domaine
+            </h2>
+            <Badge color="green" label="Bac à sable" />
+          </div>
+          <p className="mb-4 text-[13.5px] leading-relaxed text-[#9BA1A8] text-pretty">
+            Utilisez cette adresse comme expéditeur (<code>from</code>) pour
+            envoyer votre premier email dès maintenant — pratique pour tester
+            votre intégration avant de vérifier un domaine.
+          </p>
+          <div className="mb-4 rounded-lg border border-white/[0.09] bg-[#0E1013] p-1.5">
+            <CopyField value={user.testSenderAddress} className="w-full" />
+          </div>
+          <p className="text-[13px] leading-relaxed text-[#9BA1A8] text-pretty">
+            Tant qu&rsquo;aucun domaine n&rsquo;est vérifié, vous ne pouvez
+            écrire qu&rsquo;à l&rsquo;adresse email de votre compte (
+            {user.email}).{" "}
+            <Link
+              href="/dashboard/domaines"
+              className="font-medium text-[#8AA4FF] underline underline-offset-2"
+            >
+              Vérifiez un domaine
+            </Link>{" "}
+            quand vous passerez en production, pour écrire à vos
+            utilisateurs.
+          </p>
+        </div>
+      )}
 
       {revealedSecret && (
         <div className="mb-6 rounded-2xl border border-[#5B7CFA]/35 bg-[linear-gradient(180deg,rgba(91,124,250,0.08),rgba(91,124,250,0.01))] p-6">

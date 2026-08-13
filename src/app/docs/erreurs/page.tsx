@@ -59,6 +59,7 @@ const CODES = [
     summary: "Action refusée malgré une authentification valide",
     causes: [
       "Domaine d'envoi non vérifié sur POST /v1/emails.",
+      "Envoi depuis l'adresse de test (mode bac à sable) vers un destinataire autre que l'adresse email de votre compte sur POST /v1/emails.",
       "Compte suspendu (réputation d'envoi dégradée) — sur toute route authentifiée, API key ou session.",
     ],
   },
