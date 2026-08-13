@@ -88,3 +88,64 @@ export function formatRetryAfterFr(seconds: number | null): string {
   const minutes = Math.ceil(seconds / 60);
   return `${minutes} minute${minutes >= 2 ? "s" : ""}`;
 }
+
+// --- Classification du résultat du diagnostic (B14) ------------------------
+//
+// Extrait de `DnsDiagnostic.tsx` (posé en B2) pour être partagé avec le
+// bouton « Vérifier maintenant » de la fiche domaine : les deux doivent
+// raconter la même histoire pour la même question, jamais deux logiques
+// divergentes.
+
+export type SummaryTone = "success" | "waiting" | "issue";
+
+export interface DnsDiagnosticSummary {
+  tone: SummaryTone;
+  text: string;
+}
+
+/**
+ * Classe un résultat de diagnostic DNS en un message unique.
+ *
+ * Le diagnostic est informatif, SES reste seul juge du statut (posé en B2) :
+ * 3 enregistrements DKIM corrects avec un statut SES encore `PENDING` est un
+ * état normal (ton `waiting`, pas `issue`) — Amazon peut mettre jusqu'à 72 h
+ * après la publication pour refaire son propre contrôle.
+ */
+export function buildSummary(result: DomainDnsCheckResult): DnsDiagnosticSummary {
+  const hasDkimTokens = result.dkim.length > 0;
+  const dkimAllOk =
+    hasDkimTokens && result.dkim.every((record) => record.status === "ok");
+
+  if (result.sesStatus === "VERIFIED") {
+    return {
+      tone: "success",
+      text: "Domaine déjà vérifié par Amazon SES. Ces résultats sont là pour référence.",
+    };
+  }
+
+  if (!hasDkimTokens) {
+    return {
+      tone: "issue",
+      text: "Aucun jeton DKIM enregistré pour ce domaine : aucun des 3 enregistrements attendus n'a pu être vérifié.",
+    };
+  }
+
+  if (dkimAllOk) {
+    return {
+      tone: "waiting",
+      text: "Vos enregistrements sont corrects — en attente de la validation d'Amazon. Ce n'est pas une erreur : Amazon SES peut prendre jusqu'à 72 h après la publication pour refaire son contrôle.",
+    };
+  }
+
+  return {
+    tone: "issue",
+    text: "Des écarts ont été détectés sur vos enregistrements DKIM : Amazon SES ne pourra pas vérifier le domaine tant qu'ils ne sont pas corrigés. Voir le détail ci-dessous.",
+  };
+}
+
+/** Styles partagés entre le panneau de diagnostic et le bandeau « Vérifier maintenant ». */
+export const SUMMARY_TONE_CLASSES: Record<SummaryTone, string> = {
+  success: "border-[#35D07F]/25 bg-[#35D07F]/10 text-[#B7F5D3]",
+  waiting: "border-[#5B7CFA]/30 bg-[#5B7CFA]/10 text-[#C7D3FF]",
+  issue: "border-[#F5A623]/25 bg-[#F5A623]/10 text-[#F5D9A9]",
+};

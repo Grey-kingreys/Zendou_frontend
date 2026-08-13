@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import Badge from "@/components/dashboard/Badge";
@@ -8,9 +8,21 @@ import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
 import CopyField from "@/components/dashboard/CopyField";
 import DnsDiagnostic from "@/components/dashboard/DnsDiagnostic";
 import { api, ApiError } from "@/lib/api";
+import {
+  buildSummary,
+  DnsCheckRateLimitError,
+  fetchDomainDnsCheck,
+  formatRetryAfterFr,
+  SUMMARY_TONE_CLASSES,
+  type SummaryTone,
+} from "@/lib/dns-check";
 import { formatDateTimeFr } from "@/lib/format";
 import { domainStatusMeta } from "@/lib/status";
-import type { DomainCheckResult, DomainDetail } from "@/lib/types";
+import type {
+  DomainCheckResult,
+  DomainDetail,
+  DomainDnsCheckResult,
+} from "@/lib/types";
 
 export default function DashboardDomainDetailPage() {
   const params = useParams<{ id: string }>();
@@ -23,6 +35,20 @@ export default function DashboardDomainDetailPage() {
 
   const [checking, setChecking] = useState(false);
   const [checkMessage, setCheckMessage] = useState<string | null>(null);
+  const [checkTone, setCheckTone] = useState<SummaryTone | null>(null);
+
+  // Diagnostic DNS (B2) — état levé ici plutôt que dans `DnsDiagnostic` : le
+  // même résultat alimente à la fois le panneau de diagnostic et le bandeau
+  // du bouton « Vérifier maintenant » (B14), pour ne jamais raconter deux
+  // histoires différentes sur la même question.
+  const [dnsResult, setDnsResult] = useState<DomainDnsCheckResult | null>(null);
+  const [dnsLoading, setDnsLoading] = useState(false);
+  const [dnsError, setDnsError] = useState<string | null>(null);
+  // Garde d'auto-lancement : une ref plutôt qu'un tableau de dépendances,
+  // pour survivre au double-appel d'effet du mode strict de React en dev
+  // (setup → cleanup → setup, sur la même instance de composant : la ref
+  // n'est pas réinitialisée entre les deux).
+  const dnsAutoRanRef = useRef(false);
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -57,9 +83,97 @@ export default function DashboardDomainDetailPage() {
     };
   }, [id]);
 
+  /**
+   * Diagnostic DNS partagé : utilisé par l'auto-lancement, par le bouton
+   * manuel du panneau `DnsDiagnostic`, et par `handleCheck` ci-dessous.
+   * `silent` couvre le cas de l'auto-lancement : un 429 (ou toute autre
+   * panne) au chargement de la page ne doit jamais afficher de bandeau
+   * rouge — on retombe silencieusement sur le bouton manuel.
+   */
+  const runDnsDiagnostic = useCallback(
+    async ({
+      silent = false,
+    }: { silent?: boolean } = {}): Promise<DomainDnsCheckResult | null> => {
+      setDnsLoading(true);
+      if (!silent) setDnsError(null);
+      try {
+        const data = await fetchDomainDnsCheck(id);
+        setDnsResult(data);
+        setDnsError(null);
+        return data;
+      } catch (err) {
+        if (!silent) {
+          if (err instanceof DnsCheckRateLimitError) {
+            setDnsError(
+              `Vous avez atteint la limite de vérifications (30 par heure). Réessayez dans ${formatRetryAfterFr(err.retryAfterSeconds)}.`
+            );
+          } else if (err instanceof ApiError) {
+            setDnsError(err.message);
+          } else {
+            setDnsError("Impossible de joindre le serveur.");
+          }
+        }
+        return null;
+      } finally {
+        setDnsLoading(false);
+      }
+    },
+    [id]
+  );
+
+  // Auto-lancement du diagnostic au premier affichage d'un domaine qui n'est
+  // pas encore vérifié (B14) : sinon, l'information reste cachée derrière un
+  // bouton que personne ne presse. `dnsAutoRanRef` garantit un seul appel
+  // par montage, y compris sous le double-appel d'effet de StrictMode (la
+  // ref n'est pas réinitialisée entre le premier « setup → cleanup » simulé
+  // et le second « setup » réel, contrairement à un state ou un tableau de
+  // dépendances).
+  //
+  // N'appelle pas `runDnsDiagnostic` directement : cette fonction capture
+  // des setters de state (setDnsLoading...), et un effet qui appelle,
+  // même indirectement, une fonction qui appelle `setState` est rejeté par
+  // la règle `react-hooks/set-state-in-effect` (react-compiler, ESLint) —
+  // rendus en cascade. Le fetch est donc dupliqué ici en miniature, à
+  // l'identique du patron déjà utilisé par l'effet de chargement du domaine
+  // ci-dessus ; la classification (`buildSummary`) reste elle strictement
+  // partagée, seule la plomberie fetch+setState est locale à chaque effet.
+  useEffect(() => {
+    if (!domain) return;
+    if (dnsAutoRanRef.current) return;
+    if (domain.status === "VERIFIED") return;
+    dnsAutoRanRef.current = true;
+
+    let active = true;
+    fetchDomainDnsCheck(id)
+      .then((data) => {
+        if (!active) return;
+        setDnsResult(data);
+        setDnsError(null);
+      })
+      .catch(() => {
+        // Silencieux à dessein (429 ou toute autre panne) : on retombe sur
+        // le bouton manuel du panneau de diagnostic, jamais de bandeau
+        // rouge à l'ouverture de la page.
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [domain, id]);
+
   async function handleCheck() {
     setChecking(true);
     setCheckMessage(null);
+    setCheckTone(null);
+
+    // 1) Diagnostic DNS d'abord (gratuit, 30/h) — bloc indépendant du bloc
+    // SES ci-dessous : un échec ou un 429 ici ne doit jamais empêcher
+    // l'appel SES, ni effacer le résultat qu'il produira.
+    const diagnostic = await runDnsDiagnostic();
+
+    // 2) SES ensuite (coûte un appel AWS, 10/h) — bloc try séparé du
+    // précédent, pour la même raison en sens inverse : un échec ici ne doit
+    // pas effacer le diagnostic déjà obtenu.
     try {
       const result = await api.post<DomainCheckResult>(
         `/v1/domains/${id}/check`
@@ -69,16 +183,38 @@ export default function DashboardDomainDetailPage() {
           ? { ...current, status: result.status, verifiedAt: result.verifiedAt }
           : current
       );
-      if (result.status === "PENDING") {
+      // Garde le panneau de diagnostic (juste au-dessus) synchronisé avec le
+      // statut SES tout frais — sinon son propre résumé (`buildSummary`,
+      // basé sur le `sesStatus` du diagnostic, capturé *avant* cet appel)
+      // pourrait rester sur « en attente d'Amazon » un instant après que ce
+      // bandeau annonce déjà « Domaine vérifié ».
+      setDnsResult((current) =>
+        current ? { ...current, sesStatus: result.status } : current
+      );
+
+      if (result.status === "VERIFIED") {
+        // Cas 3 — inchangé.
+        setCheckMessage("Domaine vérifié.");
+        setCheckTone("success");
+      } else if (diagnostic) {
+        // Cas 1 (écarts ou absence) ou cas 2 (corrects, en attente
+        // d'Amazon) — classification réutilisée telle quelle depuis le
+        // panneau de diagnostic (`buildSummary`), pas une seconde logique.
+        const summary = buildSummary({ ...diagnostic, sesStatus: result.status });
+        setCheckMessage(summary.text);
+        setCheckTone(summary.tone);
+      } else if (result.status === "PENDING") {
+        // Cas dégradé : diagnostic indisponible (429, panne réseau...), on
+        // retombe sur le comportement actuel — message SES seul.
         setCheckMessage(
           "Vérification en cours chez AWS, cela peut prendre jusqu’à 72 h."
         );
-      } else if (result.status === "VERIFIED") {
-        setCheckMessage("Domaine vérifié.");
+        setCheckTone("waiting");
       } else {
         setCheckMessage(
           "La vérification a échoué. Contrôlez les enregistrements DNS ci-dessous."
         );
+        setCheckTone("issue");
       }
     } catch (err) {
       setCheckMessage(
@@ -86,6 +222,7 @@ export default function DashboardDomainDetailPage() {
           ? err.message
           : "Impossible de joindre le serveur."
       );
+      setCheckTone("issue");
     } finally {
       setChecking(false);
     }
@@ -190,11 +327,20 @@ export default function DashboardDomainDetailPage() {
         </div>
       </div>
 
-      {checkMessage && (
-        <p className="mb-8 rounded-lg border border-white/[0.09] bg-white/[0.03] px-3.5 py-2.5 text-[13.5px] text-[#C5CACF]">
+      {checkMessage && checkTone && (
+        <div
+          className={`mb-8 rounded-lg border px-3.5 py-2.5 text-[13.5px] leading-relaxed text-pretty ${SUMMARY_TONE_CLASSES[checkTone]}`}
+        >
           {checkMessage}
-        </p>
+        </div>
       )}
+
+      <DnsDiagnostic
+        result={dnsResult}
+        loading={dnsLoading}
+        error={dnsError}
+        onRun={() => void runDnsDiagnostic()}
+      />
 
       <section className="mb-8">
         <h2 className="mb-1.5 font-heading text-base font-semibold text-[#EDEEF0]">
@@ -278,8 +424,6 @@ export default function DashboardDomainDetailPage() {
           ))}
         </div>
       </section>
-
-      <DnsDiagnostic domainId={id} />
 
       <ConfirmDialog
         open={deleteOpen}
