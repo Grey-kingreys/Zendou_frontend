@@ -20,6 +20,16 @@ import type { AdminTopUpRequestItem, User } from "@/lib/types";
  * client qui contournerait ce garde (devtools, appel direct à l'API...) se
  * heurterait de toute façon à ce 403 — le front ne fait que masquer une
  * interface qui ne lui servirait à rien.
+ *
+ * Vague 8 — confirmation obligatoire : un compte ADMIN dont l'email n'est
+ * pas confirmé est renvoyé vers /confirmez-votre-email, exactement comme le
+ * garde du tableau de bord (`dashboard/layout.tsx`). Décision explicite,
+ * pas d'exemption pour les admins : un rôle ADMIN ne dispense pas de
+ * prouver l'adresse — c'est justement l'adresse qui reçoit les alertes du
+ * compte, une faute de frappe dessus serait aussi grave que pour un client.
+ * La contrepartie (ne pas enfermer un admin dehors si son adresse est
+ * fausse) se traite côté seed du compte admin (T15, backend — le compte
+ * doit être créé déjà confirmé), pas par un contournement ici.
  */
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -38,6 +48,13 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           // Compte authentifié mais pas admin : renvoi silencieux vers son
           // propre espace, pas d'écran d'erreur.
           router.replace("/dashboard");
+          return;
+        }
+        if (data.emailVerifiedAt === null) {
+          // Admin authentifié mais pas encore confirmé : même garde que le
+          // tableau de bord, aucune exemption de rôle (voir le commentaire
+          // au-dessus du composant).
+          router.replace("/confirmez-votre-email");
           return;
         }
         setUser(data);
