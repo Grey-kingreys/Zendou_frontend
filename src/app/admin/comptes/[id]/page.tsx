@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Badge from "@/components/dashboard/Badge";
 import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
 import { useAdminPendingCount } from "@/components/admin/admin-context";
@@ -18,6 +18,7 @@ import type {
   AdminCreditResult,
   AdminQuotaResult,
   AdminUserActionResult,
+  AdminUserDeleteResult,
   AdminUserDetail,
 } from "@/lib/types";
 
@@ -33,7 +34,7 @@ const MIN_DAILY_SEND_LIMIT = 1;
 const MAX_DAILY_SEND_LIMIT = 1_000_000;
 const MAX_CREDIT_DELTA = 1_000_000;
 
-type DialogType = "credit" | "suspend" | "reactivate" | "quota";
+type DialogType = "credit" | "suspend" | "reactivate" | "quota" | "delete";
 
 /**
  * Fonction pure séparée du composant — même raison qu'en `/admin/recharges` :
@@ -80,6 +81,7 @@ function describeActionDetails(action: AdminActionItem): string | null {
 
 export default function AdminCompteDetailPage() {
   const params = useParams<{ id: string }>();
+  const router = useRouter();
   const id = params.id;
   const { adminUser } = useAdminPendingCount();
   const isSelf = adminUser !== null && adminUser.id === id;
@@ -92,6 +94,10 @@ export default function AdminCompteDetailPage() {
   const [dialog, setDialog] = useState<DialogType | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  // Vrai uniquement pour un 409 sur la suppression : ce compte a des
+  // données, il faut orienter explicitement vers la suspension plutôt que
+  // de laisser l'admin face à un message d'erreur sans issue.
+  const [deleteBlocked, setDeleteBlocked] = useState(false);
 
   const [creditDelta, setCreditDelta] = useState("");
   const [creditReason, setCreditReason] = useState("");
@@ -152,6 +158,7 @@ export default function AdminCompteDetailPage() {
   function openSuspend() {
     setSuccessMessage(null);
     setActionError(null);
+    setDeleteBlocked(false);
     setSuspendReason("");
     setDialog("suspend");
   }
@@ -170,10 +177,18 @@ export default function AdminCompteDetailPage() {
     setDialog("quota");
   }
 
+  function openDelete() {
+    setSuccessMessage(null);
+    setActionError(null);
+    setDeleteBlocked(false);
+    setDialog("delete");
+  }
+
   function closeDialog() {
     if (actionLoading) return;
     setDialog(null);
     setActionError(null);
+    setDeleteBlocked(false);
   }
 
   const creditDeltaNum = Number(creditDelta);
@@ -239,6 +254,13 @@ export default function AdminCompteDetailPage() {
         setSuccessMessage(
           `Quota mis à jour : ${formatNumberFr(result.previousDailySendLimit)} → ${formatNumberFr(result.dailySendLimit)} emails/jour.`
         );
+      } else if (dialog === "delete") {
+        // Suppression réelle de la ligne : la fiche n'existe plus après
+        // succès, donc pas de `reloadDetail()` ici — retour direct à la
+        // liste des comptes (exigence produit : « la fiche n'existe plus »).
+        await api.del<AdminUserDeleteResult>(`/v1/admin/users/${detail.id}`);
+        router.push("/admin/comptes");
+        return;
       }
 
       setDialog(null);
@@ -246,8 +268,14 @@ export default function AdminCompteDetailPage() {
     } catch (err) {
       if (err instanceof ApiError) {
         setActionError(err.message);
+        // 409 sur la suppression : refus métier « ce compte a encore des
+        // données » — le message de l'API (affiché tel quel ci-dessus) le
+        // détaille déjà, mais l'orientation vers la suspension doit être un
+        // geste, pas seulement une phrase.
+        setDeleteBlocked(dialog === "delete" && err.status === 409);
       } else {
         setActionError("Impossible de joindre le serveur.");
+        setDeleteBlocked(false);
       }
     } finally {
       setActionLoading(false);
@@ -302,7 +330,9 @@ export default function AdminCompteDetailPage() {
           ? "Réactiver ce compte ?"
           : dialog === "quota"
             ? "Modifier le quota ?"
-            : "";
+            : dialog === "delete"
+              ? "Supprimer ce compte ?"
+              : "";
 
   const dialogDescription =
     dialog === "credit"
@@ -313,7 +343,9 @@ export default function AdminCompteDetailPage() {
           ? `Les envois de ${detail.name} seront réautorisés immédiatement. Le compteur de réputation (bounces/plaintes) repart de zéro à cet instant : sans ce geste, le compte serait re-suspendu au premier événement suivant.`
           : dialog === "quota"
             ? `Nouveau quota d'envoi journalier pour ${detail.name}. Quota actuel : ${formatNumberFr(detail.dailySendLimit)} emails/jour.`
-            : "";
+            : dialog === "delete"
+              ? `Le compte de ${detail.name} sera supprimé définitivement — impossible à annuler. Son adresse (${detail.email}) redeviendra aussitôt disponible pour une nouvelle inscription. Les lignes du journal d'audit qui le concernent sont conservées (son email y reste archivé) : la trace administrative ne disparaît pas.`
+              : "";
 
   const confirmLabel =
     dialog === "credit"
@@ -322,7 +354,9 @@ export default function AdminCompteDetailPage() {
         ? "Suspendre"
         : dialog === "reactivate"
           ? "Réactiver"
-          : "Modifier";
+          : dialog === "quota"
+            ? "Modifier"
+            : "Supprimer";
 
   const confirmDisabled =
     dialog === "credit"
@@ -333,7 +367,7 @@ export default function AdminCompteDetailPage() {
           ? !reactivateReasonValid
           : dialog === "quota"
             ? !quotaValueValid
-            : true;
+            : false;
 
   return (
     <div className="mx-auto max-w-[960px]">
@@ -531,6 +565,32 @@ export default function AdminCompteDetailPage() {
               Modifier le quota
             </button>
           </div>
+
+          <div className="rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-5 sm:col-span-2">
+            <h3 className="mb-1.5 font-heading text-[14.5px] font-semibold text-[#EDEEF0]">
+              Supprimer le compte
+            </h3>
+            <p className="mb-4 text-[13px] leading-relaxed text-[#9BA1A8] text-pretty">
+              Suppression définitive, réservée aux comptes sans aucune donnée
+              (domaine, clé API, email, mouvement de crédit, demande de
+              recharge). Dans tous les autres cas, suspendez le compte plutôt
+              que de le supprimer.
+            </p>
+            {isSelf ? (
+              <p className="rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[12.5px] text-[#F5C177]">
+                Vous ne pouvez pas supprimer votre propre compte : demandez à
+                un autre administrateur.
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={openDelete}
+                className="rounded-lg border border-[#E5484D]/30 px-4 py-2.5 text-[13.5px] font-medium text-[#FF9592] transition-opacity hover:opacity-90"
+              >
+                Supprimer le compte
+              </button>
+            )}
+          </div>
         </div>
       </section>
 
@@ -644,7 +704,7 @@ export default function AdminCompteDetailPage() {
         title={dialogTitle}
         description={dialogDescription}
         confirmLabel={confirmLabel}
-        danger={dialog === "suspend"}
+        danger={dialog === "suspend" || dialog === "delete"}
         loading={actionLoading}
         confirmDisabled={confirmDisabled}
         onConfirm={handleConfirm}
@@ -751,6 +811,16 @@ export default function AdminCompteDetailPage() {
           <p className="mt-3 rounded-lg border border-[#E5484D]/30 bg-[#E5484D]/10 px-3.5 py-2.5 text-[13.5px] text-[#FF9592]">
             {actionError}
           </p>
+        )}
+
+        {deleteBlocked && (
+          <button
+            type="button"
+            onClick={openSuspend}
+            className="mt-3 w-full rounded-lg border border-white/[0.14] px-4 py-2.5 text-[13.5px] font-medium text-[#EDEEF0] transition-opacity hover:opacity-90"
+          >
+            Suspendre le compte à la place →
+          </button>
         )}
       </ConfirmDialog>
     </div>
