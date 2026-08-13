@@ -14,8 +14,8 @@ export default function PricingSection() {
           Payez pour ce que vous envoyez
         </h2>
         <p className="mx-auto max-w-[520px] text-base text-[#9BA1A8] text-pretty">
-          Entre le gratuit vite saturé et le palier à 50 000 emails, il
-          manquait quelque chose. Le voici.
+          Entre le gratuit vite saturé et le grand écart vers les offres
+          pro, il manquait quelque chose. Le voici.
         </p>
       </div>
 
@@ -147,7 +147,7 @@ export default function PricingSection() {
             Packs de crédits — sans expiration
           </div>
           <p className="max-w-[620px] text-[14.5px] text-[#8A9099] text-pretty">
-            Vos envois sont irréguliers ? Achetez 5 000 crédits une fois,
+            Vos envois sont irréguliers ? Achetez 15 000 crédits une fois,
             consommez-les quand vous voulez. Rien ne périme à la fin du mois.
           </p>
         </div>

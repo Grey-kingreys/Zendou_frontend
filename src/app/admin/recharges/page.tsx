@@ -30,7 +30,7 @@ const EMPTY_MESSAGES: Record<TopUpStatus, string> = {
 };
 
 /**
- * `packId` est un identifiant technique brut (ex. "starter"), le catalogue
+ * `packId` est un identifiant technique brut (ex. "essentiel"), le catalogue
  * complet des packs vit côté backend (src/billing/packs.ts) et n'est pas
  * dupliqué ici — on se contente d'une capitalisation de confort.
  */

@@ -15,7 +15,7 @@ const TOPUP_REQUEST_EXAMPLE = `curl -X POST https://api.zendou.dev/v1/billing/to
   -H "Content-Type: application/json" \\
   --cookie "zendou_session=..." \\
   -d '{
-    "packId": "starter",
+    "packId": "essentiel",
     "method": "ORANGE_MONEY",
     "phoneNumber": "+224 620 00 00 00",
     "transactionRef": "OM.2601.2201.A12345"
@@ -23,9 +23,9 @@ const TOPUP_REQUEST_EXAMPLE = `curl -X POST https://api.zendou.dev/v1/billing/to
 
 const TOPUP_RESPONSE_EXAMPLE = `{
   "id": "clx1a2b3c4d5",
-  "packId": "starter",
-  "credits": 10000,
-  "amountGnf": 25000,
+  "packId": "essentiel",
+  "credits": 15000,
+  "amountGnf": 50000,
   "method": "ORANGE_MONEY",
   "phoneNumber": "+224 620 00 00 00",
   "transactionRef": "OM.2601.2201.A12345",
@@ -96,26 +96,18 @@ export default function FacturationPage() {
               <td className="px-5 py-3 text-[#70767D]">Non</td>
             </tr>
             <tr className="border-b border-white/[0.05]">
-              <td className="px-5 py-3 text-[#EDEEF0]">Starter</td>
-              <td className="px-5 py-3 font-mono text-[#9BA1A8]">10 000</td>
+              <td className="px-5 py-3 text-[#EDEEF0]">Essentiel</td>
+              <td className="px-5 py-3 font-mono text-[#9BA1A8]">15 000</td>
               <td className="px-5 py-3 font-mono text-[#9BA1A8]">
-                25 000 GNF
-              </td>
-              <td className="px-5 py-3 text-[#35D07F]">Oui</td>
-            </tr>
-            <tr className="border-b border-white/[0.05]">
-              <td className="px-5 py-3 text-[#EDEEF0]">Growth</td>
-              <td className="px-5 py-3 font-mono text-[#9BA1A8]">30 000</td>
-              <td className="px-5 py-3 font-mono text-[#9BA1A8]">
-                60 000 GNF
+                50 000 GNF
               </td>
               <td className="px-5 py-3 text-[#35D07F]">Oui</td>
             </tr>
             <tr className="last:border-b-0">
-              <td className="px-5 py-3 text-[#EDEEF0]">Pack 5 000</td>
-              <td className="px-5 py-3 font-mono text-[#9BA1A8]">5 000</td>
+              <td className="px-5 py-3 text-[#EDEEF0]">Growth</td>
+              <td className="px-5 py-3 font-mono text-[#9BA1A8]">30 000</td>
               <td className="px-5 py-3 font-mono text-[#9BA1A8]">
-                15 000 GNF
+                90 000 GNF
               </td>
               <td className="px-5 py-3 text-[#35D07F]">Oui</td>
             </tr>
