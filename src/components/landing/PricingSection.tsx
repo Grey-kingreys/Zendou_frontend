@@ -59,13 +59,13 @@ export default function PricingSection() {
             Une app en production
           </div>
           <div className="mb-1 flex min-h-[46px] items-baseline gap-1.5 font-heading text-[28px] font-semibold tracking-[-0.03em] whitespace-nowrap sm:text-[clamp(24px,2.3vw,34px)]">
-            25 000{" "}
+            50 000{" "}
             <span className="text-[15px] font-normal text-[#8A9099]">
-              GNF / mois
+              GNF
             </span>
           </div>
           <div className="mb-[26px] font-mono text-[12.5px] text-[#8A9099]">
-            10 000 emails / mois
+            15 000 emails, sans expiration
           </div>
           <div className="mb-7 flex flex-col gap-2.5 text-sm text-[#C5CACF]">
             <span>Domaines illimités</span>
@@ -90,13 +90,13 @@ export default function PricingSection() {
             {"L'app qui décolle"}
           </div>
           <div className="mb-1 flex min-h-[46px] items-baseline gap-1.5 font-heading text-[28px] font-semibold tracking-[-0.03em] whitespace-nowrap sm:text-[clamp(24px,2.3vw,34px)]">
-            60 000{" "}
+            90 000{" "}
             <span className="text-[15px] font-normal text-[#70767D]">
-              GNF / mois
+              GNF
             </span>
           </div>
           <div className="mb-[26px] font-mono text-[12.5px] text-[#70767D]">
-            30 000 emails / mois
+            30 000 emails, sans expiration
           </div>
           <div className="mb-7 flex flex-col gap-2.5 text-sm text-[#A8AEB4]">
             <span>Tout Starter</span>
