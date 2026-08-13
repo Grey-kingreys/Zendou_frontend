@@ -1,63 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import Badge from "@/components/dashboard/Badge";
-import {
-  DnsCheckRateLimitError,
-  fetchDomainDnsCheck,
-  formatRetryAfterFr,
-} from "@/lib/dns-check";
+import { buildSummary, SUMMARY_TONE_CLASSES } from "@/lib/dns-check";
 import { formatDateTimeFr } from "@/lib/format";
 import { dnsRecordCheckStatusMeta } from "@/lib/status";
-import { ApiError } from "@/lib/api";
 import type {
   DkimDnsRecordCheck,
   DomainDnsCheckResult,
   TxtDnsRecordCheck,
 } from "@/lib/types";
-
-type SummaryTone = "success" | "waiting" | "issue";
-
-const TONE_CLASSES: Record<SummaryTone, string> = {
-  success: "border-[#35D07F]/25 bg-[#35D07F]/10 text-[#B7F5D3]",
-  waiting: "border-[#5B7CFA]/30 bg-[#5B7CFA]/10 text-[#C7D3FF]",
-  issue: "border-[#F5A623]/25 bg-[#F5A623]/10 text-[#F5D9A9]",
-};
-
-function buildSummary(result: DomainDnsCheckResult): {
-  tone: SummaryTone;
-  text: string;
-} {
-  const hasDkimTokens = result.dkim.length > 0;
-  const dkimAllOk =
-    hasDkimTokens && result.dkim.every((record) => record.status === "ok");
-
-  if (result.sesStatus === "VERIFIED") {
-    return {
-      tone: "success",
-      text: "Domaine déjà vérifié par Amazon SES. Ces résultats sont là pour référence.",
-    };
-  }
-
-  if (!hasDkimTokens) {
-    return {
-      tone: "issue",
-      text: "Aucun jeton DKIM enregistré pour ce domaine : aucun des 3 enregistrements attendus n'a pu être vérifié.",
-    };
-  }
-
-  if (dkimAllOk) {
-    return {
-      tone: "waiting",
-      text: "Vos enregistrements sont corrects — en attente de la validation d'Amazon. Ce n'est pas une erreur : Amazon SES peut prendre jusqu'à 72 h après la publication pour refaire son contrôle.",
-    };
-  }
-
-  return {
-    tone: "issue",
-    text: "Des écarts ont été détectés sur vos enregistrements DKIM : Amazon SES ne pourra pas vérifier le domaine tant qu'ils ne sont pas corrigés. Voir le détail ci-dessous.",
-  };
-}
 
 function DnsValue({
   label,
@@ -117,43 +68,35 @@ function DnsCheckRow({
   );
 }
 
-export default function DnsDiagnostic({ domainId }: { domainId: string }) {
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<DomainDnsCheckResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  async function handleRun() {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await fetchDomainDnsCheck(domainId);
-      setResult(data);
-    } catch (err) {
-      if (err instanceof DnsCheckRateLimitError) {
-        setError(
-          `Vous avez atteint la limite de vérifications (30 par heure). Réessayez dans ${formatRetryAfterFr(err.retryAfterSeconds)}.`
-        );
-      } else if (err instanceof ApiError) {
-        setError(err.message);
-      } else {
-        setError("Impossible de joindre le serveur.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
+/**
+ * Panneau de diagnostic DNS. Contrôlé depuis `page.tsx` (état levé au niveau
+ * de la fiche domaine) plutôt que géré en interne : le même résultat sert à
+ * la fois à ce panneau et au bandeau du bouton « Vérifier maintenant »
+ * (B14), et l'auto-lancement au premier affichage doit pouvoir peupler ce
+ * panneau sans passer par un clic sur son propre bouton.
+ */
+export default function DnsDiagnostic({
+  result,
+  loading,
+  error,
+  onRun,
+}: {
+  result: DomainDnsCheckResult | null;
+  loading: boolean;
+  error: string | null;
+  onRun: () => void;
+}) {
   const summary = result ? buildSummary(result) : null;
 
   return (
     <section className="mb-8">
       <div className="mb-1.5 flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-heading text-base font-semibold text-[#EDEEF0]">
-          3. Diagnostic DNS
+          Diagnostic DNS
         </h2>
         <button
           type="button"
-          onClick={handleRun}
+          onClick={onRun}
           disabled={loading}
           className="shrink-0 rounded-lg border border-white/[0.14] px-4 py-2.5 text-[13.5px] font-medium text-[#EDEEF0] transition-opacity hover:opacity-90 disabled:opacity-60"
         >
@@ -180,7 +123,7 @@ export default function DnsDiagnostic({ domainId }: { domainId: string }) {
       {result && summary && (
         <div className="flex flex-col gap-4">
           <div
-            className={`rounded-lg border px-3.5 py-2.5 text-[13.5px] leading-relaxed text-pretty ${TONE_CLASSES[summary.tone]}`}
+            className={`rounded-lg border px-3.5 py-2.5 text-[13.5px] leading-relaxed text-pretty ${SUMMARY_TONE_CLASSES[summary.tone]}`}
           >
             {summary.text}
           </div>
