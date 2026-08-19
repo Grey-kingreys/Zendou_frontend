@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { SITE_URL } from "@/lib/site";
 
 /**
  * Image de partage générée par le code (convention `opengraph-image`, voir
@@ -99,7 +100,7 @@ export default function Image() {
             OTP · Reçus · Notifications — API + relais SMTP
           </div>
           <div style={{ display: "flex", color: "#5B7CFA" }}>
-            zendou.kingreys.fr
+            {new URL(SITE_URL).host}
           </div>
         </div>
       </div>
