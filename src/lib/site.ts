@@ -15,7 +15,7 @@
  * production (plutôt qu'une URL relative invalide dans les metadata).
  */
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://zendou.kingreys.fr"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://zendou.app"
 ).replace(/\/+$/, "");
 
 export const SITE_NAME = "Zendou";

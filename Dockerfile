@@ -48,7 +48,7 @@ ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
 # https://zendou.kingreys.fr codé en dur dans src/lib/site.ts, donc le build
 # ne casse pas, mais les URL générées pointeront vers le mauvais domaine si
 # celui-ci change un jour sans que ce build arg soit mis à jour.
-ARG NEXT_PUBLIC_SITE_URL=https://zendou.kingreys.fr
+ARG NEXT_PUBLIC_SITE_URL=https://zendou.app
 ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
 
 COPY --from=deps /app/node_modules ./node_modules
