@@ -18,7 +18,6 @@ import type {
   AdminCreditResult,
   AdminQuotaResult,
   AdminUserActionResult,
-  AdminUserDeleteResult,
   AdminUserDetail,
 } from "@/lib/types";
 
@@ -258,7 +257,7 @@ export default function AdminCompteDetailPage() {
         // Suppression réelle de la ligne : la fiche n'existe plus après
         // succès, donc pas de `reloadDetail()` ici — retour direct à la
         // liste des comptes (exigence produit : « la fiche n'existe plus »).
-        await api.del<AdminUserDeleteResult>(`/v1/admin/users/${detail.id}`);
+        await api.del<void>(`/v1/admin/users/${detail.id}`);
         router.push("/admin/comptes");
         return;
       }
@@ -267,12 +266,25 @@ export default function AdminCompteDetailPage() {
       await reloadDetail();
     } catch (err) {
       if (err instanceof ApiError) {
-        setActionError(err.message);
-        // 409 sur la suppression : refus métier « ce compte a encore des
-        // données » — le message de l'API (affiché tel quel ci-dessus) le
-        // détaille déjà, mais l'orientation vers la suspension doit être un
-        // geste, pas seulement une phrase.
-        setDeleteBlocked(dialog === "delete" && err.status === 409);
+        if (dialog === "delete" && err.status !== 409) {
+          // Tout échec de suppression autre que le 409 métier (ex. 500 sur
+          // une écriture d'audit) : le message de l'API n'est pas garanti
+          // d'être en français ni explicite sur l'état du compte (cas vécu :
+          // « Internal Server Error »). On affiche un message maison qui
+          // lève toute ambiguïté — le compte n'a pas été supprimé — et garde
+          // le code d'origine pour le support.
+          setActionError(
+            `La suppression a échoué (erreur ${err.status} côté serveur). Le compte n'a pas été supprimé.`
+          );
+          setDeleteBlocked(false);
+        } else {
+          setActionError(err.message);
+          // 409 sur la suppression : refus métier « ce compte a encore des
+          // données » — le message de l'API (affiché tel quel ci-dessus) le
+          // détaille déjà, mais l'orientation vers la suspension doit être un
+          // geste, pas seulement une phrase.
+          setDeleteBlocked(dialog === "delete" && err.status === 409);
+        }
       } else {
         setActionError("Impossible de joindre le serveur.");
         setDeleteBlocked(false);

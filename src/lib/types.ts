@@ -343,13 +343,6 @@ export interface AdminCreditResult {
   actionId: string;
 }
 
-/** Réponse de `DELETE /v1/admin/users/:id` : le compte a réellement disparu. */
-export interface AdminUserDeleteResult {
-  id: string;
-  email: string;
-  actionId: string;
-}
-
 // --- Admin : statistiques plateforme (GET /v1/admin/stats/emails) ---------
 
 /**
