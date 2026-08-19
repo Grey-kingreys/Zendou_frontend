@@ -3,6 +3,7 @@ export const navItems = [
   { href: "/dashboard/emails", label: "Emails" },
   { href: "/dashboard/domaines", label: "Domaines" },
   { href: "/dashboard/cles-api", label: "Clés API" },
+  { href: "/dashboard/smtp", label: "Relais SMTP" },
   { href: "/dashboard/facturation", label: "Facturation" },
   { href: "/dashboard/profil", label: "Profil" },
 ] as const;

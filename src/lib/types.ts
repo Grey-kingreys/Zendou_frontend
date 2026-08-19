@@ -78,6 +78,52 @@ export interface RotateApiKeyResponse {
   rotatedAt: string;
 }
 
+// --- Identifiants SMTP (relais entrant, B6) --------------------------------
+
+/**
+ * Élément de la liste des identifiants SMTP d'un utilisateur — jamais le
+ * secret ni son hash. Contrairement à `RotateSmtpCredentialResponse`, cette
+ * forme ne porte pas `rotatedAt` : le backend (`SmtpCredentialsService.
+ * findAllForUser`) ne le sélectionne pas, exactement comme `ApiKeySummary`
+ * ne porte pas non plus de trace de rotation dans la liste.
+ */
+export interface SmtpCredentialSummary {
+  id: string;
+  name: string;
+  /** Nom d'utilisateur opaque et généré (ex. `zdu_…`), en clair — pas l'adresse email du compte. */
+  username: string;
+  prefix: string;
+  createdAt: string;
+  lastUsedAt: string | null;
+  revokedAt: string | null;
+}
+
+/** Réponse à la création : `password` (`zd_smtp_…`, mot de passe complet) n'apparaît qu'ici. */
+export interface CreateSmtpCredentialResponse {
+  id: string;
+  name: string;
+  username: string;
+  prefix: string;
+  password: string;
+  createdAt: string;
+}
+
+/**
+ * Réponse à la rotation d'un identifiant SMTP : `id`, `name`, `username` et
+ * `createdAt` sont inchangés par rapport à l'identifiant d'origine ; `prefix`
+ * et `password` (mot de passe complet, n'apparaît qu'ici) sont nouveaux.
+ * `rotatedAt` trace le geste.
+ */
+export interface RotateSmtpCredentialResponse {
+  id: string;
+  name: string;
+  username: string;
+  prefix: string;
+  password: string;
+  createdAt: string;
+  rotatedAt: string;
+}
+
 // --- Domaines -----------------------------------------------------------
 
 export type DomainStatus =
@@ -176,12 +222,16 @@ export type EmailStatus =
   | "FAILED"
   | "SUPPRESSED";
 
+/** Point d'entrée par lequel l'envoi est arrivé (chantier B6 — relais SMTP entrant). */
+export type EmailChannel = "API" | "SMTP";
+
 export interface EmailListItem {
   publicId: string;
   fromAddress: string;
   toAddress: string;
   subject: string;
   status: EmailStatus;
+  channel: EmailChannel;
   queuedAt: string;
   sentAt: string | null;
   deliveredAt: string | null;
@@ -191,6 +241,11 @@ export interface EmailListItem {
 export interface EmailDetail extends EmailListItem {
   errorMessage: string | null;
   sesMessageId: string | null;
+  /**
+   * Identifiant SMTP ayant expédié cet envoi — `null` pour le canal API, ou
+   * pour un envoi SMTP dont l'identifiant a depuis été révoqué/supprimé.
+   */
+  smtpCredentialId: string | null;
 }
 
 export interface PaginatedEmails {
