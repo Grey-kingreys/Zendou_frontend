@@ -4,6 +4,7 @@ import type {
   AdminActionType,
   DnsRecordCheckStatus,
   DomainStatus,
+  EmailChannel,
   EmailStatus,
   TopUpMethod,
 } from "./types";
@@ -63,6 +64,30 @@ export function emailStatusMeta(status: EmailStatus): {
       return { label: "Supprimé", color: "gray" };
   }
 }
+
+/**
+ * Badge discret pour le canal d'entrée d'un envoi (chantier B6). `gray` pour
+ * l'API (canal historique, ne doit pas attirer l'œil) et `blue` pour SMTP,
+ * même codage que les autres badges neutres/informatifs de cette table
+ * (`emailStatusMeta("SENT")`, `adminActionTypeMeta("ADJUST_QUOTA")`).
+ */
+export function emailChannelMeta(channel: EmailChannel): {
+  label: string;
+  color: BadgeColor;
+} {
+  switch (channel) {
+    case "API":
+      return { label: "API", color: "gray" };
+    case "SMTP":
+      return { label: "SMTP", color: "blue" };
+  }
+}
+
+export const EMAIL_CHANNEL_OPTIONS: { value: EmailChannel; label: string }[] =
+  [
+    { value: "API", label: "API" },
+    { value: "SMTP", label: "SMTP" },
+  ];
 
 export function topUpMethodMeta(method: TopUpMethod): {
   label: string;
