@@ -18,7 +18,6 @@ import type {
   AdminCreditResult,
   AdminQuotaResult,
   AdminUserActionResult,
-  AdminUserDeleteResult,
   AdminUserDetail,
 } from "@/lib/types";
 
@@ -258,7 +257,7 @@ export default function AdminCompteDetailPage() {
         // Suppression réelle de la ligne : la fiche n'existe plus après
         // succès, donc pas de `reloadDetail()` ici — retour direct à la
         // liste des comptes (exigence produit : « la fiche n'existe plus »).
-        await api.del<AdminUserDeleteResult>(`/v1/admin/users/${detail.id}`);
+        await api.del<void>(`/v1/admin/users/${detail.id}`);
         router.push("/admin/comptes");
         return;
       }
