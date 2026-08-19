@@ -52,7 +52,7 @@ export function emailStatusMeta(status: EmailStatus): {
     case "DELIVERED":
       return { label: "Délivré", color: "green" };
     case "BOUNCED":
-      return { label: "Rejeté (bounce)", color: "red" };
+      return { label: "Rebond", color: "red" };
     case "COMPLAINED":
       return { label: "Plainte", color: "red" };
     case "REJECTED":
@@ -145,13 +145,25 @@ export function adminActionTypeMeta(type: AdminActionType): {
   }
 }
 
-export const EMAIL_STATUS_OPTIONS: { value: EmailStatus; label: string }[] = [
-  { value: "QUEUED", label: "En file" },
-  { value: "SENT", label: "Envoyé" },
-  { value: "DELIVERED", label: "Délivré" },
-  { value: "BOUNCED", label: "Rejeté (bounce)" },
-  { value: "COMPLAINED", label: "Plainte" },
-  { value: "REJECTED", label: "Rejeté" },
-  { value: "FAILED", label: "Échec" },
-  { value: "SUPPRESSED", label: "Supprimé" },
+const EMAIL_STATUS_VALUES: EmailStatus[] = [
+  "QUEUED",
+  "SENT",
+  "DELIVERED",
+  "BOUNCED",
+  "COMPLAINED",
+  "REJECTED",
+  "FAILED",
+  "SUPPRESSED",
 ];
+
+/**
+ * Dérivé de `emailStatusMeta` pour n'avoir qu'une seule source de libellés —
+ * les deux listes avaient divergé (BOUNCED libellé différemment ici et dans
+ * `emailStatusMeta`), ce qui a laissé vivre un doublon de texte quasi
+ * identique à celui de REJECTED sur l'écran admin des statistiques.
+ */
+export const EMAIL_STATUS_OPTIONS: { value: EmailStatus; label: string }[] =
+  EMAIL_STATUS_VALUES.map((value) => ({
+    value,
+    label: emailStatusMeta(value).label,
+  }));
