@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import PageHeader from "@/components/docs/PageHeader";
 import CodeBlock from "@/components/docs/CodeBlock";
 
@@ -96,7 +97,7 @@ export default function ErreursPage() {
       <PageHeader
         eyebrow="RÉFÉRENCE API"
         title="Erreurs"
-        description="L'API renvoie des codes HTTP standards. Toute erreur porte un corps JSON de la même forme, produite par le framework NestJS."
+        description="L'API HTTP renvoie des codes HTTP standards. Toute erreur porte un corps JSON de la même forme, produite par le framework NestJS. Le relais SMTP a sa propre table de codes à trois chiffres, documentée séparément."
       />
 
       <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
@@ -154,6 +155,14 @@ export default function ErreursPage() {
         Pour le détail des messages exacts renvoyés par{" "}
         <code>POST /v1/emails</code>, voir le tableau d&rsquo;erreurs de la
         page « Envoyer un email ».
+      </p>
+      <p className="mt-3 text-[13px] leading-relaxed text-[#70767D]">
+        Ces codes ne couvrent que l&rsquo;API HTTP. Le{" "}
+        <Link href="/docs/relais-smtp" className="text-[#8AA4FF]">
+          relais SMTP
+        </Link>{" "}
+        répond en codes à trois chiffres (RFC 5321), pas en HTTP — sa propre
+        table de correspondance est documentée sur cette page.
       </p>
     </div>
   );

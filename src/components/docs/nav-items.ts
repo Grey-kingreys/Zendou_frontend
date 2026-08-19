@@ -8,6 +8,7 @@ export const docsNavItems = [
   { href: "/docs/envoyer-un-email", label: "Envoyer un email" },
   { href: "/docs/verifier-un-domaine", label: "Vérifier un domaine" },
   { href: "/docs/cles-api", label: "Clés API" },
+  { href: "/docs/relais-smtp", label: "Relais SMTP" },
   { href: "/docs/erreurs", label: "Erreurs" },
   { href: "/docs/facturation", label: "Facturation" },
 ] as const;
