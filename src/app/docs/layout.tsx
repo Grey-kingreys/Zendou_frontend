@@ -6,7 +6,7 @@ import DocsMobileNav from "@/components/docs/DocsMobileNav";
 export const metadata: Metadata = {
   title: "Documentation — Zendou",
   description:
-    "Documentation développeur de l'API Zendou : envoi d'emails, vérification de domaine, clés API, erreurs et facturation.",
+    "Documentation développeur de l'API Zendou : envoi d'emails, vérification de domaine, clés API, relais SMTP, erreurs et facturation.",
 };
 
 export default function DocsLayout({ children }: LayoutProps<"/docs">) {

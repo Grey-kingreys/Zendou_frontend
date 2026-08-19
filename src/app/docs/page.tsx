@@ -106,6 +106,11 @@ const MORE_LINKS = [
     body: "Création, affichage unique, révocation et bonnes pratiques de stockage.",
   },
   {
+    href: "/docs/relais-smtp",
+    title: "Relais SMTP",
+    body: "Connectez WordPress, Laravel, Django ou tout logiciel SMTP à Zendou : hôte, ports, identifiants et codes de réponse.",
+  },
+  {
     href: "/docs/erreurs",
     title: "Erreurs",
     body: "Tous les codes HTTP renvoyés par l'API, la forme du corps d'erreur et leurs causes concrètes.",
@@ -123,7 +128,7 @@ export default function DocsHomePage() {
       <PageHeader
         eyebrow="DOCUMENTATION"
         title="Documentation Zendou"
-        description="L'API d'email transactionnel pensée pour les équipes ouest-africaines. Cette documentation couvre l'envoi d'emails, la vérification de domaine, les clés API, les erreurs et la facturation — tout ce qu'il faut pour intégrer Zendou à votre produit."
+        description="L'API d'email transactionnel pensée pour les équipes ouest-africaines. Cette documentation couvre l'envoi d'emails, la vérification de domaine, les clés API, le relais SMTP, les erreurs et la facturation — tout ce qu'il faut pour intégrer Zendou à votre produit."
       />
 
       <h2 className="mb-5 font-heading text-xl font-semibold text-[#EDEEF0]">
