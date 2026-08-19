@@ -5,13 +5,19 @@ import Link from "next/link";
 import Badge from "@/components/dashboard/Badge";
 import { api, ApiError } from "@/lib/api";
 import { formatDateTimeFr } from "@/lib/format";
-import { EMAIL_STATUS_OPTIONS, emailStatusMeta } from "@/lib/status";
-import type { EmailStatus, PaginatedEmails } from "@/lib/types";
+import {
+  EMAIL_CHANNEL_OPTIONS,
+  EMAIL_STATUS_OPTIONS,
+  emailChannelMeta,
+  emailStatusMeta,
+} from "@/lib/status";
+import type { EmailChannel, EmailStatus, PaginatedEmails } from "@/lib/types";
 
 const LIMIT = 25;
 
 export default function DashboardEmailsPage() {
   const [status, setStatus] = useState<EmailStatus | "">("");
+  const [channel, setChannel] = useState<EmailChannel | "">("");
   const [qInput, setQInput] = useState("");
   const [q, setQ] = useState("");
   const [from, setFrom] = useState("");
@@ -22,7 +28,7 @@ export default function DashboardEmailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const hasFilters = Boolean(status || q || from || to);
+  const hasFilters = Boolean(status || channel || q || from || to);
 
   // Debounce le champ de recherche libre (~400 ms) avant de déclencher un
   // nouvel appel — évite une requête par frappe.
@@ -40,6 +46,7 @@ export default function DashboardEmailsPage() {
 
     const params = new URLSearchParams();
     if (status) params.set("status", status);
+    if (channel) params.set("channel", channel);
     if (q) params.set("q", q);
     if (from) params.set("from", from);
     if (to) params.set("to", to);
@@ -67,7 +74,7 @@ export default function DashboardEmailsPage() {
     return () => {
       active = false;
     };
-  }, [status, q, from, to, page]);
+  }, [status, channel, q, from, to, page]);
 
   return (
     <div className="mx-auto max-w-[1080px]">
@@ -96,6 +103,27 @@ export default function DashboardEmailsPage() {
           >
             <option value="">Tous</option>
             {EMAIL_STATUS_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="mb-1.5 block text-[12.5px] font-medium text-[#C5CACF]">
+            Canal
+          </label>
+          <select
+            value={channel}
+            onChange={(event) => {
+              setChannel(event.target.value as EmailChannel | "");
+              setPage(1);
+              setLoading(true);
+            }}
+            className="rounded-lg border border-white/[0.09] bg-[#0E1013] px-3 py-2 text-[16px] text-[#EDEEF0] outline-none focus:border-[#5B7CFA]"
+          >
+            <option value="">Tous</option>
+            {EMAIL_CHANNEL_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -194,6 +222,7 @@ export default function DashboardEmailsPage() {
                   <tr className="border-b border-white/[0.07] text-[12px] tracking-[0.02em] text-[#70767D] uppercase">
                     <th className="px-5 py-3 font-medium">Destinataire</th>
                     <th className="px-5 py-3 font-medium">Sujet</th>
+                    <th className="px-5 py-3 font-medium">Canal</th>
                     <th className="px-5 py-3 font-medium">Statut</th>
                     <th className="px-5 py-3 font-medium">Date</th>
                   </tr>
@@ -201,6 +230,7 @@ export default function DashboardEmailsPage() {
                 <tbody>
                   {result.items.map((item) => {
                     const meta = emailStatusMeta(item.status);
+                    const channelMeta = emailChannelMeta(item.channel);
                     return (
                       <tr
                         key={item.publicId}
@@ -220,6 +250,17 @@ export default function DashboardEmailsPage() {
                             className="block max-w-[280px] truncate px-5 py-3.5 text-[#C5CACF]"
                           >
                             {item.subject}
+                          </Link>
+                        </td>
+                        <td className="p-0">
+                          <Link
+                            href={`/dashboard/emails/${item.publicId}`}
+                            className="block px-5 py-3.5"
+                          >
+                            <Badge
+                              color={channelMeta.color}
+                              label={channelMeta.label}
+                            />
                           </Link>
                         </td>
                         <td className="p-0">

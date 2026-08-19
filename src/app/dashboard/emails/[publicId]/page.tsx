@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import Badge from "@/components/dashboard/Badge";
 import { api, ApiError } from "@/lib/api";
 import { formatDateTimeFr } from "@/lib/format";
-import { emailStatusMeta } from "@/lib/status";
+import { emailChannelMeta, emailStatusMeta } from "@/lib/status";
 import type { EmailDetail } from "@/lib/types";
 
 export default function DashboardEmailDetailPage() {
@@ -84,6 +84,7 @@ export default function DashboardEmailDetailPage() {
   }
 
   const meta = emailStatusMeta(email.status);
+  const channelMeta = emailChannelMeta(email.channel);
 
   return (
     <div className="mx-auto max-w-[720px]">
@@ -99,7 +100,10 @@ export default function DashboardEmailDetailPage() {
           <h1 className="mb-2 font-heading text-xl font-semibold text-[#EDEEF0] text-pretty">
             {email.subject}
           </h1>
-          <Badge color={meta.color} label={meta.label} />
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge color={meta.color} label={meta.label} />
+            <Badge color={channelMeta.color} label={channelMeta.label} />
+          </div>
         </div>
       </div>
 
@@ -109,6 +113,7 @@ export default function DashboardEmailDetailPage() {
           <Row label="De" value={email.fromAddress} mono />
           <Row label="À" value={email.toAddress} mono />
           <Row label="Statut" value={meta.label} />
+          <Row label="Canal" value={channelMeta.label} />
           <Row label="Mis en file le" value={formatDateTimeFr(email.queuedAt)} />
           <Row label="Envoyé le" value={formatDateTimeFr(email.sentAt)} />
           <Row
@@ -122,6 +127,11 @@ export default function DashboardEmailDetailPage() {
           <Row
             label="Identifiant SES"
             value={email.sesMessageId ?? "—"}
+            mono
+          />
+          <Row
+            label="Identifiant SMTP"
+            value={email.smtpCredentialId ?? "—"}
             mono
           />
         </dl>
