@@ -30,9 +30,9 @@ export default function Footer() {
           <Link href="#tarifs" className="text-[#8A9099]">
             Tarifs
           </Link>
-          <a href="#" className="text-[#8A9099]">
+          <Link href="/docs/relais-smtp" className="text-[#8A9099]">
             Relais SMTP
-          </a>
+          </Link>
           <a href="#" className="text-[#8A9099]">
             Changelog
           </a>
@@ -45,12 +45,12 @@ export default function Footer() {
           <Link href="/docs" className="text-[#8A9099]">
             Documentation
           </Link>
-          <a href="#" className="text-[#8A9099]">
+          <Link href="/docs/envoyer-un-email" className="text-[#8A9099]">
             Référence API
-          </a>
-          <a href="#" className="text-[#8A9099]">
+          </Link>
+          <Link href="/docs/verifier-un-domaine" className="text-[#8A9099]">
             Vérifier un domaine
-          </a>
+          </Link>
           <a href="#" className="text-[#8A9099]">
             Statut
           </a>
@@ -63,7 +63,7 @@ export default function Footer() {
           <a href="#" className="text-[#8A9099]">
             À propos
           </a>
-          <a href="#" className="text-[#8A9099]">
+          <a href="mailto:contact@zendou.app" className="text-[#8A9099]">
             Contact
           </a>
           <a href="#" className="text-[#8A9099]">
