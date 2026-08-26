@@ -3,6 +3,7 @@ import PageHeader from "@/components/docs/PageHeader";
 import CodeBlock from "@/components/docs/CodeBlock";
 import DocsTable from "@/components/docs/DocsTable";
 import Callout from "@/components/docs/Callout";
+import { API_V1_BASE_URL } from "@/lib/api-docs";
 
 export const metadata: Metadata = {
   title: "Facturation — Documentation Zendou",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/docs/facturation" },
 };
 
-const TOPUP_REQUEST_EXAMPLE = `curl -X POST https://api.zendou.dev/v1/billing/topup-requests \\
+const TOPUP_REQUEST_EXAMPLE = `curl -X POST ${API_V1_BASE_URL}/billing/topup-requests \\
   -H "Content-Type: application/json" \\
   --cookie "zendou_session=..." \\
   -d '{

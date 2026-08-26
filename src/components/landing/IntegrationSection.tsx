@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-
-const API_DOMAIN = "api.zendou.dev";
+import { API_HOST } from "@/lib/api-docs";
 
 const TABS = ["curl", "Node.js", "PHP"] as const;
 
 const SNIPPETS = [
-  `curl -X POST https://${API_DOMAIN}/v1/emails \\
+  `curl -X POST https://${API_HOST}/v1/emails \\
   -H "Authorization: Bearer zd_live_x9f2…" \\
   -H "Content-Type: application/json" \\
   -d '{
