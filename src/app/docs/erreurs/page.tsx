@@ -91,9 +91,10 @@ const CODES = [
   {
     code: "429",
     error: "Too Many Requests",
-    summary: "Limite journalière d'envoi atteinte",
+    summary: "Limite journalière atteinte, ou rafale d'envoi trop rapide",
     causes: [
-      "POST /v1/emails alors que le nombre d'emails envoyés depuis minuit UTC a atteint la limite journalière du compte (200 par défaut, relevée automatiquement avec l'ancienneté et le volume — voir Facturation).",
+      "Quota journalier : POST /v1/emails alors que le nombre d'emails envoyés depuis minuit UTC a atteint la limite journalière du compte (200 par défaut, relevée automatiquement avec l'ancienneté et le volume — voir Facturation). Message : « Limite journalière atteinte : réessayez demain ou demandez une augmentation de quota. »",
+      "Rafale : plus de 60 requêtes par minute sur POST /v1/emails, indépendamment du quota journalier et du solde de crédits. Message : « Trop de requêtes. Réessayez dans quelques instants. » La réponse porte alors un en-tête Retry-After indiquant, en secondes, le délai avant de pouvoir réessayer — absent dans le cas du quota journalier atteint.",
     ],
   },
 ];
