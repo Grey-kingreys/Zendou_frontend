@@ -16,7 +16,7 @@ const TOPUP_REQUEST_EXAMPLE = `curl -X POST ${API_V1_BASE_URL}/billing/topup-req
   -H "Content-Type: application/json" \\
   --cookie "zendou_session=..." \\
   -d '{
-    "packId": "essentiel",
+    "packId": "starter",
     "method": "ORANGE_MONEY",
     "phoneNumber": "+224 620 00 00 00",
     "transactionRef": "OM.2601.2201.A12345"
@@ -24,7 +24,7 @@ const TOPUP_REQUEST_EXAMPLE = `curl -X POST ${API_V1_BASE_URL}/billing/topup-req
 
 const TOPUP_RESPONSE_EXAMPLE = `{
   "id": "clx1a2b3c4d5",
-  "packId": "essentiel",
+  "packId": "starter",
   "credits": 15000,
   "amountGnf": 50000,
   "method": "ORANGE_MONEY",
@@ -97,7 +97,7 @@ export default function FacturationPage() {
               <td className="px-5 py-3 text-[#70767D]">Non</td>
             </tr>
             <tr className="border-b border-white/[0.05]">
-              <td className="px-5 py-3 text-[#EDEEF0]">Essentiel</td>
+              <td className="px-5 py-3 text-[#EDEEF0]">Starter</td>
               <td className="px-5 py-3 font-mono text-[#9BA1A8]">15 000</td>
               <td className="px-5 py-3 font-mono text-[#9BA1A8]">
                 50 000 GNF

@@ -91,7 +91,7 @@ export default function IntegrationSection() {
           {SNIPPETS[tab]}
         </pre>
         <div className="flex gap-4 border-t border-white/[0.07] px-6 py-3.5 font-mono text-[12.5px] text-[#5E646B]">
-          <span className="text-[#35D07F]">200 OK</span>
+          <span className="text-[#35D07F]">202 Accepted</span>
           <span>{'{ "id": "e_7f3a91c2", "status": "queued" }'}</span>
         </div>
       </div>
