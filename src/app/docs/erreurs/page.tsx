@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PageHeader from "@/components/docs/PageHeader";
 import CodeBlock from "@/components/docs/CodeBlock";
+import Callout from "@/components/docs/Callout";
 
 export const metadata: Metadata = {
   title: "Erreurs — Documentation Zendou",
@@ -11,17 +12,23 @@ export const metadata: Metadata = {
 };
 
 const ERROR_BODY_EXAMPLE = `{
-  "statusCode": 403,
-  "message": "Le domaine d'envoi n'est pas vérifié : ajoutez-le à votre compte et validez ses enregistrements DNS avant d'envoyer.",
-  "error": "Forbidden"
+  "message": "L'adresse du destinataire est invalide : indiquez une seule adresse comme « client@exemple.gn ».",
+  "error": "Bad Request",
+  "statusCode": 400,
+  "errors": [
+    "L'adresse du destinataire est invalide : indiquez une seule adresse comme « client@exemple.gn »."
+  ]
 }`;
 
 const VALIDATION_ERROR_EXAMPLE = `{
+  "message": "L'adresse d'expédition est invalide : utilisez « adresse@domaine » ou « Nom <adresse@domaine> ». L'adresse du destinataire est invalide : indiquez une seule adresse comme « client@exemple.gn ». Le sujet est obligatoire et ne doit pas dépasser 300 caractères.",
+  "error": "Bad Request",
   "statusCode": 400,
-  "message": [
+  "errors": [
+    "L'adresse d'expédition est invalide : utilisez « adresse@domaine » ou « Nom <adresse@domaine> ».",
+    "L'adresse du destinataire est invalide : indiquez une seule adresse comme « client@exemple.gn ».",
     "Le sujet est obligatoire et ne doit pas dépasser 300 caractères."
-  ],
-  "error": "Bad Request"
+  ]
 }`;
 
 const CODES = [
@@ -104,16 +111,43 @@ export default function ErreursPage() {
         Forme du corps d&rsquo;erreur
       </h2>
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
-        <code>statusCode</code> reprend le code HTTP, <code>error</code> son
-        libellé standard, et <code>message</code> est soit une phrase en
-        français décrivant la cause précise, soit — pour certaines erreurs de
-        validation — un tableau de phrases (un message par champ invalide).
+        <code>statusCode</code> reprend le code HTTP et <code>error</code> son
+        libellé standard. <code>message</code> est <strong>toujours une
+        chaîne</strong> : la phrase à afficher telle quelle.{" "}
+        <code>errors</code> est <strong>toujours un tableau de chaînes non
+        vide</strong> : le détail, un élément par champ invalide quand
+        plusieurs champs sont en cause. Les deux sont liés par un invariant :
+        <code> message === errors.join(&#39; &#39;)</code> —{" "}
+        <code>message</code> n&rsquo;est que la concaténation de{" "}
+        <code>errors</code>, séparée par un espace.
       </p>
       <div className="mb-3">
-        <CodeBlock code={ERROR_BODY_EXAMPLE} label="403 Forbidden" />
+        <CodeBlock
+          code={ERROR_BODY_EXAMPLE}
+          label="400 Bad Request — un champ invalide"
+        />
+      </div>
+      <div className="mb-4">
+        <CodeBlock
+          code={VALIDATION_ERROR_EXAMPLE}
+          label="400 Bad Request — plusieurs champs invalides"
+        />
       </div>
       <div className="mb-10">
-        <CodeBlock code={VALIDATION_ERROR_EXAMPLE} label="400 Bad Request" />
+        <Callout
+          variant="info"
+          title="Migration : message n'est plus jamais un tableau"
+        >
+          Avant ce correctif, <code>message</code> changeait de forme selon le
+          chemin d&rsquo;échec : une chaîne pour une erreur levée à la main,
+          un tableau pour les erreurs de validation agrégées par NestJS. Un
+          code qui lisait <code>message[0]</code> pour afficher la phrase
+          recevait donc, sans erreur visible, soit la phrase entière soit sa
+          première lettre — selon le chemin emprunté. Remplacez{" "}
+          <code>message[0]</code> par <code>errors[0]</code> :{" "}
+          <code>message</code> est désormais toujours la chaîne complète à
+          afficher, et <code>errors</code> porte le détail champ par champ.
+        </Callout>
       </div>
 
       <h2 className="mb-5 font-heading text-xl font-semibold text-[#EDEEF0]">
