@@ -5,6 +5,7 @@ import PageHeader from "@/components/docs/PageHeader";
 import CodeBlock from "@/components/docs/CodeBlock";
 import DocsTable from "@/components/docs/DocsTable";
 import Callout from "@/components/docs/Callout";
+import { API_V1_BASE_URL } from "@/lib/api-docs";
 
 export const metadata: Metadata = {
   title: "Envoyer un email transactionnel — Documentation Zendou",
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/docs/envoyer-un-email" },
 };
 
-const SANDBOX_REQUEST_EXAMPLE = `curl -X POST https://api.zendou.dev/v1/emails \\
+const SANDBOX_REQUEST_EXAMPLE = `curl -X POST ${API_V1_BASE_URL}/emails \\
   -H "Authorization: Bearer zd_live_votre_cle" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -23,7 +24,7 @@ const SANDBOX_REQUEST_EXAMPLE = `curl -X POST https://api.zendou.dev/v1/emails \
     "html": "<p>Ça marche déjà, avant même de vérifier un domaine.</p>"
   }'`;
 
-const REQUEST_EXAMPLE = `curl -X POST https://api.zendou.dev/v1/emails \\
+const REQUEST_EXAMPLE = `curl -X POST ${API_V1_BASE_URL}/emails \\
   -H "Authorization: Bearer zd_live_votre_cle" \\
   -H "Content-Type: application/json" \\
   -d '{

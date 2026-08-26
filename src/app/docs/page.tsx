@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import PageHeader from "@/components/docs/PageHeader";
 import CodeTabs from "@/components/docs/CodeTabs";
 import Callout from "@/components/docs/Callout";
+import { API_V1_BASE_URL } from "@/lib/api-docs";
 
 export const metadata: Metadata = {
   title: "Démarrage rapide — Documentation Zendou",
@@ -35,7 +36,7 @@ const QUICKSTART_STEPS = [
 const QUICKSTART_SNIPPETS = [
   {
     label: "curl",
-    code: `curl -X POST https://api.zendou.dev/v1/emails \\
+    code: `curl -X POST ${API_V1_BASE_URL}/emails \\
   -H "Authorization: Bearer zd_live_votre_cle" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -47,7 +48,7 @@ const QUICKSTART_SNIPPETS = [
   },
   {
     label: "Node.js",
-    code: `const response = await fetch("https://api.zendou.dev/v1/emails", {
+    code: `const response = await fetch("${API_V1_BASE_URL}/emails", {
   method: "POST",
   headers: {
     Authorization: \`Bearer \${process.env.ZENDOU_API_KEY}\`,
@@ -66,7 +67,7 @@ const email = await response.json();
   },
   {
     label: "PHP",
-    code: `$ch = curl_init('https://api.zendou.dev/v1/emails');
+    code: `$ch = curl_init('${API_V1_BASE_URL}/emails');
 
 curl_setopt_array($ch, [
   CURLOPT_RETURNTRANSFER => true,
@@ -169,7 +170,7 @@ export default function DocsHomePage() {
       <Callout variant="info" title="Base URL">
         En production, l&rsquo;API est servie sur{" "}
         <code className="rounded bg-white/[0.08] px-1 py-0.5 font-mono text-[12.5px]">
-          https://api.zendou.dev/v1
+          {API_V1_BASE_URL}
         </code>
         . En local (backend lancé avec <code className="rounded bg-white/[0.08] px-1 py-0.5 font-mono text-[12.5px]">npm run start:dev</code>),
         remplacez-la par{" "}

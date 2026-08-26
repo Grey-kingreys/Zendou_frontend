@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-
-const API_DOMAIN = "api.zendou.dev";
+import { API_HOST } from "@/lib/api-docs";
 
 const TABS = ["curl", "Node.js", "PHP"] as const;
 
 const SNIPPETS = [
-  `curl -X POST https://${API_DOMAIN}/v1/emails \\
+  `curl -X POST https://${API_HOST}/v1/emails \\
   -H "Authorization: Bearer zd_live_x9f2…" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -92,7 +91,7 @@ export default function IntegrationSection() {
           {SNIPPETS[tab]}
         </pre>
         <div className="flex gap-4 border-t border-white/[0.07] px-6 py-3.5 font-mono text-[12.5px] text-[#5E646B]">
-          <span className="text-[#35D07F]">200 OK</span>
+          <span className="text-[#35D07F]">202 Accepted</span>
           <span>{'{ "id": "e_7f3a91c2", "status": "queued" }'}</span>
         </div>
       </div>
