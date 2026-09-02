@@ -14,6 +14,12 @@ const eslintConfig = defineConfig([
         "error",
         { aspects: ["noHref", "preferButton"] },
       ],
+      // Garde anti-XSS : tout `dangerouslySetInnerHTML` doit etre justifie
+      // par un commentaire de desactivation ligne a ligne, jamais glisse
+      // dans un composant au fil d'une revue. Le seul usage legitime
+      // aujourd'hui est le JSON-LD statique de la landing (src/app/page.tsx).
+      // La regle vient d'eslint-plugin-react, fourni par eslint-config-next.
+      "react/no-danger": "error",
     },
   },
   // Override default ignores of eslint-config-next.

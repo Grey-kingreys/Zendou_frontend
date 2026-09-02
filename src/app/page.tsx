@@ -60,6 +60,7 @@ export default function Home() {
     <div className="bg-[#08090A]">
       <script
         type="application/ld+json"
+        // eslint-disable-next-line react/no-danger -- JSON-LD statique construit uniquement depuis des constantes du site, jamais depuis une saisie
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
