@@ -21,6 +21,12 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Meme raison que src/app/dashboard/layout.tsx : aucune page privee en cache
+ * CDN de longue duree.
+ */
+export const dynamic = "force-dynamic";
+
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return <AdminLayoutClient>{children}</AdminLayoutClient>;
 }

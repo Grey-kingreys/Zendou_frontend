@@ -1,15 +1,50 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { Suspense, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import AuthCard from "@/components/auth/AuthCard";
 import { FormError, SubmitButton, TextField } from "@/components/auth/fields";
 import { api, ApiError } from "@/lib/api";
 import type { User } from "@/lib/types";
 
+// Destinations autorisees apres connexion. Le proxy (src/proxy.ts) renvoie
+// ici avec `?next=<chemin prive demande>` ; tout le reste est ignore.
+const NEXT_PATH_PREFIXES = ["/dashboard", "/admin", "/confirmez-votre-email"];
+
+/**
+ * Resout le parametre `next` en chemin de redirection sur. Une liste blanche
+ * de prefixes evite la redirection ouverte : un `next` fourni par un tiers ne
+ * peut pas envoyer ailleurs que dans les zones privees du site. `//hote` et
+ * `/\hote` sont rejetes explicitement car les navigateurs les traitent comme
+ * des URL absolues malgre le `/` initial.
+ */
+function resolveNextPath(raw: string | null): string {
+  if (!raw) return "/dashboard";
+  if (raw.startsWith("//") || raw.startsWith("/\\")) return "/dashboard";
+  return NEXT_PATH_PREFIXES.some((prefix) => raw.startsWith(prefix))
+    ? raw
+    : "/dashboard";
+}
+
+/**
+ * `useSearchParams` impose une frontiere `<Suspense>` au-dessus du composant
+ * qui l'appelle, sans quoi le build echoue sur le bailout CSR (voir
+ * node_modules/next/dist/docs/01-app/03-api-reference/04-functions/
+ * use-search-params.md). Le layout de ce dossier forcant le rendu dynamique,
+ * la solution de repli n'est jamais affichee en pratique.
+ */
 export default function ConnexionPage() {
+  return (
+    <Suspense fallback={null}>
+      <ConnexionForm />
+    </Suspense>
+  );
+}
+
+function ConnexionForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +57,7 @@ export default function ConnexionPage() {
 
     try {
       await api.post<User>("/v1/auth/login", { email, password });
-      router.push("/dashboard");
+      router.push(resolveNextPath(searchParams.get("next")));
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         setError("Email ou mot de passe incorrect.");

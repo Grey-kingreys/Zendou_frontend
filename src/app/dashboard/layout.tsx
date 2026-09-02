@@ -24,6 +24,13 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Aucune page privee ne doit finir dans un cache CDN de longue duree : le
+ * rendu dynamique force Next a servir ces routes avec un Cache-Control
+ * `private, no-store` au lieu du `s-maxage=31536000` des pages prerendues.
+ */
+export const dynamic = "force-dynamic";
+
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return <DashboardLayoutClient>{children}</DashboardLayoutClient>;
 }
