@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
 import Badge from "@/components/dashboard/Badge";
 import CopyField from "@/components/dashboard/CopyField";
 import { api, ApiError } from "@/lib/api";
@@ -16,6 +17,7 @@ import {
 } from "@/lib/status";
 import type {
   BalanceSummary,
+  CreditEntryItem,
   CreditPack,
   PaginatedCreditEntries,
   PaymentMethodItem,
@@ -40,25 +42,70 @@ function packLabel(packs: CreditPack[] | null, packId: string): string {
   return packId.charAt(0).toUpperCase() + packId.slice(1);
 }
 
+/** Contenu affichable de la colonne Référence d'une ligne du ledger. */
+type LedgerReferenceCell =
+  | { kind: "text"; value: string }
+  | { kind: "link"; value: string; href: string };
+
 /**
- * Résout la référence d'une ligne du ledger en la référence de transaction
- * Mobile Money que le client a lui-même déclarée. `CreditEntry.reference`
- * est un identifiant interne (id de la demande de recharge pour un motif
- * TOPUP, id de l'action admin pour un ADMIN_GRANT) : il ne veut rien dire
- * pour le client et ne lui permet pas de rapprocher la ligne de son propre
- * transfert. Seul un TOPUP dont la demande figure encore dans l'historique
- * (`GET /v1/billing/topup-requests`, chargé en entier, sans pagination) est
- * résolu vers son `transactionRef`. Tout le reste (WELCOME_BONUS sans
- * référence, ADMIN_GRANT, TOPUP dont la demande a disparu, tout autre motif)
- * retombe sur `null` : jamais l'identifiant brut à l'écran.
+ * Décide du contenu de la colonne Référence à partir de `entry.reason` : la
+ * donnée qui porte l'intention métier, pas une correspondance accidentelle
+ * d'id. `CreditEntry.reference` a quatre origines connues côté backend, et
+ * chacune se lit différemment :
+ *   - WELCOME_BONUS (email-confirmation.service.ts) : toujours `null`,
+ *     rien à afficher.
+ *   - SEND (emails.service.ts) : le `publicId` de l'email envoyé, pas un
+ *     identifiant interne, celui-là même que le client retrouve dans son
+ *     journal (`/dashboard/emails/[publicId]`) — affiché en lien vers cette
+ *     page, c'est le rapprochement qui compte le plus puisque c'est la
+ *     quasi-totalité des lignes d'un compte actif.
+ *   - ADMIN_GRANT (admin-users.service.ts) : id d'une `AdminAction`, opaque
+ *     pour le client, jamais affiché.
+ *   - TOPUP (admin-billing.service.ts) : id de la demande de recharge,
+ *     résolu vers le `transactionRef` que le client a lui-même déclaré
+ *     (l'historique est chargé en entier, sans pagination).
+ * Un motif inconnu (futur) retombe sur `null`, jamais sur la valeur brute.
  */
-function ledgerReferenceLabel(
-  reference: string | null,
+function ledgerReferenceCell(
+  entry: CreditEntryItem,
   topUpRequests: TopUpRequestItem[] | null
-): string | null {
-  if (!reference) return null;
-  const match = topUpRequests?.find((item) => item.id === reference);
-  return match ? match.transactionRef : null;
+): LedgerReferenceCell | null {
+  switch (entry.reason) {
+    case "SEND":
+      if (!entry.reference) return null;
+      return {
+        kind: "link",
+        value: entry.reference,
+        href: `/dashboard/emails/${entry.reference}`,
+      };
+    case "TOPUP": {
+      const match = topUpRequests?.find((item) => item.id === entry.reference);
+      return match ? { kind: "text", value: match.transactionRef } : null;
+    }
+    case "WELCOME_BONUS":
+    case "ADMIN_GRANT":
+    default:
+      return null;
+  }
+}
+
+function LedgerReferenceValue({
+  entry,
+  topUpRequests,
+}: {
+  entry: CreditEntryItem;
+  topUpRequests: TopUpRequestItem[] | null;
+}) {
+  const cell = ledgerReferenceCell(entry, topUpRequests);
+  if (!cell) return "-";
+  if (cell.kind === "link") {
+    return (
+      <Link href={cell.href} className="text-[#8AA4FF] hover:underline">
+        {cell.value}
+      </Link>
+    );
+  }
+  return cell.value;
 }
 
 /**
@@ -713,8 +760,10 @@ export default function DashboardFacturationPage() {
                           {creditReasonLabelFr(entry.reason)}
                         </td>
                         <td className="px-3 py-3.5 font-mono whitespace-nowrap text-[#9BA1A8]">
-                          {ledgerReferenceLabel(entry.reference, topUpRequests) ??
-                            "-"}
+                          <LedgerReferenceValue
+                            entry={entry}
+                            topUpRequests={topUpRequests}
+                          />
                         </td>
                         <td
                           className={`px-3 py-3.5 font-mono whitespace-nowrap ${
@@ -752,8 +801,10 @@ export default function DashboardFacturationPage() {
                   </div>
                   <div className="flex items-center justify-between gap-3 text-[12px] text-[#70767D]">
                     <span className="truncate font-mono">
-                      {ledgerReferenceLabel(entry.reference, topUpRequests) ??
-                        "-"}
+                      <LedgerReferenceValue
+                        entry={entry}
+                        topUpRequests={topUpRequests}
+                      />
                     </span>
                     <span className="shrink-0">
                       {formatDateTimeShortFr(entry.createdAt)}
