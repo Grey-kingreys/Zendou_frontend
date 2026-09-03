@@ -31,7 +31,7 @@ export default function ClesApiPage() {
         la forme suivante :
       </p>
       <div className="mb-4">
-        <CodeBlock code="zd_live_9fQ2mR7xL0pK4wT8nB1vD6sH3jY5cZ2aE9uI7oP" />
+        <CodeBlock code="zd_live_9fQ2mR7xL0pK4wT8nB1vD6sH3jY5cZ2aE9uI7oP4rN8" />
       </div>
       <p className="mb-8 text-[15px] leading-[1.7] text-[#9BA1A8]">
         Utilisez-la dans l&rsquo;en-tête <code>Authorization</code> de vos
@@ -39,7 +39,7 @@ export default function ClesApiPage() {
       </p>
       <div className="mb-10">
         <CodeBlock
-          code={`Authorization: Bearer zd_live_9fQ2mR7xL0pK4wT8nB1vD6sH3jY5cZ2aE9uI7oP`}
+          code={`Authorization: Bearer zd_live_9fQ2mR7xL0pK4wT8nB1vD6sH3jY5cZ2aE9uI7oP4rN8`}
         />
       </div>
 

@@ -30,6 +30,7 @@ const REQUEST_EXAMPLE = `curl -X POST ${API_V1_BASE_URL}/emails \\
   -d '{
     "from": "Boutique Awa <no-reply@boutique-awa.gn>",
     "to": "cliente@exemple.gn",
+    "replyTo": "support@boutique-awa.gn",
     "subject": "Votre commande est confirmée",
     "html": "<p>Merci pour votre commande, elle est en préparation.</p>"
   }'`;
@@ -58,6 +59,13 @@ const PARAMS = [
     required: "Oui",
     description:
       "Destinataire — une seule adresse nue (« client@exemple.gn »), sans nom affiché. Pas de liste ni de séparateur en v1.",
+  },
+  {
+    name: "replyTo",
+    type: "string",
+    required: "Non",
+    description:
+      "Adresse à laquelle les réponses doivent arriver. « adresse@domaine » ou « Nom <adresse@domaine> ». Soumise à la même règle que from : le domaine doit être vérifié et rattaché à votre compte, sinon l'envoi est refusé en 403.",
   },
   {
     name: "subject",
@@ -103,6 +111,13 @@ const ERROR_ROWS: {
   },
   {
     code: "400",
+    cause: "Adresse de réponse (replyTo) illisible",
+    message:
+      "L'adresse de réponse (reply-to) est invalide : utilisez « adresse@domaine » ou « Nom <adresse@domaine> ».",
+    action: "Corrigez le format du champ replyTo, ou omettez-le.",
+  },
+  {
+    code: "400",
     cause: "Sujet vide ou trop long",
     message:
       "Le sujet est obligatoire et ne doit pas dépasser 300 caractères.",
@@ -141,6 +156,14 @@ const ERROR_ROWS: {
     message:
       "Le domaine d'envoi n'est pas vérifié : ajoutez-le à votre compte et validez ses enregistrements DNS avant d'envoyer.",
     action: "Suivez le guide de vérification de domaine avant de réessayer.",
+  },
+  {
+    code: "403",
+    cause: "Domaine de l'adresse de réponse (replyTo) non vérifié",
+    message:
+      "L'adresse de réponse (reply-to) doit utiliser un domaine vérifié de votre compte : ajoutez-le et validez ses enregistrements DNS avant d'envoyer.",
+    action:
+      "Vérifiez le domaine de l'adresse replyTo, comme pour from, ou omettez ce champ.",
   },
   {
     code: "403",

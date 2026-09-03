@@ -3,6 +3,7 @@ import Link from "next/link";
 import PageHeader from "@/components/docs/PageHeader";
 import CodeBlock from "@/components/docs/CodeBlock";
 import Callout from "@/components/docs/Callout";
+import DocsTable from "@/components/docs/DocsTable";
 
 export const metadata: Metadata = {
   title: "Erreurs — Documentation Zendou",
@@ -31,6 +32,87 @@ const VALIDATION_ERROR_EXAMPLE = `{
   ]
 }`;
 
+const SEND_ERROR_CODE_EXAMPLE = `{
+  "message": "Le domaine d'envoi n'est pas vérifié : ajoutez-le à votre compte et validez ses enregistrements DNS avant d'envoyer.",
+  "error": "Forbidden",
+  "statusCode": 403,
+  "code": "DOMAIN_NOT_VERIFIED",
+  "errors": [
+    "Le domaine d'envoi n'est pas vérifié : ajoutez-le à votre compte et validez ses enregistrements DNS avant d'envoyer."
+  ]
+}`;
+
+const SEND_ERROR_CODES: { code: string; status: string; meaning: string }[] = [
+  {
+    code: "ACCOUNT_SUSPENDED",
+    status: "403",
+    meaning: "Compte suspendu (réputation d'envoi dégradée).",
+  },
+  {
+    code: "EMAIL_NOT_VERIFIED",
+    status: "403",
+    meaning: "Adresse email du compte non confirmée.",
+  },
+  {
+    code: "INVALID_FROM",
+    status: "400",
+    meaning: "Adresse d'expédition (from) illisible.",
+  },
+  {
+    code: "INVALID_TO",
+    status: "400",
+    meaning: "Adresse destinataire (to) illisible.",
+  },
+  {
+    code: "INVALID_REPLY_TO",
+    status: "400",
+    meaning: "Adresse de réponse (replyTo) illisible. Nouveau.",
+  },
+  {
+    code: "MISSING_BODY",
+    status: "400",
+    meaning: "Ni html ni text fourni.",
+  },
+  {
+    code: "BODY_TOO_LARGE",
+    status: "400",
+    meaning: "Un corps (html ou text) dépasse 500 Ko.",
+  },
+  {
+    code: "DOMAIN_NOT_VERIFIED",
+    status: "403",
+    meaning:
+      "Domaine de l'adresse d'expédition non vérifié ou non rattaché au compte.",
+  },
+  {
+    code: "REPLY_TO_NOT_VERIFIED",
+    status: "403",
+    meaning:
+      "Domaine de l'adresse de réponse (replyTo) non vérifié ou non rattaché au compte. Nouveau.",
+  },
+  {
+    code: "TEST_SENDER_UNAVAILABLE",
+    status: "503",
+    meaning: "Mode bac à sable momentanément indisponible (configuration serveur).",
+  },
+  {
+    code: "TEST_SENDER_RECIPIENT_RESTRICTED",
+    status: "403",
+    meaning:
+      "Depuis l'adresse de test, destinataire autre que l'adresse du compte.",
+  },
+  {
+    code: "INSUFFICIENT_CREDITS",
+    status: "402",
+    meaning: "Solde de crédits insuffisant.",
+  },
+  {
+    code: "DAILY_LIMIT_REACHED",
+    status: "429",
+    meaning: "Quota journalier atteint.",
+  },
+];
+
 const CODES = [
   {
     code: "400",
@@ -42,6 +124,7 @@ const CODES = [
       "Nom de clé API vide ou trop long sur POST /v1/api-keys.",
       "Pack de recharge inconnu, méthode de paiement invalide, ou numéro de téléphone mal formé sur POST /v1/billing/topup-requests.",
       "Paramètre de pagination (page, limit) non numérique ou hors bornes.",
+      "Champ non déclaré dans le corps JSON, par exemple une faute de frappe dans un nom de paramètre : désormais refusé par un 400 (« Le champ « X » n'est pas accepté. »), là où il était auparavant ignoré silencieusement.",
     ],
   },
   {
@@ -91,10 +174,11 @@ const CODES = [
   {
     code: "429",
     error: "Too Many Requests",
-    summary: "Limite journalière atteinte, ou rafale d'envoi trop rapide",
+    summary: "Limite journalière atteinte, rafale d'envoi trop rapide, ou trop d'échecs d'authentification",
     causes: [
       "Quota journalier : POST /v1/emails alors que le nombre d'emails envoyés depuis minuit UTC a atteint la limite journalière du compte (200 par défaut, relevée automatiquement avec l'ancienneté et le volume — voir Facturation). Message : « Limite journalière atteinte : réessayez demain ou demandez une augmentation de quota. »",
-      "Rafale : plus de 60 requêtes par minute sur POST /v1/emails, indépendamment du quota journalier et du solde de crédits. Message : « Trop de requêtes. Réessayez dans quelques instants. » La réponse porte alors un en-tête Retry-After indiquant, en secondes, le délai avant de pouvoir réessayer — absent dans le cas du quota journalier atteint.",
+      "Rafale : plus de 60 requêtes par minute sur POST /v1/emails, indépendamment du quota journalier et du solde de crédits. Message : « Trop de requêtes. Réessayez dans quelques instants. »",
+      "Trop d'échecs d'authentification depuis une même adresse IP sur POST /v1/emails (clé API inconnue ou révoquée présentée à répétition). Utile à savoir en intégration : tester avec une mauvaise clé peut donc, après plusieurs essais, renvoyer un 429 plutôt qu'un 401. Une clé valide n'est jamais concernée, même si l'IP est bloquée.",
     ],
   },
 ];
@@ -185,6 +269,76 @@ export default function ErreursPage() {
           </div>
         ))}
       </div>
+
+      <div className="mb-10">
+        <Callout variant="info" title="En-têtes de limitation de débit">
+          Toute réponse d&rsquo;une route soumise à une limite porte trois
+          en-têtes : <code>X-RateLimit-Limit</code> (budget de la fenêtre),{" "}
+          <code>X-RateLimit-Remaining</code> (requêtes encore acceptées dans
+          cette fenêtre) et <code>X-RateLimit-Reset</code> (secondes avant
+          remise à zéro). Un 429 porte en plus <code>Retry-After</code>{" "}
+          (secondes avant de pouvoir réessayer), désormais aussi bien sur le
+          429 de rafale que sur celui de quota journalier atteint. Quand
+          plusieurs compteurs s&rsquo;appliquent à une même requête, ce sont
+          les valeurs du compteur le plus contraignant, celui qui bloquera le
+          client en premier, qui sont publiées.
+        </Callout>
+      </div>
+
+      <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
+        Code d&rsquo;erreur machine (POST /v1/emails)
+      </h2>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        Toute réponse d&rsquo;erreur 4xx de <code>POST /v1/emails</code> porte,
+        en plus de <code>message</code> et <code>errors</code>, un champ{" "}
+        <code>code</code> : une chaîne stable et lisible par machine, sur
+        laquelle brancher la logique d&rsquo;un client plutôt que sur le texte
+        français de <code>message</code>, susceptible d&rsquo;être reformulé.
+      </p>
+      <div className="mb-4">
+        <CodeBlock
+          code={SEND_ERROR_CODE_EXAMPLE}
+          label="403 Forbidden - domaine d'envoi non vérifié"
+        />
+      </div>
+      <div className="mb-4">
+        <DocsTable minWidth={560}>
+          <thead>
+            <tr className="border-b border-white/[0.07] text-[12px] tracking-[0.02em] text-[#70767D] uppercase">
+              <th className="px-5 py-3 font-medium">Code</th>
+              <th className="px-5 py-3 font-medium">Statut HTTP</th>
+              <th className="px-5 py-3 font-medium">Signification</th>
+            </tr>
+          </thead>
+          <tbody>
+            {SEND_ERROR_CODES.map((row) => (
+              <tr
+                key={row.code}
+                className="border-b border-white/[0.05] last:border-b-0"
+              >
+                <td className="px-5 py-3 align-top font-mono text-[12.5px] text-[#EDEEF0]">
+                  {row.code}
+                </td>
+                <td className="px-5 py-3 align-top font-mono font-semibold text-[#FF9592]">
+                  {row.status}
+                </td>
+                <td className="px-5 py-3 align-top text-[#9BA1A8]">
+                  {row.meaning}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </DocsTable>
+      </div>
+      <p className="mb-10 text-[13px] leading-relaxed text-[#70767D]">
+        <code>INVALID_REPLY_TO</code> et <code>REPLY_TO_NOT_VERIFIED</code>{" "}
+        sont nouveaux, liés à la prise en charge du champ{" "}
+        <code>replyTo</code>, voir{" "}
+        <Link href="/docs/envoyer-un-email" className="text-[#8AA4FF]">
+          Envoyer un email
+        </Link>
+        .
+      </p>
 
       <p className="mt-8 text-[13px] leading-relaxed text-[#70767D]">
         Pour le détail des messages exacts renvoyés par{" "}

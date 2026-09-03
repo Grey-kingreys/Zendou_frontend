@@ -118,6 +118,24 @@ const REPLY_ROWS: {
   {
     code: "550",
     status: "5.7.1",
+    cause: "Domaine de l'adresse de réponse (Reply-To:) non vérifié",
+    message:
+      "L'adresse de réponse (reply-to) doit utiliser un domaine vérifié de votre compte : ajoutez-le et validez ses enregistrements DNS avant d'envoyer.",
+    action: (
+      <>
+        Même règle que pour <code>From:</code>, vérifiez le domaine de
+        l&rsquo;adresse <code>Reply-To:</code> dans Zendou avant
+        d&rsquo;envoyer, voir{" "}
+        <Link href="/docs/verifier-un-domaine" className="text-[#8AA4FF]">
+          Vérifier un domaine
+        </Link>
+        .
+      </>
+    ),
+  },
+  {
+    code: "550",
+    status: "5.7.1",
     cause: "Compte suspendu",
     message: "Ce compte est suspendu",
     action:
@@ -213,10 +231,10 @@ const REPLY_ROWS: {
   {
     code: "554",
     status: "5.6.0",
-    cause: "En-têtes MIME illisibles, ou plusieurs From:",
+    cause: "En-têtes MIME illisibles, plusieurs From:, ou plusieurs Reply-To:",
     message: "Message MIME invalide, ou plusieurs en-têtes « From: ».",
     action:
-      "Vérifiez que le message est un MIME valide avec un seul en-tête From: bien formé.",
+      "Vérifiez que le message est un MIME valide avec un seul en-tête From: et un seul Reply-To: bien formés.",
   },
   {
     code: "554",
@@ -364,7 +382,8 @@ export default function RelaisSmtpPage() {
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
         Le relais applique exactement les mêmes règles que l&rsquo;API :
         l&rsquo;adresse indiquée dans l&rsquo;en-tête <code>From:</code> doit
-        appartenir à un domaine vérifié de votre compte.
+        appartenir à un domaine vérifié de votre compte, et il en va de même
+        pour l&rsquo;en-tête <code>Reply-To:</code>, s&rsquo;il est présent.
       </p>
       <Callout variant="success" title="L'adresse de test fonctionne aussi en SMTP">
         Pas encore de domaine vérifié ? L&rsquo;adresse d&rsquo;expédition de
