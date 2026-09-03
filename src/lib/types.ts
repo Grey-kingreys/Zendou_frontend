@@ -293,6 +293,61 @@ export interface BalanceSummary {
 export type TopUpStatus = "PENDING" | "APPROVED" | "REJECTED";
 export type TopUpMethod = "ORANGE_MONEY" | "MTN_MOMO";
 
+// --- Facturation : recharge côté client (B22-B) ----------------------------
+
+/** Pack de crédits du catalogue (GET /v1/billing/packs). */
+export interface CreditPack {
+  id: string;
+  label: string;
+  credits: number;
+  amountGnf: number;
+  /** Un pack non achetable est seulement informatif (ex. offre découverte). */
+  purchasable: boolean;
+}
+
+/** Ligne du ledger de crédits (GET /v1/billing/entries). */
+export interface CreditEntryItem {
+  delta: number;
+  reason: string;
+  reference: string | null;
+  createdAt: string;
+}
+
+export interface PaginatedCreditEntries {
+  items: CreditEntryItem[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+/** Demande de recharge telle qu'exposée au client qui l'a créée. */
+export interface TopUpRequestItem {
+  id: string;
+  packId: string;
+  credits: number;
+  amountGnf: number;
+  method: TopUpMethod;
+  phoneNumber: string;
+  transactionRef: string;
+  status: TopUpStatus;
+  rejectionReason: string | null;
+  createdAt: string;
+}
+
+/**
+ * Coordonnées de paiement Mobile Money Zendou pour une méthode configurée
+ * (GET /v1/billing/payment-methods). Seules les méthodes réellement
+ * configurées sont renvoyées : un tableau vide signifie qu'aucun
+ * encaissement Mobile Money n'est possible aujourd'hui.
+ */
+export interface PaymentMethodItem {
+  method: TopUpMethod;
+  label: string;
+  number: string;
+  accountName: string | null;
+}
+
 export interface AdminTopUpRequestUser {
   id: string;
   email: string;

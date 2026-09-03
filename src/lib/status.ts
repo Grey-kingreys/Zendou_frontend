@@ -7,6 +7,7 @@ import type {
   EmailChannel,
   EmailStatus,
   TopUpMethod,
+  TopUpStatus,
 } from "./types";
 import type { BadgeColor } from "@/components/dashboard/Badge";
 
@@ -99,6 +100,38 @@ export function topUpMethodMeta(method: TopUpMethod): {
     case "MTN_MOMO":
       return { label: "MTN MoMo", color: "blue" };
   }
+}
+
+export function topUpStatusMeta(status: TopUpStatus): {
+  label: string;
+  color: BadgeColor;
+} {
+  switch (status) {
+    case "PENDING":
+      return { label: "En attente", color: "orange" };
+    case "APPROVED":
+      return { label: "Approuvée", color: "green" };
+    case "REJECTED":
+      return { label: "Rejetée", color: "red" };
+  }
+}
+
+/**
+ * Libellés français des motifs du ledger de crédits (`CreditEntry.reason`).
+ * Le champ est une chaîne ouverte côté backend (billing.types.ts) : liste
+ * fermée pour les trois motifs connus (recharge, bienvenue, avoir admin, et
+ * le seul motif de consommation actuel `SEND`), un motif inconnu s'affiche
+ * tel quel plutôt que de laisser un texte vide ou de planter.
+ */
+const CREDIT_REASON_LABELS: Record<string, string> = {
+  TOPUP: "Recharge",
+  WELCOME_BONUS: "Crédit de bienvenue",
+  ADMIN_GRANT: "Avoir administrateur",
+  SEND: "Envoi d'email",
+};
+
+export function creditReasonLabelFr(reason: string): string {
+  return CREDIT_REASON_LABELS[reason] ?? reason;
 }
 
 export function adminAccountStatusMeta(status: AdminAccountStatus): {
