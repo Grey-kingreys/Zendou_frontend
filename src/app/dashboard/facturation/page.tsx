@@ -41,6 +41,27 @@ function packLabel(packs: CreditPack[] | null, packId: string): string {
 }
 
 /**
+ * Résout la référence d'une ligne du ledger en la référence de transaction
+ * Mobile Money que le client a lui-même déclarée. `CreditEntry.reference`
+ * est un identifiant interne (id de la demande de recharge pour un motif
+ * TOPUP, id de l'action admin pour un ADMIN_GRANT) : il ne veut rien dire
+ * pour le client et ne lui permet pas de rapprocher la ligne de son propre
+ * transfert. Seul un TOPUP dont la demande figure encore dans l'historique
+ * (`GET /v1/billing/topup-requests`, chargé en entier, sans pagination) est
+ * résolu vers son `transactionRef`. Tout le reste (WELCOME_BONUS sans
+ * référence, ADMIN_GRANT, TOPUP dont la demande a disparu, tout autre motif)
+ * retombe sur `null` : jamais l'identifiant brut à l'écran.
+ */
+function ledgerReferenceLabel(
+  reference: string | null,
+  topUpRequests: TopUpRequestItem[] | null
+): string | null {
+  if (!reference) return null;
+  const match = topUpRequests?.find((item) => item.id === reference);
+  return match ? match.transactionRef : null;
+}
+
+/**
  * Fonctions pures hors composant (React Compiler) : le chargement initial
  * (solde, packs, méthodes de paiement, historique des demandes) et le
  * chargement du ledger paginé sont tous les deux appelés à la fois depuis
@@ -692,7 +713,8 @@ export default function DashboardFacturationPage() {
                           {creditReasonLabelFr(entry.reason)}
                         </td>
                         <td className="px-3 py-3.5 font-mono whitespace-nowrap text-[#9BA1A8]">
-                          {entry.reference ?? "-"}
+                          {ledgerReferenceLabel(entry.reference, topUpRequests) ??
+                            "-"}
                         </td>
                         <td
                           className={`px-3 py-3.5 font-mono whitespace-nowrap ${
@@ -730,7 +752,8 @@ export default function DashboardFacturationPage() {
                   </div>
                   <div className="flex items-center justify-between gap-3 text-[12px] text-[#70767D]">
                     <span className="truncate font-mono">
-                      {entry.reference ?? "-"}
+                      {ledgerReferenceLabel(entry.reference, topUpRequests) ??
+                        "-"}
                     </span>
                     <span className="shrink-0">
                       {formatDateTimeShortFr(entry.createdAt)}
