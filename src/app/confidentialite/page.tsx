@@ -277,8 +277,7 @@ export default function ConfidentialitePage() {
             (métadonnées) : conservé 6 mois, puis supprimé automatiquement.
           </li>
           <li>
-            <strong className="text-[#EDEEF0]">Journaux techniques</strong> :
-            conservés 90 jours au plus.
+            <strong className="text-[#EDEEF0]">Journaux techniques</strong> : conservés par notre hébergeur selon sa politique de rotation, et utilisés uniquement pour le diagnostic et la sécurité du service.
           </li>
           <li>
             <strong className="text-[#EDEEF0]">Données de compte</strong> :
