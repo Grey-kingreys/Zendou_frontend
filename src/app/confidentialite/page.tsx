@@ -10,15 +10,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/confidentialite" },
 };
 
-/** Marqueur visible pour une information que seul le porteur peut fournir : jamais inventée. */
-function ToComplete({ children }: { children: ReactNode }) {
-  return (
-    <p className="mt-2 rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[13px] text-[#F5C177]">
-      [À COMPLÉTER PAR LE PORTEUR : {children}]
-    </p>
-  );
-}
-
 function H2({ children }: { children: ReactNode }) {
   return (
     <h2 className="mt-12 mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
@@ -83,39 +74,47 @@ export default function ConfidentialitePage() {
           (y compris avec le bouton « Continuer avec Google »), envoi
           d&rsquo;emails transactionnels via l&rsquo;API ou le relais SMTP,
           et gestion du tableau de bord. Elle est écrite à partir de ce que
-          le service fait réellement, pas d&rsquo;un modèle générique : là
-          où une information précise (durée de conservation, raison
-          sociale...) n&rsquo;est pas encore fixée, un encadré orange
-          l&rsquo;indique explicitement plutôt que de l&rsquo;inventer.
+          le service fait réellement, pas d&rsquo;un modèle générique.
         </P>
 
         <H2>Qui traite vos données</H2>
         <P>
-          Zendou est un service d&rsquo;email transactionnel opéré depuis la
-          Guinée. Le contact pour toute question relative à vos données est{" "}
+          Zendou est exploité à titre individuel par{" "}
+          <strong className="text-[#EDEEF0]">Souleymane Diallo</strong>,
+          personne physique, en République de Guinée. Aucune société
+          n&rsquo;est aujourd&rsquo;hui immatriculée pour l&rsquo;exploitation
+          du service ; cette mention sera mise à jour dès qu&rsquo;une
+          immatriculation sera effectuée. Aucune adresse postale n&rsquo;est
+          publiée à ce stade.
+        </P>
+        <P>
+          Contact pour toute question relative à vos données :{" "}
           <a
             href="mailto:contact@zendou.app"
             className="text-[#8AA4FF] underline underline-offset-2"
           >
             contact@zendou.app
+          </a>{" "}
+          ou{" "}
+          <a
+            href="tel:+224624815998"
+            className="text-[#8AA4FF] underline underline-offset-2"
+          >
+            +224 624 81 59 98
           </a>
-          .
+          . Aucun délégué à la protection des données n&rsquo;est désigné :
+          le service est exploité par une seule personne.
         </P>
-        <ToComplete>
-          raison sociale exacte, forme juridique et numéro
-          d&rsquo;immatriculation (RCCM) de l&rsquo;entité responsable du
-          traitement
-        </ToComplete>
-        <ToComplete>
-          adresse postale du siège de l&rsquo;entité responsable du
-          traitement
-        </ToComplete>
-        <ToComplete>
-          référence légale exacte (numéro, date) de la loi guinéenne
-          applicable à la protection des données personnelles, et
-          coordonnées de l&rsquo;autorité de contrôle compétente si elle
-          existe
-        </ToComplete>
+        <P>
+          Le traitement de vos données personnelles s&rsquo;inscrit dans le
+          cadre de la loi guinéenne L/2016/037/AN relative à la
+          cybersécurité et à la protection des données à caractère
+          personnel. À la date de rédaction de cette page, aucune autorité
+          de contrôle indépendante et opérationnelle n&rsquo;a pu être
+          identifiée en Guinée ; Zendou s&rsquo;engage à respecter les
+          principes de cette loi et à mettre à jour cette page dès
+          qu&rsquo;une telle autorité sera désignée.
+        </P>
 
         <H2>Données que nous collectons</H2>
 
@@ -154,12 +153,9 @@ export default function ConfidentialitePage() {
           jamais enregistré en base de données.</strong> Il transite par
           notre file d&rsquo;envoi et en est effacé dès que l&rsquo;envoi
           réussit. En cas d&rsquo;échec définitif (toutes les tentatives
-          épuisées), il reste dans cette file.
+          épuisées), il reste dans cette file 7 jours, puis en est
+          automatiquement supprimé.
         </P>
-        <ToComplete>
-          durée de conservation des emails en échec dans la file
-          d&rsquo;envoi
-        </ToComplete>
 
         <H3>Domaines, clés API et identifiants SMTP</H3>
         <P>
@@ -239,8 +235,10 @@ export default function ConfidentialitePage() {
           </li>
           <li>
             <strong className="text-[#EDEEF0]">Hébergement</strong> : le
-            site et l&rsquo;API tournent sur un serveur privé virtuel (VPS)
-            dédié à Zendou.
+            site, l&rsquo;API et le relais SMTP tournent sur un serveur
+            exploité via Executable (<code>exeapps.com</code>),
+            physiquement situé en Finlande, dans l&rsquo;infrastructure de
+            Hetzner Online GmbH.
           </li>
           <li>
             <strong className="text-[#EDEEF0]">Cloudflare</strong> : gère le
@@ -259,26 +257,44 @@ export default function ConfidentialitePage() {
           déclarez, ces opérateurs ne reçoivent donc aucune donnée de votre
           compte Zendou de notre part.
         </P>
-        <ToComplete>
-          localisation géographique précise (pays) du VPS d&rsquo;hébergement
-        </ToComplete>
+        <P>
+          L&rsquo;infrastructure de Zendou (hébergement et envoi
+          d&rsquo;emails) n&rsquo;est donc pas située en Guinée à ce jour.
+          Cette page sera mise à jour si cela change.
+        </P>
 
         <H2>Combien de temps nous conservons vos données</H2>
         <P>
           Le cookie de session est valable 7 jours glissants ; le cookie posé
-          pendant une connexion Google expire après 10 minutes. Pour le
-          reste (données de compte, journal des emails envoyés, journaux
-          techniques), la durée de conservation n&rsquo;est pas encore
-          fixée :
+          pendant une connexion Google expire après 10 minutes. Le corps
+          d&rsquo;un email transite par la file d&rsquo;envoi et en est
+          effacé dès que l&rsquo;envoi réussit, ou 7 jours après un échec
+          définitif (voir « Emails envoyés » ci-dessus). Pour le reste :
         </P>
-        <ToComplete>
-          durée de conservation des données de compte après suppression ou
-          inactivité prolongée
-        </ToComplete>
-        <ToComplete>
-          durée de conservation du journal des emails envoyés (métadonnées)
-          et des journaux techniques
-        </ToComplete>
+        <ul className="mb-4 flex list-disc flex-col gap-2 pl-5 text-[15px] leading-[1.7] text-[#9BA1A8]">
+          <li>
+            <strong className="text-[#EDEEF0]">Journal des envois</strong>{" "}
+            (métadonnées) : conservé 6 mois, puis supprimé automatiquement.
+          </li>
+          <li>
+            <strong className="text-[#EDEEF0]">Journaux techniques</strong> :
+            conservés 90 jours au plus.
+          </li>
+          <li>
+            <strong className="text-[#EDEEF0]">Données de compte</strong> :
+            conservées tant que votre compte est actif. Un compte inactif
+            depuis 24 mois (aucune connexion, aucun envoi) est prévenu par
+            email 30 jours à l&rsquo;avance, puis anonymisé.
+          </li>
+          <li>
+            <strong className="text-[#EDEEF0]">
+              Sur demande d&rsquo;effacement
+            </strong>{" "}
+            : vos données personnelles sont effacées ou anonymisées sous 30
+            jours. Seules les traces de paiement (recharges et mouvements de
+            crédits) sont conservées, pour nos obligations comptables.
+          </li>
+        </ul>
 
         <H2>Sécurité</H2>
         <P>
@@ -299,26 +315,32 @@ export default function ConfidentialitePage() {
           >
             profil
           </Link>
-          . Pour toute autre demande concernant vos données personnelles
-          (accès complet, suppression de compte, opposition), écrivez à{" "}
+          . Pour exercer vos droits d&rsquo;accès, de rectification,
+          d&rsquo;effacement ou d&rsquo;opposition sur vos données
+          personnelles, écrivez à{" "}
           <a
             href="mailto:contact@zendou.app"
             className="text-[#8AA4FF] underline underline-offset-2"
           >
             contact@zendou.app
+          </a>{" "}
+          ou appelez le{" "}
+          <a
+            href="tel:+224624815998"
+            className="text-[#8AA4FF] underline underline-offset-2"
+          >
+            +224 624 81 59 98
           </a>
           . La suppression d&rsquo;un compte est aujourd&rsquo;hui traitée
           sur demande auprès de nous plutôt que par un bouton en libre-service
           dans le tableau de bord.
         </P>
-        <ToComplete>
-          délégué à la protection des données ou point de contact dédié, si
-          désigné
-        </ToComplete>
-        <ToComplete>
-          procédure et délai de traitement des demandes d&rsquo;exercice des
-          droits (accès, rectification, suppression, opposition)
-        </ToComplete>
+        <P>
+          Nous accusons réception de votre demande sous 5 jours ouvrés et y
+          répondons sous 30 jours. Ce délai peut être prolongé une fois de
+          30 jours pour une demande complexe ; nous vous en informons alors,
+          avec le motif, avant la fin du premier délai.
+        </P>
 
         <H2>Contact</H2>
         <P>
