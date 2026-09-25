@@ -52,7 +52,8 @@ export default function DashboardEmailDetailPage() {
             Email introuvable
           </h1>
           <p className="mb-4 text-sm text-[#9BA1A8]">
-            Cet email n’existe pas ou a été supprimé.
+            Cet envoi est introuvable. Les envois de plus de 6 mois sont
+            supprimés automatiquement du journal.
           </p>
           <Link
             href="/dashboard/emails"

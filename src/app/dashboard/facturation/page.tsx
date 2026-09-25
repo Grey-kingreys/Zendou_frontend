@@ -10,6 +10,7 @@ import {
   formatGnf,
   formatNumberFr,
 } from "@/lib/format";
+import { isEmailLogEntryPurged } from "@/lib/retention";
 import {
   creditReasonLabelFr,
   topUpMethodMeta,
@@ -42,10 +43,18 @@ function packLabel(packs: CreditPack[] | null, packId: string): string {
   return packId.charAt(0).toUpperCase() + packId.slice(1);
 }
 
+/**
+ * Message affiché (title + lecteur d'écran) quand la ligne `Email`
+ * correspondante a déjà été purgée du journal par la rétention
+ * automatique de 6 mois (RET-12).
+ */
+const EMAIL_LOG_ENTRY_PURGED_HINT = "Détail supprimé du journal après 6 mois";
+
 /** Contenu affichable de la colonne Référence d'une ligne du ledger. */
 type LedgerReferenceCell =
   | { kind: "text"; value: string }
-  | { kind: "link"; value: string; href: string };
+  | { kind: "link"; value: string; href: string }
+  | { kind: "purged"; value: string };
 
 /**
  * Décide du contenu de la colonne Référence à partir de `entry.reason` : la
@@ -58,7 +67,10 @@ type LedgerReferenceCell =
  *     identifiant interne, celui-là même que le client retrouve dans son
  *     journal (`/dashboard/emails/[publicId]`) — affiché en lien vers cette
  *     page, c'est le rapprochement qui compte le plus puisque c'est la
- *     quasi-totalité des lignes d'un compte actif.
+ *     quasi-totalité des lignes d'un compte actif. Au-delà de 6 mois
+ *     (RET-12), la ligne `Email` correspondante a été purgée : le lien
+ *     mènerait à un 404, la référence est alors affichée en texte simple
+ *     (voir `isEmailLogEntryPurged`).
  *   - ADMIN_GRANT (admin-users.service.ts) : id d'une `AdminAction`, opaque
  *     pour le client, jamais affiché.
  *   - TOPUP (admin-billing.service.ts) : id de la demande de recharge,
@@ -73,6 +85,9 @@ function ledgerReferenceCell(
   switch (entry.reason) {
     case "SEND":
       if (!entry.reference) return null;
+      if (isEmailLogEntryPurged(entry.createdAt)) {
+        return { kind: "purged", value: entry.reference };
+      }
       return {
         kind: "link",
         value: entry.reference,
@@ -103,6 +118,14 @@ function LedgerReferenceValue({
       <Link href={cell.href} className="text-[#8AA4FF] hover:underline">
         {cell.value}
       </Link>
+    );
+  }
+  if (cell.kind === "purged") {
+    return (
+      <span title={EMAIL_LOG_ENTRY_PURGED_HINT}>
+        {cell.value}
+        <span className="sr-only"> ({EMAIL_LOG_ENTRY_PURGED_HINT})</span>
+      </span>
     );
   }
   return cell.value;
