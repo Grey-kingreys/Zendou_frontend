@@ -66,6 +66,9 @@ export default function Footer() {
           <a href="mailto:contact@zendou.app" className="text-[#8A9099]">
             Contact
           </a>
+          <Link href="/confidentialite" className="text-[#8A9099]">
+            Confidentialité
+          </Link>
           <a href="#" className="text-[#8A9099]">
             CGU
           </a>

@@ -29,6 +29,7 @@ const STATIC_ROUTES: Array<{
   { path: "/docs/relais-smtp", priority: 0.8, changeFrequency: "monthly" },
   { path: "/docs/facturation", priority: 0.7, changeFrequency: "monthly" },
   { path: "/docs/erreurs", priority: 0.7, changeFrequency: "monthly" },
+  { path: "/confidentialite", priority: 0.3, changeFrequency: "yearly" },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
