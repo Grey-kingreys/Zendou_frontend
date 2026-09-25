@@ -150,10 +150,16 @@ export default function ConfidentialitePage() {
           adresses d&rsquo;expéditeur et de destinataire, objet, statut de
           livraison (mis en file, envoyé, livré, rejeté...), horodatages, et
           l&rsquo;identifiant technique attribué par notre fournisseur
-          d&rsquo;envoi. <strong>Le contenu (corps) de vos emails
-          n&rsquo;est pas stocké</strong> par Zendou une fois l&rsquo;envoi
-          traité.
+          d&rsquo;envoi. <strong>Le contenu (corps) de vos emails n&rsquo;est
+          jamais enregistré en base de données.</strong> Il transite par
+          notre file d&rsquo;envoi et en est effacé dès que l&rsquo;envoi
+          réussit. En cas d&rsquo;échec définitif (toutes les tentatives
+          épuisées), il reste dans cette file.
         </P>
+        <ToComplete>
+          durée de conservation des emails en échec dans la file
+          d&rsquo;envoi
+        </ToComplete>
 
         <H3>Domaines, clés API et identifiants SMTP</H3>
         <P>
