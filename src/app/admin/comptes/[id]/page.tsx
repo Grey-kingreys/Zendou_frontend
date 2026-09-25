@@ -18,6 +18,7 @@ import type {
   AdminCreditResult,
   AdminQuotaResult,
   AdminUserActionResult,
+  AdminUserAnonymizeResult,
   AdminUserDetail,
 } from "@/lib/types";
 
@@ -33,7 +34,22 @@ const MIN_DAILY_SEND_LIMIT = 1;
 const MAX_DAILY_SEND_LIMIT = 1_000_000;
 const MAX_CREDIT_DELTA = 1_000_000;
 
-type DialogType = "credit" | "suspend" | "reactivate" | "quota" | "delete";
+type DialogType =
+  | "credit"
+  | "suspend"
+  | "reactivate"
+  | "quota"
+  | "delete"
+  | "anonymize";
+
+/**
+ * Message d'échec générique de l'anonymisation (même famille que celui de la
+ * suppression, B17) : couvre tout ce qui n'est pas un refus métier connu
+ * (400 soi-même, 409 admin/déjà anonymisé, 404 introuvable), dont l'API rend
+ * déjà un message français explicite affiché tel quel.
+ */
+const ANONYMIZE_FAILED_MESSAGE =
+  "L'anonymisation a échoué. Le compte n'a pas été modifié.";
 
 /**
  * Fonction pure séparée du composant — même raison qu'en `/admin/recharges` :
@@ -89,6 +105,10 @@ export default function AdminCompteDetailPage() {
   const [notFound, setNotFound] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  // Encadré d'avertissement persistant (jamais un toast) : ce qui reste à
+  // faire à la main après une anonymisation dont une partie hors base a
+  // échoué (identité SES, sessions). Vide sinon.
+  const [remainingActions, setRemainingActions] = useState<string[]>([]);
 
   const [dialog, setDialog] = useState<DialogType | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
@@ -103,6 +123,7 @@ export default function AdminCompteDetailPage() {
   const [suspendReason, setSuspendReason] = useState("");
   const [reactivateReason, setReactivateReason] = useState("");
   const [quotaValue, setQuotaValue] = useState("");
+  const [anonymizeConfirmed, setAnonymizeConfirmed] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -183,11 +204,19 @@ export default function AdminCompteDetailPage() {
     setDialog("delete");
   }
 
+  function openAnonymize() {
+    setSuccessMessage(null);
+    setActionError(null);
+    setAnonymizeConfirmed(false);
+    setDialog("anonymize");
+  }
+
   function closeDialog() {
     if (actionLoading) return;
     setDialog(null);
     setActionError(null);
     setDeleteBlocked(false);
+    setAnonymizeConfirmed(false);
   }
 
   const creditDeltaNum = Number(creditDelta);
@@ -260,6 +289,14 @@ export default function AdminCompteDetailPage() {
         await api.del<void>(`/v1/admin/users/${detail.id}`);
         router.push("/admin/comptes");
         return;
+      } else if (dialog === "anonymize") {
+        const result = await api.post<AdminUserAnonymizeResult>(
+          `/v1/admin/users/${detail.id}/anonymize`
+        );
+        setSuccessMessage(
+          `Compte anonymisé le ${formatDateTimeFr(result.anonymizedAt)}.`
+        );
+        setRemainingActions(result.remainingActions);
       }
 
       setDialog(null);
@@ -277,6 +314,19 @@ export default function AdminCompteDetailPage() {
             `La suppression a échoué (erreur ${err.status} côté serveur). Le compte n'a pas été supprimé.`
           );
           setDeleteBlocked(false);
+        } else if (
+          dialog === "anonymize" &&
+          err.status !== 400 &&
+          err.status !== 404 &&
+          err.status !== 409
+        ) {
+          // 400 (soi-même), 404 (introuvable) et 409 (compte admin ou déjà
+          // anonymisé) ont déjà un message français explicite côté API,
+          // affiché tel quel ci-dessous. Tout le reste (ex. 500) reste
+          // ambigu sur l'état réel du compte : message maison, même famille
+          // que la suppression.
+          setActionError(ANONYMIZE_FAILED_MESSAGE);
+          setDeleteBlocked(false);
         } else {
           setActionError(err.message);
           // 409 sur la suppression : refus métier « ce compte a encore des
@@ -285,6 +335,9 @@ export default function AdminCompteDetailPage() {
           // geste, pas seulement une phrase.
           setDeleteBlocked(dialog === "delete" && err.status === 409);
         }
+      } else if (dialog === "anonymize") {
+        setActionError(ANONYMIZE_FAILED_MESSAGE);
+        setDeleteBlocked(false);
       } else {
         setActionError("Impossible de joindre le serveur.");
         setDeleteBlocked(false);
@@ -332,6 +385,10 @@ export default function AdminCompteDetailPage() {
 
   const roleMeta = adminAccountRoleMeta(detail.role);
   const statusMeta = adminAccountStatusMeta(detail.status);
+  // Booléens dérivés une fois : conditionnent aussi bien la carte
+  // d'anonymisation que la carte de réactivation (précédent B3, cf. spec).
+  const isAdminRole = detail.role === "ADMIN";
+  const isAnonymized = Boolean(detail.anonymizedAt);
 
   const dialogTitle =
     dialog === "credit"
@@ -344,7 +401,9 @@ export default function AdminCompteDetailPage() {
             ? "Modifier le quota ?"
             : dialog === "delete"
               ? "Supprimer ce compte ?"
-              : "";
+              : dialog === "anonymize"
+                ? "Anonymiser ce compte ?"
+                : "";
 
   const dialogDescription =
     dialog === "credit"
@@ -357,7 +416,9 @@ export default function AdminCompteDetailPage() {
             ? `Nouveau quota d'envoi journalier pour ${detail.name}. Quota actuel : ${formatNumberFr(detail.dailySendLimit)} emails/jour.`
             : dialog === "delete"
               ? `Le compte de ${detail.name} sera supprimé définitivement — impossible à annuler. Son adresse (${detail.email}) redeviendra aussitôt disponible pour une nouvelle inscription. Les lignes du journal d'audit qui le concernent sont conservées (son email y reste archivé) : la trace administrative ne disparaît pas.`
-              : "";
+              : dialog === "anonymize"
+                ? `Le compte de ${detail.name} sera anonymisé en réponse à une demande d'effacement. Action irréversible, impossible à annuler.`
+                : "";
 
   const confirmLabel =
     dialog === "credit"
@@ -368,7 +429,9 @@ export default function AdminCompteDetailPage() {
           ? "Réactiver"
           : dialog === "quota"
             ? "Modifier"
-            : "Supprimer";
+            : dialog === "anonymize"
+              ? "Anonymiser"
+              : "Supprimer";
 
   const confirmDisabled =
     dialog === "credit"
@@ -379,7 +442,9 @@ export default function AdminCompteDetailPage() {
           ? !reactivateReasonValid
           : dialog === "quota"
             ? !quotaValueValid
-            : false;
+            : dialog === "anonymize"
+              ? !anonymizeConfirmed
+              : false;
 
   return (
     <div className="mx-auto max-w-[960px]">
@@ -398,6 +463,7 @@ export default function AdminCompteDetailPage() {
             </h1>
             <Badge color={roleMeta.color} label={roleMeta.label} />
             <Badge color={statusMeta.color} label={statusMeta.label} />
+            {isAnonymized && <Badge color="gray" label="Anonymisé" />}
             {isSelf && <Badge color="blue" label="Vous" />}
           </div>
           <p className="text-sm text-[#9BA1A8]">
@@ -414,6 +480,19 @@ export default function AdminCompteDetailPage() {
         <p className="mb-6 rounded-lg border border-[#35D07F]/30 bg-[#35D07F]/10 px-3.5 py-2.5 text-[13.5px] text-[#35D07F]">
           {successMessage}
         </p>
+      )}
+
+      {remainingActions.length > 0 && (
+        <div className="mb-6 rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[13.5px] text-[#F5C177]">
+          <p className="mb-1.5 font-medium">
+            Actions restantes à faire à la main :
+          </p>
+          <ul className="list-disc space-y-0.5 pl-4">
+            {remainingActions.map((action, index) => (
+              <li key={index}>{action}</li>
+            ))}
+          </ul>
+        </div>
       )}
 
       {detail.status === "SUSPENDED" && detail.suspensionReason && (
@@ -546,17 +625,25 @@ export default function AdminCompteDetailPage() {
                 <h3 className="mb-1.5 font-heading text-[14.5px] font-semibold text-[#EDEEF0]">
                   Réactiver
                 </h3>
-                <p className="mb-4 text-[13px] leading-relaxed text-[#9BA1A8] text-pretty">
-                  Rouvre le compte et réinitialise son compteur de réputation
-                  — bounces et plaintes repartent de zéro.
-                </p>
-                <button
-                  type="button"
-                  onClick={openReactivate}
-                  className="rounded-lg bg-[#35D07F]/15 px-4 py-2.5 text-[13.5px] font-medium text-[#35D07F] transition-opacity hover:opacity-90"
-                >
-                  Réactiver le compte
-                </button>
+                {isAnonymized ? (
+                  <p className="rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[12.5px] text-[#F5C177]">
+                    Ce compte est anonymisé : il ne peut pas être réactivé.
+                  </p>
+                ) : (
+                  <>
+                    <p className="mb-4 text-[13px] leading-relaxed text-[#9BA1A8] text-pretty">
+                      Rouvre le compte et réinitialise son compteur de
+                      réputation, bounces et plaintes repartent de zéro.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={openReactivate}
+                      className="rounded-lg bg-[#35D07F]/15 px-4 py-2.5 text-[13.5px] font-medium text-[#35D07F] transition-opacity hover:opacity-90"
+                    >
+                      Réactiver le compte
+                    </button>
+                  </>
+                )}
               </>
             )}
           </div>
@@ -576,6 +663,41 @@ export default function AdminCompteDetailPage() {
             >
               Modifier le quota
             </button>
+          </div>
+
+          <div className="rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-5 sm:col-span-2">
+            <h3 className="mb-1.5 font-heading text-[14.5px] font-semibold text-[#EDEEF0]">
+              Anonymiser le compte (demande d&apos;effacement)
+            </h3>
+            <p className="mb-4 text-[13px] leading-relaxed text-[#9BA1A8] text-pretty">
+              Efface les données personnelles du compte en réponse à une
+              demande d&apos;effacement (politique de confidentialité :
+              traitement sous 30 jours). Les traces de paiement sont
+              conservées pour la comptabilité. Action irréversible.
+            </p>
+            {isSelf ? (
+              <p className="rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[12.5px] text-[#F5C177]">
+                Vous ne pouvez pas anonymiser votre propre compte : demandez à
+                un autre administrateur.
+              </p>
+            ) : isAdminRole ? (
+              <p className="rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[12.5px] text-[#F5C177]">
+                Ce compte est administrateur : rétrogradez-le d&apos;abord en
+                client avant de pouvoir l&apos;anonymiser.
+              </p>
+            ) : isAnonymized ? (
+              <p className="rounded-lg border border-white/[0.09] bg-white/[0.03] px-3.5 py-2.5 text-[13.5px] text-[#9BA1A8]">
+                Anonymisé le {formatDateTimeFr(detail.anonymizedAt)}.
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={openAnonymize}
+                className="rounded-lg border border-[#E5484D]/30 px-4 py-2.5 text-[13.5px] font-medium text-[#FF9592] transition-opacity hover:opacity-90"
+              >
+                Anonymiser le compte
+              </button>
+            )}
           </div>
 
           <div className="rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-5 sm:col-span-2">
@@ -719,7 +841,7 @@ export default function AdminCompteDetailPage() {
         title={dialogTitle}
         description={dialogDescription}
         confirmLabel={confirmLabel}
-        danger={dialog === "suspend" || dialog === "delete"}
+        danger={dialog === "suspend" || dialog === "delete" || dialog === "anonymize"}
         loading={actionLoading}
         confirmDisabled={confirmDisabled}
         onConfirm={handleConfirm}
@@ -819,6 +941,44 @@ export default function AdminCompteDetailPage() {
               onChange={(event) => setQuotaValue(event.target.value)}
               className="w-full rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[16px] text-[#EDEEF0] outline-none focus:border-[#5B7CFA]"
             />
+          </div>
+        )}
+
+        {dialog === "anonymize" && (
+          <div className="flex flex-col gap-3">
+            <div className="rounded-lg border border-white/[0.09] bg-[#0E1013] p-3.5 text-[13px] leading-relaxed text-[#C5CACF]">
+              <p className="mb-1.5 font-medium text-[#EDEEF0]">
+                Sera effacé définitivement :
+              </p>
+              <ul className="mb-3 list-disc space-y-0.5 pl-4">
+                <li>Email, nom, entreprise</li>
+                <li>Mot de passe et connexion Google</li>
+                <li>Domaines, avec leur identité d&apos;envoi</li>
+                <li>Clés API et identifiants SMTP</li>
+                <li>Journal des envois</li>
+                <li>Lignes de suppression propres au compte</li>
+                <li>Sessions actives</li>
+              </ul>
+              <p className="mb-1.5 font-medium text-[#EDEEF0]">
+                Sera conservé (comptabilité) :
+              </p>
+              <ul className="list-disc space-y-0.5 pl-4">
+                <li>Recharges et mouvements de crédits</li>
+                <li>Numéro Mobile Money, masqué</li>
+              </ul>
+            </div>
+            <label className="flex items-start gap-2.5 text-[13px] text-[#C5CACF]">
+              <input
+                type="checkbox"
+                checked={anonymizeConfirmed}
+                onChange={(event) => setAnonymizeConfirmed(event.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/[0.2] bg-[#0E1013] accent-[#E5484D]"
+              />
+              <span>
+                Je comprends que cette action est irréversible et je confirme
+                l&apos;anonymisation de ce compte.
+              </span>
+            </label>
           </div>
         )}
 

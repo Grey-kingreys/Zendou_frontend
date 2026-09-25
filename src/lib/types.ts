@@ -404,6 +404,12 @@ export interface AdminUserListItem {
   suspendedAt: string | null;
   creditBalance: number;
   emailsSent30d: number;
+  /**
+   * Date d'anonymisation (ANON-1), `null` pour un compte qui ne l'est pas.
+   * Optionnel pour tolérer un backend pas encore déployé avec ce champ :
+   * absent, l'écran admin traite le compte comme non anonymisé.
+   */
+  anonymizedAt?: string | null;
 }
 
 export interface PaginatedAdminUsers {
@@ -422,7 +428,8 @@ export type AdminActionType =
   | "PROMOTE_ADMIN"
   | "DEMOTE_ADMIN"
   | "APPROVE_TOPUP"
-  | "REJECT_TOPUP";
+  | "REJECT_TOPUP"
+  | "ANONYMIZE_USER";
 
 export interface AdminActionItem {
   id: string;
@@ -466,6 +473,17 @@ export interface AdminCreditResult {
   delta: number;
   creditBalance: number;
   actionId: string;
+}
+
+/**
+ * Réponse de `POST /v1/admin/users/:id/anonymize` (ANON-1).
+ * `remainingActions` : ce qui n'a pas pu être fait hors de la base (identité
+ * SES non détruite, sessions non révoquées), en français, à faire à la main.
+ * Vide quand tout est fait.
+ */
+export interface AdminUserAnonymizeResult {
+  anonymizedAt: string;
+  remainingActions: string[];
 }
 
 // --- Admin : statistiques plateforme (GET /v1/admin/stats/emails) ---------

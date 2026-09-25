@@ -251,12 +251,15 @@ export default function AdminComptesPage() {
                         <td className="p-0">
                           <Link
                             href={`/admin/comptes/${item.id}`}
-                            className="block px-3 py-3.5"
+                            className="flex flex-wrap items-center gap-1.5 px-3 py-3.5"
                           >
                             <Badge
                               color={statusMeta.color}
                               label={statusMeta.label}
                             />
+                            {item.anonymizedAt && (
+                              <Badge color="gray" label="Anonymisé" />
+                            )}
                           </Link>
                         </td>
                         <td className="p-0">
@@ -327,6 +330,9 @@ export default function AdminComptesPage() {
                     <div className="flex shrink-0 flex-col items-end gap-1.5">
                       <Badge color={roleMeta.color} label={roleMeta.label} />
                       <Badge color={statusMeta.color} label={statusMeta.label} />
+                      {item.anonymizedAt && (
+                        <Badge color="gray" label="Anonymisé" />
+                      )}
                     </div>
                   </div>
 

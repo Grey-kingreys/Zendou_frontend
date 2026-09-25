@@ -200,6 +200,8 @@ export function adminActionTypeMeta(type: AdminActionType): {
       return { label: "Recharge approuvée", color: "green" };
     case "REJECT_TOPUP":
       return { label: "Recharge rejetée", color: "red" };
+    case "ANONYMIZE_USER":
+      return { label: "Anonymisation", color: "red" };
   }
 }
 
