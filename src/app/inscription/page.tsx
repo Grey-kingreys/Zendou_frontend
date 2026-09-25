@@ -13,7 +13,12 @@ import {
 import TurnstileWidget, {
   type TurnstileWidgetHandle,
 } from "@/components/auth/TurnstileWidget";
+import {
+  GoogleContinueButton,
+  useGoogleProviderAvailable,
+} from "@/components/auth/GoogleButton";
 import { api, ApiError } from "@/lib/api";
+import { resolveNextPath } from "@/lib/next-path";
 import type { RegisterPayload, User } from "@/lib/types";
 
 const USAGE_OPTIONS = [
@@ -32,6 +37,11 @@ const CAPTCHA_EXPIRED_MESSAGE = "La vérification a expiré, refaites-la.";
 
 export default function InscriptionPage() {
   const router = useRouter();
+  const googleAvailable = useGoogleProviderAvailable();
+  // Pas de parametre `next` porte par l'ecran d'inscription aujourd'hui :
+  // resolveNextPath(null) retombe sur "/dashboard", meme regle que la
+  // connexion.
+  const googleNextPath = resolveNextPath(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
@@ -98,6 +108,7 @@ export default function InscriptionPage() {
         </>
       }
     >
+      {googleAvailable && <GoogleContinueButton next={googleNextPath} />}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <TextField
           label="Nom"

@@ -1,18 +1,23 @@
-const API_BASE_URL =
+export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "http://localhost:4000";
 
 /**
  * Thrown for any non-2xx response from the API. `status` lets callers branch
  * on specific HTTP codes (401, 409, ...) and `message` is safe to show to
- * the user when the API already returns a human-readable message.
+ * the user when the API already returns a human-readable message. `code`
+ * porte le code metier optionnel du corps d'erreur (ex. "PASSWORD_NOT_SET",
+ * "DOMAIN_NOT_VERIFIED", present depuis la vague 18) - absent si le backend
+ * n'en fournit pas pour cette erreur.
  */
 export class ApiError extends Error {
   status: number;
+  code?: string;
 
-  constructor(status: number, message: string) {
+  constructor(status: number, message: string, code?: string) {
     super(message);
     this.name = "ApiError";
     this.status = status;
+    this.code = code;
   }
 }
 
@@ -27,6 +32,16 @@ function extractMessage(body: unknown, fallback: string): string {
     }
   }
   return fallback;
+}
+
+function extractCode(body: unknown): string | undefined {
+  if (body && typeof body === "object" && "code" in body) {
+    const code = (body as { code?: unknown }).code;
+    if (typeof code === "string" && code.trim().length > 0) {
+      return code;
+    }
+  }
+  return undefined;
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -56,7 +71,8 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     }
     throw new ApiError(
       response.status,
-      extractMessage(body, `Erreur ${response.status}`)
+      extractMessage(body, `Erreur ${response.status}`),
+      extractCode(body)
     );
   }
 

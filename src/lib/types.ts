@@ -27,6 +27,21 @@ export interface User {
    * côté client, même partiellement.
    */
   testSenderAddress?: string | null;
+  /**
+   * Connexion Google (vague B30, contrat figé `docs/plans/ACTIVE.md`) :
+   * `hasPassword` distingue un compte avec mot de passe d'un compte créé (ou
+   * rattaché) uniquement via Google, `googleLinked` indique qu'un compte
+   * Google est associé. Optionnels pour tolérer un backend pas encore
+   * déployé avec ces champs : absents, `/dashboard/profil` traite le compte
+   * comme ayant un mot de passe et sans Google associé, jamais de plantage.
+   */
+  hasPassword?: boolean;
+  googleLinked?: boolean;
+}
+
+/** Réponse de GET /v1/auth/providers (public, sans session), vague B30. */
+export interface AuthProvidersResponse {
+  google?: boolean;
 }
 
 export interface LoginPayload {

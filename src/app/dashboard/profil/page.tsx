@@ -152,6 +152,13 @@ export default function DashboardProfilPage() {
     };
   }, []);
 
+  // Connexion Google (vague B30) : champs absents cote backend (deploiement
+  // pas encore synchronise) -> compte traite comme ayant un mot de passe et
+  // sans Google associe, jamais de plantage (voir User.hasPassword /
+  // User.googleLinked dans src/lib/types.ts).
+  const hasPassword = user?.hasPassword !== false;
+  const googleLinked = user?.googleLinked === true;
+
   const dirty =
     values.name !== initialValues.name ||
     values.company !== initialValues.company ||
@@ -286,6 +293,11 @@ export default function DashboardProfilPage() {
                 L’adresse email ne peut pas être modifiée : c’est votre
                 identifiant de connexion.
               </p>
+              {googleLinked && (
+                <div className="mt-2.5">
+                  <Badge color="blue" label="Compte Google associé" />
+                </div>
+              )}
             </div>
 
             <form
@@ -352,80 +364,92 @@ export default function DashboardProfilPage() {
             </form>
           </section>
 
-          {/* --- Changer le mot de passe --------------------------------- */}
-          <section className="rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-6">
-            <h2 className="mb-1.5 font-heading text-lg font-semibold text-[#EDEEF0]">
-              Changer le mot de passe
-            </h2>
-            <p className="mb-5 text-[13.5px] text-[#9BA1A8]">
-              Choisissez un mot de passe difficile à deviner.
-            </p>
-
-            <form
-              onSubmit={handlePasswordSubmit}
-              className="flex flex-col gap-4"
-            >
-              <TextField
-                label="Mot de passe actuel"
-                name="currentPassword"
-                type="password"
-                autoComplete="current-password"
-                required
-                revealable
-                value={currentPassword}
-                onChange={(event) => setCurrentPassword(event.target.value)}
-              />
-              <TextField
-                label="Nouveau mot de passe"
-                name="newPassword"
-                type="password"
-                autoComplete="new-password"
-                required
-                minLength={8}
-                hint="8 caractères minimum"
-                revealable
-                value={newPassword}
-                onChange={(event) => setNewPassword(event.target.value)}
-              />
-              <TextField
-                label="Confirmer le nouveau mot de passe"
-                name="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                required
-                minLength={8}
-                revealable
-                value={confirmPassword}
-                onChange={(event) => setConfirmPassword(event.target.value)}
-              />
-
-              <p className="rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[13px] text-[#F5C177]">
-                Vous serez déconnecté de tous vos appareils après le
-                changement.
+          {/* --- Mot de passe ---------------------------------------------- */}
+          {hasPassword ? (
+            <section className="rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-6">
+              <h2 className="mb-1.5 font-heading text-lg font-semibold text-[#EDEEF0]">
+                Changer le mot de passe
+              </h2>
+              <p className="mb-5 text-[13.5px] text-[#9BA1A8]">
+                Choisissez un mot de passe difficile à deviner.
               </p>
 
-              {passwordError && (
-                <p className="rounded-lg border border-[#E5484D]/30 bg-[#E5484D]/10 px-3.5 py-2.5 text-[13.5px] text-[#FF9592]">
-                  {passwordError}
-                </p>
-              )}
-              {passwordChanged && (
-                <p className="rounded-lg border border-[#35D07F]/25 bg-[#35D07F]/10 px-3.5 py-2.5 text-[13.5px] text-[#35D07F]">
-                  Mot de passe modifié. Redirection vers la connexion…
-                </p>
-              )}
+              <form
+                onSubmit={handlePasswordSubmit}
+                className="flex flex-col gap-4"
+              >
+                <TextField
+                  label="Mot de passe actuel"
+                  name="currentPassword"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  revealable
+                  value={currentPassword}
+                  onChange={(event) => setCurrentPassword(event.target.value)}
+                />
+                <TextField
+                  label="Nouveau mot de passe"
+                  name="newPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
+                  hint="8 caractères minimum"
+                  revealable
+                  value={newPassword}
+                  onChange={(event) => setNewPassword(event.target.value)}
+                />
+                <TextField
+                  label="Confirmer le nouveau mot de passe"
+                  name="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
+                  revealable
+                  value={confirmPassword}
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                />
 
-              <div>
-                <button
-                  type="submit"
-                  disabled={changingPassword || passwordChanged}
-                  className="rounded-lg bg-[#5B7CFA] px-5 py-2.5 text-[13.5px] font-semibold text-[#F7F9FF] transition-opacity disabled:opacity-40"
-                >
-                  {changingPassword ? "Modification…" : "Changer le mot de passe"}
-                </button>
-              </div>
-            </form>
-          </section>
+                <p className="rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[13px] text-[#F5C177]">
+                  Vous serez déconnecté de tous vos appareils après le
+                  changement.
+                </p>
+
+                {passwordError && (
+                  <p className="rounded-lg border border-[#E5484D]/30 bg-[#E5484D]/10 px-3.5 py-2.5 text-[13.5px] text-[#FF9592]">
+                    {passwordError}
+                  </p>
+                )}
+                {passwordChanged && (
+                  <p className="rounded-lg border border-[#35D07F]/25 bg-[#35D07F]/10 px-3.5 py-2.5 text-[13.5px] text-[#35D07F]">
+                    Mot de passe modifié. Redirection vers la connexion…
+                  </p>
+                )}
+
+                <div>
+                  <button
+                    type="submit"
+                    disabled={changingPassword || passwordChanged}
+                    className="rounded-lg bg-[#5B7CFA] px-5 py-2.5 text-[13.5px] font-semibold text-[#F7F9FF] transition-opacity disabled:opacity-40"
+                  >
+                    {changingPassword ? "Modification…" : "Changer le mot de passe"}
+                  </button>
+                </div>
+              </form>
+            </section>
+          ) : (
+            <section className="rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-6">
+              <h2 className="mb-1.5 font-heading text-lg font-semibold text-[#EDEEF0]">
+                Mot de passe
+              </h2>
+              <p className="text-[13.5px] text-[#9BA1A8]">
+                Votre compte utilise la connexion Google : aucun mot de passe
+                n’est défini.
+              </p>
+            </section>
+          )}
 
           {/* --- Résumé du compte ----------------------------------------- */}
           <section className="rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-6">

@@ -5,26 +5,35 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import AuthCard from "@/components/auth/AuthCard";
 import { FormError, SubmitButton, TextField } from "@/components/auth/fields";
+import {
+  GoogleContinueButton,
+  useGoogleProviderAvailable,
+} from "@/components/auth/GoogleButton";
 import { api, ApiError } from "@/lib/api";
+import { resolveNextPath } from "@/lib/next-path";
 import type { User } from "@/lib/types";
 
-// Destinations autorisees apres connexion. Le proxy (src/proxy.ts) renvoie
-// ici avec `?next=<chemin prive demande>` ; tout le reste est ignore.
-const NEXT_PATH_PREFIXES = ["/dashboard", "/admin", "/confirmez-votre-email"];
+// Codes d'erreur renvoyes par GET /v1/auth/google/callback (redirection
+// `/connexion?erreur=<code>` en echec, contrat B30 fige dans
+// docs/plans/ACTIVE.md). La valeur brute du parametre n'est jamais affichee :
+// un code absent du dictionnaire retombe sur le message generique.
+const GOOGLE_ERROR_MESSAGES: Record<string, string> = {
+  google_annule: "Connexion Google annulée.",
+  google_session_expiree:
+    "La session de connexion Google a expiré. Réessayez.",
+  google_email_non_verifie:
+    "Votre compte Google n'a pas d'adresse email vérifiée par Google. Utilisez un compte Google avec un email vérifié, ou créez un compte avec un mot de passe.",
+  google_compte_conflit:
+    "Cet email est déjà associé à un autre compte Google. Connectez-vous avec ce compte Google, ou contactez le support.",
+  google_indisponible:
+    "La connexion Google est momentanément indisponible. Réessayez plus tard ou utilisez votre mot de passe.",
+};
+const GOOGLE_ERROR_FALLBACK =
+  "Une erreur est survenue pendant la connexion. Réessayez.";
 
-/**
- * Resout le parametre `next` en chemin de redirection sur. Une liste blanche
- * de prefixes evite la redirection ouverte : un `next` fourni par un tiers ne
- * peut pas envoyer ailleurs que dans les zones privees du site. `//hote` et
- * `/\hote` sont rejetes explicitement car les navigateurs les traitent comme
- * des URL absolues malgre le `/` initial.
- */
-function resolveNextPath(raw: string | null): string {
-  if (!raw) return "/dashboard";
-  if (raw.startsWith("//") || raw.startsWith("/\\")) return "/dashboard";
-  return NEXT_PATH_PREFIXES.some((prefix) => raw.startsWith(prefix))
-    ? raw
-    : "/dashboard";
+function googleErrorMessage(code: string | null): string | null {
+  if (!code) return null;
+  return GOOGLE_ERROR_MESSAGES[code] ?? GOOGLE_ERROR_FALLBACK;
 }
 
 /**
@@ -45,21 +54,30 @@ export default function ConnexionPage() {
 function ConnexionForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const googleAvailable = useGoogleProviderAvailable();
+  const nextPath = resolveNextPath(searchParams.get("next"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() =>
+    googleErrorMessage(searchParams.get("erreur"))
+  );
+  const [passwordNotSet, setPasswordNotSet] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setPasswordNotSet(false);
     setLoading(true);
 
     try {
       await api.post<User>("/v1/auth/login", { email, password });
-      router.push(resolveNextPath(searchParams.get("next")));
+      router.push(nextPath);
     } catch (err) {
-      if (err instanceof ApiError && err.status === 401) {
+      if (err instanceof ApiError && err.status === 401 && err.code === "PASSWORD_NOT_SET") {
+        setError(err.message);
+        setPasswordNotSet(true);
+      } else if (err instanceof ApiError && err.status === 401) {
         setError("Email ou mot de passe incorrect.");
       } else if (err instanceof ApiError) {
         setError(err.message);
@@ -83,6 +101,7 @@ function ConnexionForm() {
         </>
       }
     >
+      {googleAvailable && <GoogleContinueButton next={nextPath} />}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <TextField
           label="Email"
@@ -105,6 +124,11 @@ function ConnexionForm() {
         />
 
         {error && <FormError message={error} />}
+        {passwordNotSet && googleAvailable && (
+          <p className="text-[13px] text-[#9BA1A8]">
+            Utilisez le bouton « Continuer avec Google » ci-dessus pour vous connecter.
+          </p>
+        )}
 
         <SubmitButton loading={loading} loadingLabel="Connexion…">
           Se connecter
