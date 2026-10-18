@@ -172,11 +172,6 @@ export default function DocsHomePage() {
         <code className="rounded bg-white/[0.08] px-1 py-0.5 font-mono text-[12.5px]">
           {API_V1_BASE_URL}
         </code>
-        . En local (backend lancé avec <code className="rounded bg-white/[0.08] px-1 py-0.5 font-mono text-[12.5px]">npm run start:dev</code>),
-        remplacez-la par{" "}
-        <code className="rounded bg-white/[0.08] px-1 py-0.5 font-mono text-[12.5px]">
-          http://localhost:4000/v1
-        </code>
         .
       </Callout>
 

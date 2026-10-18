@@ -21,14 +21,15 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Contrat backend (filtre d'erreurs) : `message` est toujours une chaine, les
+ * details de validation sont dans `errors`. Pas de branche tableau.
+ */
 function extractMessage(body: unknown, fallback: string): string {
   if (body && typeof body === "object" && "message" in body) {
     const message = (body as { message?: unknown }).message;
     if (typeof message === "string" && message.trim().length > 0) {
       return message;
-    }
-    if (Array.isArray(message) && message.length > 0) {
-      return message.join(" ");
     }
   }
   return fallback;

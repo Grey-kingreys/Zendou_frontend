@@ -331,6 +331,45 @@ export default function EnvoyerUnEmailPage() {
       </div>
 
       <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
+        Formats d&rsquo;adresse
+      </h2>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8] text-pretty">
+        Les champs <code>from</code> et <code>replyTo</code> acceptent deux
+        formes : <code>adresse@domaine</code> ou{" "}
+        <code>Nom &lt;adresse@domaine&gt;</code>. Le champ <code>to</code>{" "}
+        n&rsquo;accepte que l&rsquo;adresse seule. Règles :
+      </p>
+      <ul className="mb-4 list-disc space-y-1.5 pl-5 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        <li>
+          le chevron fermant doit terminer la valeur : rien ne peut suivre{" "}
+          <code>&gt;</code> ;
+        </li>
+        <li>
+          le nom peut être entre guillemets, et doit l&rsquo;être s&rsquo;il
+          contient l&rsquo;un des caractères <code>{'" ( ) , : ; < > @ [ \ ]'}</code>,
+          par exemple <code>{'"Awa, Boutique" <no-reply@boutique-awa.gn>'}</code>{" "}
+          (dans du JSON, les guillemets s&rsquo;échappent avec{" "}
+          <code>{"\\"}</code>) ;
+        </li>
+        <li>
+          la partie avant le <code>@</code> n&rsquo;est pas acceptée entre
+          guillemets ;
+        </li>
+        <li>
+          l&rsquo;adresse est ramenée en minuscules, et le domaine doit être
+          vérifié sur votre compte.
+        </li>
+      </ul>
+      <div className="mb-8">
+        <CodeBlock
+          code={`"from": "Boutique Awa <no-reply@boutique-awa.gn>",
+"replyTo": "support@boutique-awa.gn",
+"to": "client@exemple.gn"`}
+          label="exemple"
+        />
+      </div>
+
+      <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
         Exemple de requête
       </h2>
       <div className="mb-8">
