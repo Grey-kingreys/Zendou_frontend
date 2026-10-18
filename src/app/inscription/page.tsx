@@ -197,6 +197,20 @@ export default function InscriptionPage() {
             Complétez la vérification anti-robot pour continuer.
           </p>
         )}
+        <p className="text-center text-[12.5px] leading-relaxed text-[#70767D] text-pretty">
+          En créant un compte, vous acceptez les{" "}
+          <Link href="/cgu" className="text-[#8AA4FF] underline underline-offset-2">
+            CGU
+          </Link>{" "}
+          et la{" "}
+          <Link
+            href="/politique-anti-spam"
+            className="text-[#8AA4FF] underline underline-offset-2"
+          >
+            politique anti-spam
+          </Link>
+          .
+        </p>
       </form>
     </AuthCard>
   );

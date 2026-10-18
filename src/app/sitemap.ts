@@ -30,6 +30,8 @@ const STATIC_ROUTES: Array<{
   { path: "/docs/facturation", priority: 0.7, changeFrequency: "monthly" },
   { path: "/docs/erreurs", priority: 0.7, changeFrequency: "monthly" },
   { path: "/a-propos", priority: 0.3, changeFrequency: "yearly" },
+  { path: "/cgu", priority: 0.3, changeFrequency: "yearly" },
+  { path: "/politique-anti-spam", priority: 0.3, changeFrequency: "yearly" },
   { path: "/confidentialite", priority: 0.3, changeFrequency: "yearly" },
 ];
 

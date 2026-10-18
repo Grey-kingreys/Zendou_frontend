@@ -64,7 +64,7 @@ export default function ConfidentialitePage() {
           Politique de confidentialité
         </h1>
         <p className="mb-10 text-[13px] text-[#70767D]">
-          Dernière mise à jour : 25 septembre 2026.
+          Dernière mise à jour : 18 octobre 2026.
         </p>
 
         <P>
@@ -281,9 +281,17 @@ export default function ConfidentialitePage() {
           </li>
           <li>
             <strong className="text-[#EDEEF0]">Données de compte</strong> :
-            conservées tant que votre compte est actif. Un compte inactif
-            depuis 24 mois (aucune connexion, aucun envoi) est prévenu par
-            email 30 jours à l&rsquo;avance, puis anonymisé.
+            conservées tant que votre compte est actif. Un compte sans
+            connexion ni envoi depuis 24 mois est prévenu par email environ
+            un mois avant, puis anonymisé au moins 30 jours après cet
+            avertissement. Les comptes qui ont encore des crédits achetés
+            (au moins une recharge et un solde de crédits positif) ne sont
+            jamais anonymisés automatiquement pour inactivité et ne
+            reçoivent pas cet avertissement. Dès que ce solde tombe à zéro,
+            le délai normal s&rsquo;applique à nouveau. Le crédit de
+            bienvenue, un crédit accordé par Zendou ou un historique
+            d&rsquo;envois ne protègent pas un compte. Vous pouvez à tout
+            moment demander l&rsquo;anonymisation de votre compte.
           </li>
           <li>
             <strong className="text-[#EDEEF0]">
