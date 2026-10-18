@@ -8,7 +8,7 @@ import CodeBlock from "@/components/docs/CodeBlock";
 export const metadata: Metadata = {
   title: "Vérifier un domaine - Documentation Zendou",
   description:
-    "Ajoutez votre domaine, publiez les enregistrements DKIM, SPF et DMARC, et comprenez pourquoi ils comptent pour la délivrabilité.",
+    "Ajoutez votre domaine, publiez les enregistrements DKIM, MAIL FROM, SPF et DMARC, et comprenez pourquoi ils comptent pour la délivrabilité.",
   alternates: { canonical: "/docs/verifier-un-domaine" },
 };
 
@@ -229,7 +229,7 @@ export default function VerifierUnDomainePage() {
       </div>
 
       <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
-        SPF et DMARC, en clair
+        MAIL FROM, SPF et DMARC, en clair
       </h2>
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
         Ils ne sont pas exigés par Amazon SES pour vérifier le domaine, mais
@@ -239,21 +239,35 @@ export default function VerifierUnDomainePage() {
       </p>
       <div className="mb-4 rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-5">
         <h3 className="mb-1.5 font-heading text-[14.5px] font-semibold text-[#EDEEF0]">
-          SPF - qui a le droit d&rsquo;envoyer pour votre domaine
+          MAIL FROM et SPF - sur le sous-domaine bounce
         </h3>
         <p className="mb-3 text-[13.5px] leading-relaxed text-[#9BA1A8] text-pretty">
-          Un enregistrement TXT publié à la racine du domaine, qui liste les
-          serveurs autorisés à envoyer en votre nom. Il autorise Amazon SES :
+          Zendou utilise <code>bounce.</code> suivi de votre domaine comme
+          adresse d&rsquo;enveloppe (MAIL FROM). Deux enregistrements sont à
+          publier sur ce sous-domaine : un MX, pour qu&rsquo;Amazon SES
+          reçoive les retours d&rsquo;erreur, et un SPF qui l&rsquo;autorise à
+          envoyer. Le SPF est ainsi aligné avec votre domaine, ce que DMARC
+          exige, et les retours d&rsquo;erreur sont traités sur votre propre
+          sous-domaine.
         </p>
         <CodeBlock
-          code={`Nom  : boutique-awa.gn
-Type : TXT
-Valeur : v=spf1 include:amazonses.com ~all`}
+          code={`Nom       : bounce.boutique-awa.gn
+Type      : MX
+Priorité  : 10
+Valeur    : feedback-smtp.eu-west-3.amazonses.com
+
+Nom       : bounce.boutique-awa.gn
+Type      : TXT
+Valeur    : v=spf1 include:amazonses.com ~all`}
         />
         <p className="mt-3 text-[13px] leading-relaxed text-[#70767D]">
-          Si un enregistrement SPF existe déjà pour votre domaine, ne le
-          dupliquez pas : ajoutez{" "}
-          <code>include:amazonses.com</code> à celui en place.
+          Le tableau de bord affiche ces enregistrements, avec la priorité du
+          MX dans un champ séparé (la plupart des registrars en ont un). Sans
+          eux, vos envois continuent normalement : Amazon SES utilise alors
+          son adresse d&rsquo;enveloppe par défaut. Vous n&rsquo;avez plus
+          besoin d&rsquo;ajouter <code>include:amazonses.com</code> au SPF de
+          votre domaine racine, que vous pouvez laisser tel quel pour vos
+          autres services.
         </p>
       </div>
       <div className="mb-8 rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-5">

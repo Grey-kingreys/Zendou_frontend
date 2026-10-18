@@ -35,6 +35,20 @@ const REQUEST_EXAMPLE = `curl -X POST ${API_V1_BASE_URL}/emails \\
     "html": "<p>Merci pour votre commande, elle est en préparation.</p>"
   }'`;
 
+const UNSUBSCRIBE_EXAMPLE = `curl -X POST ${API_V1_BASE_URL}/emails \\
+  -H "Authorization: Bearer zd_live_votre_cle" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "from": "Boutique Awa <no-reply@boutique-awa.gn>",
+    "to": "cliente@exemple.gn",
+    "subject": "Votre bilan de la semaine",
+    "html": "<p>Voici votre bilan.</p>",
+    "headers": {
+      "List-Unsubscribe": "<https://boutique-awa.gn/desinscription?id=abc123>, <mailto:desabonnement@boutique-awa.gn>",
+      "List-Unsubscribe-Post": "List-Unsubscribe=One-Click"
+    }
+  }'`;
+
 const RESPONSE_QUEUED = `{
   "id": "e_7f3a91c2b8d1",
   "status": "queued"
@@ -58,7 +72,7 @@ const PARAMS = [
     type: "string",
     required: "Oui",
     description:
-      "Destinataire - une seule adresse nue (« client@exemple.gn »), sans nom affiché. Pas de liste ni de séparateur en v1.",
+      "Destinataire. « adresse@domaine » ou « Nom <adresse@domaine> ». Un seul destinataire, pas de liste ni de séparateur en v1. Le journal, la liste de suppression et le bac à sable travaillent sur l'adresse seule, en minuscules.",
   },
   {
     name: "replyTo",
@@ -66,6 +80,13 @@ const PARAMS = [
     required: "Non",
     description:
       "Adresse à laquelle les réponses doivent arriver. « adresse@domaine » ou « Nom <adresse@domaine> ». Soumise à la même règle que from : le domaine doit être vérifié et rattaché à votre compte, sinon l'envoi est refusé en 403.",
+  },
+  {
+    name: "headers",
+    type: "objet",
+    required: "Non",
+    description:
+      "En-têtes personnalisés, de la forme { \"X-Nom\": \"valeur\" }. 20 au plus. Seuls List-Unsubscribe, List-Unsubscribe-Post et les en-têtes X-* (hors X-SES-*) sont autorisés ; les noms ne tiennent pas compte de la casse et ne peuvent pas être en double. Voir la section « En-têtes personnalisés ».",
   },
   {
     name: "subject",
@@ -107,7 +128,7 @@ const ERROR_ROWS: {
     cause: "Adresse destinataire illisible",
     message:
       "L'adresse du destinataire est invalide : indiquez une seule adresse comme « client@exemple.gn ».",
-    action: "Le champ to n'accepte qu'une seule adresse nue, sans nom affiché.",
+    action: "Le champ to n'accepte qu'un seul destinataire, sous la forme adresse@domaine ou Nom <adresse@domaine>.",
   },
   {
     code: "400",
@@ -115,6 +136,14 @@ const ERROR_ROWS: {
     message:
       "L'adresse de réponse (reply-to) est invalide : utilisez « adresse@domaine » ou « Nom <adresse@domaine> ».",
     action: "Corrigez le format du champ replyTo, ou omettez-le.",
+  },
+  {
+    code: "400",
+    cause: "En-têtes personnalisés invalides",
+    message:
+      "L'en-tête « X-SES-Foo » n'est pas autorisé. Seuls List-Unsubscribe, List-Unsubscribe-Post et les en-têtes X-* (hors X-SES-*) peuvent être personnalisés.",
+    action:
+      "Corrigez le champ headers selon les règles de la section « En-têtes personnalisés », ou omettez-le.",
   },
   {
     code: "400",
@@ -334,10 +363,10 @@ export default function EnvoyerUnEmailPage() {
         Formats d&rsquo;adresse
       </h2>
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8] text-pretty">
-        Les champs <code>from</code> et <code>replyTo</code> acceptent deux
+        Les champs <code>from</code>, <code>to</code> et <code>replyTo</code> acceptent deux
         formes : <code>adresse@domaine</code> ou{" "}
         <code>Nom &lt;adresse@domaine&gt;</code>. Le champ <code>to</code>{" "}
-        n&rsquo;accepte que l&rsquo;adresse seule. Règles :
+        accepte lui aussi les deux formes, avec un seul destinataire. Règles :
       </p>
       <ul className="mb-4 list-disc space-y-1.5 pl-5 text-[15px] leading-[1.7] text-[#9BA1A8]">
         <li>
@@ -356,16 +385,67 @@ export default function EnvoyerUnEmailPage() {
           guillemets ;
         </li>
         <li>
-          l&rsquo;adresse est ramenée en minuscules, et le domaine doit être
-          vérifié sur votre compte.
+          un nom avec des accents (par exemple « Boutique Awa Diallo ») peut
+          être envoyé tel quel : Zendou l&rsquo;encode pour la messagerie ;
+        </li>
+        <li>
+          l&rsquo;adresse est ramenée en minuscules, et pour{" "}
+          <code>from</code> et <code>replyTo</code> le domaine doit être
+          vérifié sur votre compte ;
+        </li>
+        <li>
+          le journal, la liste de suppression et le bac à sable travaillent
+          sur l&rsquo;adresse seule, en minuscules, sans le nom.
         </li>
       </ul>
       <div className="mb-8">
         <CodeBlock
           code={`"from": "Boutique Awa <no-reply@boutique-awa.gn>",
 "replyTo": "support@boutique-awa.gn",
-"to": "client@exemple.gn"`}
+"to": "Awa Diallo <client@exemple.gn>"`}
           label="exemple"
+        />
+      </div>
+
+      <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
+        En-têtes personnalisés
+      </h2>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8] text-pretty">
+        Le champ <code>headers</code> ajoute des en-têtes à l&rsquo;email.
+        Règles :
+      </p>
+      <ul className="mb-4 list-disc space-y-1.5 pl-5 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        <li>20 en-têtes au plus ;</li>
+        <li>
+          noms autorisés : <code>List-Unsubscribe</code>,{" "}
+          <code>List-Unsubscribe-Post</code> et <code>X-*</code> hors{" "}
+          <code>X-SES-*</code> (<code>X-</code> seul est refusé), sans tenir
+          compte de la casse, sans doublon ;
+        </li>
+        <li>nom de 126 caractères au plus ;</li>
+        <li>
+          valeur en ASCII imprimable uniquement (ni accent, ni saut de
+          ligne), 995 caractères au plus ;
+        </li>
+        <li>nom et valeur réunis : 996 caractères au plus.</li>
+      </ul>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8] text-pretty">
+        Toute autre valeur donne une réponse 400 avant tout débit de crédit.
+        Le relais SMTP transmet les en-têtes tels quels.
+      </p>
+      <h3 className="mb-2.5 font-heading text-[15px] font-semibold text-[#EDEEF0]">
+        Désinscription en un clic
+      </h3>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8] text-pretty">
+        Pour les envois réguliers (rappels, bilans, lettres d&rsquo;information),
+        Gmail et Yahoo exigent un lien de désinscription en un clic. Ajoutez
+        les deux en-têtes ci-dessous, puis traitez la désinscription de votre
+        côté : Zendou ne gère pas vos listes d&rsquo;abonnés.
+      </p>
+      <div className="mb-8">
+        <CodeBlock
+          code={UNSUBSCRIBE_EXAMPLE}
+          label="curl"
         />
       </div>
 

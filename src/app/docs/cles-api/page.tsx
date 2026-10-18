@@ -114,6 +114,22 @@ export default function ClesApiPage() {
       </p>
 
       <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
+        Lire son solde avec une clé
+      </h2>
+      <p className="mb-8 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        Une clé API permet aussi de lire le solde de crédits du compte avec{" "}
+        <code>GET /v1/billing/balance</code> (toute clé active suffit, les
+        clés n&rsquo;ont pas de portée distincte). Voir{" "}
+        <Link
+          href="/docs/facturation"
+          className="text-[#8AA4FF] underline underline-offset-2"
+        >
+          Facturation
+        </Link>{" "}
+        pour la réponse et un exemple.
+      </p>
+
+      <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
         Révocation
       </h2>
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import PageHeader from "@/components/docs/PageHeader";
 import CodeBlock from "@/components/docs/CodeBlock";
 import DocsTable from "@/components/docs/DocsTable";
@@ -21,6 +22,16 @@ const TOPUP_REQUEST_EXAMPLE = `curl -X POST ${API_V1_BASE_URL}/billing/topup-req
     "phoneNumber": "+224 620 00 00 00",
     "transactionRef": "OM.2601.2201.A12345"
   }'`;
+
+const BALANCE_REQUEST_EXAMPLE = `curl ${API_V1_BASE_URL}/billing/balance \\
+  -H "Authorization: Bearer zd_live_votre_cle"`;
+
+const BALANCE_RESPONSE_EXAMPLE = `{
+  "balance": 14250,
+  "totalPurchased": 15000,
+  "totalGifted": 1000,
+  "totalConsumed": 1750
+}`;
 
 const TOPUP_RESPONSE_EXAMPLE = `{
   "id": "clx1a2b3c4d5",
@@ -123,8 +134,47 @@ export default function FacturationPage() {
       <Callout variant="success" title="Les crédits n'expirent pas">
         Un crédit acheté ou offert reste valable jusqu&rsquo;à ce qu&rsquo;il
         soit consommé par un envoi - aucune date de péremption, aucun crédit
-        perdu en fin de mois.
+        perdu en fin de mois. Un compte qui a encore des crédits achetés
+        n&rsquo;est jamais anonymisé pour inactivité ; sans crédits achetés,
+        la règle décrite dans la{" "}
+        <Link
+          href="/confidentialite"
+          className="text-[#8AA4FF] underline underline-offset-2"
+        >
+          politique de confidentialité
+        </Link>{" "}
+        s&rsquo;applique.
       </Callout>
+
+      <h2 className="mt-12 mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
+        Lire son solde par l&rsquo;API
+      </h2>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8] text-pretty">
+        <code>GET /v1/billing/balance</code> accepte une clé API
+        (<code>Authorization: Bearer zd_live_...</code>) en plus de la
+        session du tableau de bord : une application peut donc surveiller
+        elle-même son solde. Toute clé active du compte suffit. Une clé
+        inconnue ou révoquée donne une réponse 401, un compte suspendu une
+        réponse 403.
+      </p>
+      <div className="mb-4">
+        <CodeBlock code={BALANCE_REQUEST_EXAMPLE} label="curl" />
+      </div>
+      <div className="mb-10">
+        <CodeBlock code={BALANCE_RESPONSE_EXAMPLE} label="200 OK" />
+      </div>
+
+      <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
+        Alerte de solde bas
+      </h2>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8] text-pretty">
+        Zendou envoie un email au titulaire du compte lorsque le solde passe
+        sous 10 % du solde atteint juste après le dernier crédit positif
+        (recharge, crédit offert ou bonus), avec un minimum de 50 crédits.
+        L&rsquo;alerte part une seule fois par passage sous ce seuil, et se
+        réarme au crédit suivant. À zéro crédit, les envois sont refusés :
+        réponse 402 pour l&rsquo;API, refus aussi côté relais SMTP.
+      </p>
 
       <h2 className="mt-12 mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
         Recharger par Orange Money ou MTN MoMo
