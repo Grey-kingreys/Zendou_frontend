@@ -23,7 +23,7 @@ export default function DashboardLayoutClient({ children }: { children: ReactNod
         if (!active) return;
         if (data.emailVerifiedAt === null) {
           // Compte pas encore confirmé : le tableau de bord reste fermé,
-          // direction l'écran dédié (garde vague 8 — voir
+          // direction l'écran dédié (garde vague 8 - voir
           // /confirmez-votre-email). Ne pas appeler setChecking(false) ici :
           // l'écran de chargement reste affiché pendant la navigation.
           router.replace("/confirmez-votre-email");

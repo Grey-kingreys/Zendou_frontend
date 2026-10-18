@@ -12,26 +12,26 @@ import type { AdminTopUpRequestItem, User } from "@/lib/types";
 /**
  * Garde de session + de rôle pour l'espace admin (`/admin/*`).
  *
- * IMPORTANT — cette garde est purement cosmétique. Elle évite d'afficher une
+ * IMPORTANT - cette garde est purement cosmétique. Elle évite d'afficher une
  * interface admin à un compte qui n'en a pas l'usage, mais elle ne protège
  * rien : la vraie barrière est l'`AdminGuard` du backend
  * (backend/src/billing/admin/admin.guard.ts), qui renvoie 403 sur toutes les
  * routes `/v1/admin/*` pour tout compte dont le rôle n'est pas ADMIN. Un
  * client qui contournerait ce garde (devtools, appel direct à l'API...) se
- * heurterait de toute façon à ce 403 — le front ne fait que masquer une
+ * heurterait de toute façon à ce 403 - le front ne fait que masquer une
  * interface qui ne lui servirait à rien.
  *
- * Vague 8 — confirmation obligatoire : un compte ADMIN dont l'email n'est
+ * Vague 8 - confirmation obligatoire : un compte ADMIN dont l'email n'est
  * pas confirmé est renvoyé vers /confirmez-votre-email, exactement comme le
  * garde du tableau de bord (`dashboard/layout.tsx`). Décision explicite,
  * pas d'exemption pour les admins : un rôle ADMIN ne dispense pas de
- * prouver l'adresse — c'est justement l'adresse qui reçoit les alertes du
+ * prouver l'adresse - c'est justement l'adresse qui reçoit les alertes du
  * compte, une faute de frappe dessus serait aussi grave que pour un client.
  * La contrepartie (ne pas enfermer un admin dehors si son adresse est
- * fausse) se traite côté seed du compte admin (T15, backend — le compte
+ * fausse) se traite côté seed du compte admin (T15, backend - le compte
  * doit être créé déjà confirmé), pas par un contournement ici.
  *
- * Vague 10b — SEO : le `noindex` de cet espace vit dans le layout.tsx
+ * Vague 10b - SEO : le `noindex` de cet espace vit dans le layout.tsx
  * parent (Server Component), pas ici, car l'export `metadata` n'est
  * supporté que côté serveur. Voir ce fichier pour le pourquoi.
  */
@@ -81,7 +81,7 @@ export default function AdminLayoutClient({ children }: { children: ReactNode })
       .get<AdminTopUpRequestItem[]>("/v1/admin/topup-requests?status=PENDING")
       .then((data) => setPendingCount(data.length))
       .catch(() => {
-        // La pastille est un confort d'affichage — une erreur ici ne doit
+        // La pastille est un confort d'affichage - une erreur ici ne doit
         // pas bloquer le reste de l'espace admin.
       });
   }, []);

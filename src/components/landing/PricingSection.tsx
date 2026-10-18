@@ -8,7 +8,7 @@ export default function PricingSection() {
     >
       <div className="mb-12 text-center sm:mb-14">
         <div className="mb-4 font-mono text-xs tracking-[0.08em] text-[#5B7CFA]">
-          03 — TARIFS
+          03 - TARIFS
         </div>
         <h2 className="mb-3 font-heading text-[32px] leading-[1.12] font-semibold tracking-[-0.03em] text-balance sm:text-[38px]">
           Payez pour ce que vous envoyez
@@ -47,7 +47,7 @@ export default function PricingSection() {
           </Link>
         </div>
 
-        {/* Starter — mis en avant */}
+        {/* Starter - mis en avant */}
         <div className="relative flex flex-col rounded-2xl border border-[rgba(91,124,250,0.45)] bg-[linear-gradient(180deg,rgba(91,124,250,0.07),rgba(91,124,250,0.01))] p-[30px_26px] shadow-[0_0_60px_rgba(91,124,250,0.10)]">
           <div className="absolute -top-[11px] left-[26px] rounded-[6px] bg-[#5B7CFA] px-2.5 py-[3px] text-[11.5px] font-semibold tracking-[0.02em] text-[#F7F9FF]">
             POUR DÉMARRER

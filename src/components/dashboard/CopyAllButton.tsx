@@ -4,7 +4,7 @@ import { useState } from "react";
 
 /**
  * Bouton « Tout copier » pour un bloc de valeurs DNS (B12) : copie un texte
- * déjà construit par l'appelant (tabulé — type, nom, valeur, une ligne par
+ * déjà construit par l'appelant (tabulé - type, nom, valeur, une ligne par
  * enregistrement) en un seul geste, plutôt que de recopier champ par champ
  * via les `CopyField` déjà posés sur chaque ligne. Même retour visuel que
  * `CopyField` (bascule sur « Copié » puis revient après 1.6 s).

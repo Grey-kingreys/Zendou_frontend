@@ -6,7 +6,7 @@ import Callout from "@/components/docs/Callout";
 import DocsTable from "@/components/docs/DocsTable";
 
 export const metadata: Metadata = {
-  title: "Clés API — Documentation Zendou",
+  title: "Clés API - Documentation Zendou",
   description:
     "Créer, stocker et révoquer une clé API Zendou : ce qu'il faut savoir avant de mettre une clé zd_live_… en production.",
   alternates: { canonical: "/docs/cles-api" },
@@ -50,7 +50,7 @@ export default function ClesApiPage() {
         La clé complète n&rsquo;apparaît qu&rsquo;au moment de sa création.
         Une fois l&rsquo;écran quitté, seul son préfixe (les 12 premiers
         caractères, ex. <code>zd_live_9fQ2</code>) reste visible dans la
-        liste — suffisant pour identifier une clé, jamais pour l&rsquo;utiliser.
+        liste - suffisant pour identifier une clé, jamais pour l&rsquo;utiliser.
         Zendou ne stocke que l&rsquo;empreinte de la clé, jamais la clé en
         clair : si vous la perdez, il n&rsquo;y a aucun moyen de la
         récupérer, seulement d&rsquo;en créer une nouvelle.
@@ -65,7 +65,7 @@ export default function ClesApiPage() {
         Stockage sûr
       </h2>
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
-        Une clé API donne un accès direct à l&rsquo;envoi d&rsquo;emails —
+        Une clé API donne un accès direct à l&rsquo;envoi d&rsquo;emails -
         traitez-la comme un mot de passe.
       </p>
       <ul className="mb-8 flex flex-col gap-3">
@@ -74,7 +74,7 @@ export default function ClesApiPage() {
           <span>
             Stockez-la dans des variables d&rsquo;environnement (
             <code>.env</code>, secret manager, variables d&rsquo;environnement
-            de votre plateforme de déploiement) — jamais en dur dans le code
+            de votre plateforme de déploiement) - jamais en dur dans le code
             source.
           </span>
         </li>
@@ -82,7 +82,7 @@ export default function ClesApiPage() {
           <span className="text-[#35D07F]">✓</span>
           <span>
             Ne la committez jamais dans le dépôt Git, y compris dans
-            l&rsquo;historique — un secret poussé une seule fois doit être
+            l&rsquo;historique - un secret poussé une seule fois doit être
             considéré comme compromis et révoqué.
           </span>
         </li>
@@ -118,7 +118,7 @@ export default function ClesApiPage() {
       </h2>
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
         Depuis la liste des clés, « Révoquer » désactive la clé
-        immédiatement et définitivement — l&rsquo;action est irréversible.
+        immédiatement et définitivement - l&rsquo;action est irréversible.
         Toute requête authentifiée avec une clé révoquée répond{" "}
         <code className="rounded bg-white/[0.08] px-1.5 py-0.5 font-mono text-[12.5px]">
           401
@@ -151,7 +151,7 @@ export default function ClesApiPage() {
                 GET /v1/api-keys
               </td>
               <td className="px-5 py-3 text-[#9BA1A8]">
-                Liste vos clés (nom, préfixe, dates, statut) — jamais la clé
+                Liste vos clés (nom, préfixe, dates, statut) - jamais la clé
                 complète.
               </td>
             </tr>
@@ -168,7 +168,7 @@ export default function ClesApiPage() {
       </div>
       <p className="text-[13px] text-[#70767D]">
         Ces trois endpoints sont authentifiés par la session du tableau de
-        bord (cookie), pas par une clé API — c&rsquo;est elle qui les gère,
+        bord (cookie), pas par une clé API - c&rsquo;est elle qui les gère,
         pas l&rsquo;inverse.
       </p>
 

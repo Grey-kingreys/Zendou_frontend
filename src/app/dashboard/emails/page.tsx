@@ -31,7 +31,7 @@ export default function DashboardEmailsPage() {
   const hasFilters = Boolean(status || channel || q || from || to);
 
   // Debounce le champ de recherche libre (~400 ms) avant de déclencher un
-  // nouvel appel — évite une requête par frappe.
+  // nouvel appel - évite une requête par frappe.
   useEffect(() => {
     const timer = window.setTimeout(() => {
       setLoading(true);

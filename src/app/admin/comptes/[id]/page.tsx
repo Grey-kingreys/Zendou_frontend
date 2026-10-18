@@ -23,7 +23,7 @@ import type {
 } from "@/lib/types";
 
 /**
- * Bornes alignées sur `backend/src/admin/admin.constants.ts` — dupliquées ici
+ * Bornes alignées sur `backend/src/admin/admin.constants.ts` - dupliquées ici
  * faute de partage de code entre les deux sous-repos indépendants. La
  * validation serveur reste la source de vérité ; celle-ci n'est qu'un
  * confort pour éviter un aller-retour évitable.
@@ -52,7 +52,7 @@ const ANONYMIZE_FAILED_MESSAGE =
   "L'anonymisation a échoué. Le compte n'a pas été modifié.";
 
 /**
- * Fonction pure séparée du composant — même raison qu'en `/admin/recharges` :
+ * Fonction pure séparée du composant - même raison qu'en `/admin/recharges` :
  * appelée à la fois par l'effet de chargement initial et par le rechargement
  * post-action, sans jamais faire passer un appel de `setState` par
  * l'argument d'un `useEffect`.
@@ -62,7 +62,7 @@ function fetchAdminUserDetail(id: string): Promise<AdminUserDetail> {
 }
 
 /**
- * `details` est un blob JSON libre côté backend (`Prisma.JsonValue`) — cette
+ * `details` est un blob JSON libre côté backend (`Prisma.JsonValue`) - cette
  * fonction n'interprète que les formes réellement écrites par
  * `AdminUsersService` (grantCredits, updateQuota, reactivate). Les autres
  * types d'action n'ont pas de détails connus et se contentent du motif.
@@ -284,7 +284,7 @@ export default function AdminCompteDetailPage() {
         );
       } else if (dialog === "delete") {
         // Suppression réelle de la ligne : la fiche n'existe plus après
-        // succès, donc pas de `reloadDetail()` ici — retour direct à la
+        // succès, donc pas de `reloadDetail()` ici - retour direct à la
         // liste des comptes (exigence produit : « la fiche n'existe plus »).
         await api.del<void>(`/v1/admin/users/${detail.id}`);
         router.push("/admin/comptes");
@@ -308,7 +308,7 @@ export default function AdminCompteDetailPage() {
           // une écriture d'audit) : le message de l'API n'est pas garanti
           // d'être en français ni explicite sur l'état du compte (cas vécu :
           // « Internal Server Error »). On affiche un message maison qui
-          // lève toute ambiguïté — le compte n'a pas été supprimé — et garde
+          // lève toute ambiguïté - le compte n'a pas été supprimé - et garde
           // le code d'origine pour le support.
           setActionError(
             `La suppression a échoué (erreur ${err.status} côté serveur). Le compte n'a pas été supprimé.`
@@ -330,7 +330,7 @@ export default function AdminCompteDetailPage() {
         } else {
           setActionError(err.message);
           // 409 sur la suppression : refus métier « ce compte a encore des
-          // données » — le message de l'API (affiché tel quel ci-dessus) le
+          // données » - le message de l'API (affiché tel quel ci-dessus) le
           // détaille déjà, mais l'orientation vers la suspension doit être un
           // geste, pas seulement une phrase.
           setDeleteBlocked(dialog === "delete" && err.status === 409);
@@ -407,7 +407,7 @@ export default function AdminCompteDetailPage() {
 
   const dialogDescription =
     dialog === "credit"
-      ? `Le solde de ${detail.name} sera ajusté immédiatement. Un montant négatif reprend un geste accordé à tort — le motif est obligatoire et reste visible dans le journal d'audit.`
+      ? `Le solde de ${detail.name} sera ajusté immédiatement. Un montant négatif reprend un geste accordé à tort - le motif est obligatoire et reste visible dans le journal d'audit.`
       : dialog === "suspend"
         ? `Les envois de ${detail.name} seront coupés immédiatement. Le motif est obligatoire et reste visible dans le journal d'audit.`
         : dialog === "reactivate"
@@ -415,7 +415,7 @@ export default function AdminCompteDetailPage() {
           : dialog === "quota"
             ? `Nouveau quota d'envoi journalier pour ${detail.name}. Quota actuel : ${formatNumberFr(detail.dailySendLimit)} emails/jour.`
             : dialog === "delete"
-              ? `Le compte de ${detail.name} sera supprimé définitivement — impossible à annuler. Son adresse (${detail.email}) redeviendra aussitôt disponible pour une nouvelle inscription. Les lignes du journal d'audit qui le concernent sont conservées (son email y reste archivé) : la trace administrative ne disparaît pas.`
+              ? `Le compte de ${detail.name} sera supprimé définitivement - impossible à annuler. Son adresse (${detail.email}) redeviendra aussitôt disponible pour une nouvelle inscription. Les lignes du journal d'audit qui le concernent sont conservées (son email y reste archivé) : la trace administrative ne disparaît pas.`
               : dialog === "anonymize"
                 ? `Le compte de ${detail.name} sera anonymisé en réponse à une demande d'effacement. Action irréversible, impossible à annuler.`
                 : "";
@@ -497,7 +497,7 @@ export default function AdminCompteDetailPage() {
 
       {detail.status === "SUSPENDED" && detail.suspensionReason && (
         <p className="mb-6 rounded-lg border border-[#E5484D]/30 bg-[#E5484D]/10 px-3.5 py-2.5 text-[13.5px] text-[#FF9592]">
-          Suspendu{detail.suspendedAt && ` le ${formatDateTimeFr(detail.suspendedAt)}`} — motif :
+          Suspendu{detail.suspendedAt && ` le ${formatDateTimeFr(detail.suspendedAt)}`} - motif :
           {" "}
           {detail.suspensionReason}
         </p>
@@ -708,8 +708,8 @@ export default function AdminCompteDetailPage() {
               Suppression définitive, réservée aux comptes sans activité
               réelle (domaine, clé API, email envoyé par le client, demande
               de recharge, crédit ajusté au-delà du bonus d’inscription). La
-              confirmation d’adresse — email de confirmation et crédit de
-              bienvenue — ne compte pas : un compte confirmé mais inactif
+              confirmation d’adresse - email de confirmation et crédit de
+              bienvenue - ne compte pas : un compte confirmé mais inactif
               reste supprimable. Dans tous les autres cas, suspendez le
               compte plutôt que de le supprimer.
             </p>
@@ -745,7 +745,7 @@ export default function AdminCompteDetailPage() {
              * >= md : tableau, colonne « Motif » libre en largeur (elle
              * s'enroule, pas de `whitespace-nowrap`) pour ne jamais pousser
              * le tableau hors de son conteneur à 1280px. Pas de colonne
-             * d'actions ici — c'est un journal en lecture seule. < md :
+             * d'actions ici - c'est un journal en lecture seule. < md :
              * cartes empilées, même contenu.
              */}
             <div className="hidden overflow-hidden rounded-2xl border border-white/[0.09] bg-[#0C0D0F] md:block">
@@ -778,7 +778,7 @@ export default function AdminCompteDetailPage() {
                             <Badge color={meta.color} label={meta.label} />
                           </td>
                           <td className="px-3 py-3.5 text-[#C5CACF]">
-                            {action.reason ?? "—"}
+                            {action.reason ?? "-"}
                             {summary && (
                               <span className="mt-0.5 block text-[12px] text-[#70767D]">
                                 {summary}
@@ -820,7 +820,7 @@ export default function AdminCompteDetailPage() {
                       </span>
                     </div>
                     <p className="mb-1 text-[13px] text-[#C5CACF]">
-                      {action.reason ?? "—"}
+                      {action.reason ?? "-"}
                     </p>
                     {summary && (
                       <p className="mb-2 text-[12px] text-[#70767D]">{summary}</p>

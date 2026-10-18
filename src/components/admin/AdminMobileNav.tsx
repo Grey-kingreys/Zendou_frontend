@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { adminNavItems, isAdminNavItemActive } from "./nav-items";
 import { useAdminPendingCount } from "./admin-context";
 
-/** Équivalent mobile de `AdminSidebar` — même liens, même accent ambre. */
+/** Équivalent mobile de `AdminSidebar` - même liens, même accent ambre. */
 export default function AdminMobileNav() {
   const pathname = usePathname();
   const { pendingCount } = useAdminPendingCount();

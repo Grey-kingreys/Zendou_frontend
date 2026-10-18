@@ -237,7 +237,7 @@ function FirstSteps() {
         </Step>
         {/* Pas de branche « email pas encore confirmé » ici : le garde du
             layout (dashboard/layout.tsx) redirige tout compte non confirmé
-            vers /confirmez-votre-email avant que cette page ne s'affiche —
+            vers /confirmez-votre-email avant que cette page ne s'affiche -
             on est donc toujours face à un compte confirmé. */}
         <Step number={3} title="Envoyez un premier email">
           Un simple appel REST suffit :

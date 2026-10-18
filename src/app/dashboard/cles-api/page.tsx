@@ -29,9 +29,9 @@ export default function DashboardClesApiPage() {
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   // 403 spécifique : compte pas encore confirmé. En pratique inatteignable
-  // depuis la vague 8 — le garde du tableau de bord (dashboard/layout.tsx)
+  // depuis la vague 8 - le garde du tableau de bord (dashboard/layout.tsx)
   // redirige déjà tout compte non confirmé vers /confirmez-votre-email avant
-  // que cet écran ne soit rendu — mais conservé en défense en profondeur si
+  // que cet écran ne soit rendu - mais conservé en défense en profondeur si
   // jamais ce garde était contourné. Distingué de createError pour afficher
   // un message qui renvoie vers l'écran de confirmation plutôt que le texte
   // brut de l'API.
@@ -109,7 +109,7 @@ export default function DashboardClesApiPage() {
     } catch (err) {
       if (err instanceof ApiError && err.status === 403) {
         // Contrat API : la création de clé renvoie 403 tant que le compte
-        // n'est pas confirmé — pas une erreur générique.
+        // n'est pas confirmé - pas une erreur générique.
         setCreateForbidden(true);
       } else {
         setCreateError(
@@ -144,10 +144,10 @@ export default function DashboardClesApiPage() {
 
   /**
    * Rotation : régénère le secret sur place (coupure immédiate de l'ancienne
-   * valeur, sans période de grâce — voir le texte du dialogue de
+   * valeur, sans période de grâce - voir le texte du dialogue de
    * confirmation ci-dessous). 409 si la clé est révoquée : impossible en
    * temps normal puisque le bouton n'est pas proposé sur une clé révoquée,
-   * mais peut survenir en cas de course avec un autre onglet — le message
+   * mais peut survenir en cas de course avec un autre onglet - le message
    * de l'API est alors affiché tel quel via `err.message`.
    */
   async function handleRotate() {
@@ -175,7 +175,7 @@ export default function DashboardClesApiPage() {
   /**
    * Suppression définitive : réservée aux clés déjà révoquées (le bouton
    * n'est proposé que dans ce cas). 409 si la clé est encore active malgré
-   * tout — course avec un autre onglet — le message de l'API est alors
+   * tout - course avec un autre onglet - le message de l'API est alors
    * affiché tel quel via `err.message`.
    */
   async function handlePurge() {
@@ -226,7 +226,7 @@ export default function DashboardClesApiPage() {
 
       {/*
        * Mode bac à sable (B20, façon Resend) : envoyer immédiatement, sans
-       * domaine vérifié, depuis l'adresse de test de Zendou — à condition
+       * domaine vérifié, depuis l'adresse de test de Zendou - à condition
        * d'écrire à sa propre adresse de compte. `testSenderAddress` vient de
        * `GET /v1/auth/me` (partagé via `useDashboardUser`) ; tant que le
        * backend ne renvoie pas ce champ, il est `undefined` et ce bloc reste
@@ -242,7 +242,7 @@ export default function DashboardClesApiPage() {
           </div>
           <p className="mb-4 text-[13.5px] leading-relaxed text-[#9BA1A8] text-pretty">
             Utilisez cette adresse comme expéditeur (<code>from</code>) pour
-            envoyer votre premier email dès maintenant — pratique pour tester
+            envoyer votre premier email dès maintenant - pratique pour tester
             votre intégration avant de vérifier un domaine.
           </p>
           <div className="mb-4 rounded-lg border border-white/[0.09] bg-[#0E1013] p-1.5">
@@ -389,7 +389,7 @@ export default function DashboardClesApiPage() {
         <>
           {/*
            * >= md : tableau classique avec colonne Actions collante à
-           * droite (voir commit 948d191 sur /admin/recharges) — chaque
+           * droite (voir commit 948d191 sur /admin/recharges) - chaque
            * ligne active peut porter deux boutons (Réinitialiser,
            * Révoquer) et le préfixe/les dates sont en police fixe, donc le
            * tableau peut dépasser son conteneur ; sans colonne collante, le

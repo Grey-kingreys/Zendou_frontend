@@ -35,8 +35,8 @@ export default function DashboardSmtpPage() {
   const [createError, setCreateError] = useState<string | null>(null);
   // 403 spécifique : compte pas encore confirmé (même garde que la création
   // de clé API, voir /dashboard/cles-api). En pratique inatteignable depuis
-  // la vague 8 — le garde du tableau de bord redirige déjà tout compte non
-  // confirmé — mais conservé en défense en profondeur.
+  // la vague 8 - le garde du tableau de bord redirige déjà tout compte non
+  // confirmé - mais conservé en défense en profondeur.
   const [createForbidden, setCreateForbidden] = useState(false);
 
   const [revealedSecret, setRevealedSecret] = useState<RevealedSecret | null>(
@@ -118,7 +118,7 @@ export default function DashboardSmtpPage() {
     } catch (err) {
       if (err instanceof ApiError && err.status === 403) {
         // Contrat API : la création d'un identifiant SMTP renvoie 403 tant
-        // que le compte n'est pas confirmé — pas une erreur générique.
+        // que le compte n'est pas confirmé - pas une erreur générique.
         setCreateForbidden(true);
       } else {
         setCreateError(
@@ -153,10 +153,10 @@ export default function DashboardSmtpPage() {
 
   /**
    * Rotation : régénère le mot de passe sur place (coupure immédiate de
-   * l'ancienne valeur, sans période de grâce — voir le texte du dialogue de
+   * l'ancienne valeur, sans période de grâce - voir le texte du dialogue de
    * confirmation ci-dessous). 409 si l'identifiant est révoqué : impossible
    * en temps normal puisque le bouton n'est pas proposé sur un identifiant
-   * révoqué, mais peut survenir en cas de course avec un autre onglet — le
+   * révoqué, mais peut survenir en cas de course avec un autre onglet - le
    * message de l'API est alors affiché tel quel via `err.message`.
    */
   async function handleRotate() {
@@ -184,7 +184,7 @@ export default function DashboardSmtpPage() {
   /**
    * Suppression définitive : réservée aux identifiants déjà révoqués (le
    * bouton n'est proposé que dans ce cas). 409 si l'identifiant est encore
-   * actif malgré tout — course avec un autre onglet — le message de l'API
+   * actif malgré tout - course avec un autre onglet - le message de l'API
    * est alors affiché tel quel via `err.message`.
    */
   async function handlePurge() {
@@ -218,7 +218,7 @@ export default function DashboardSmtpPage() {
         </p>
       </div>
 
-      {/* Paramètres de connexion — valeurs centralisées dans src/lib/smtp.ts */}
+      {/* Paramètres de connexion - valeurs centralisées dans src/lib/smtp.ts */}
       <div className="mb-6 rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-6">
         <h2 className="mb-1 font-heading text-base font-semibold text-[#EDEEF0]">
           Paramètres de connexion
@@ -252,7 +252,7 @@ export default function DashboardSmtpPage() {
           </h2>
           <p className="text-[13.5px] text-[#9BA1A8]">
             Chaque identifiant a son propre nom d’utilisateur et mot de
-            passe — révocables indépendamment de vos clés API.
+            passe - révocables indépendamment de vos clés API.
           </p>
         </div>
         {!revealedSecret && (
@@ -398,7 +398,7 @@ export default function DashboardSmtpPage() {
         <div className="mb-8">
           {/*
            * >= md : tableau classique avec colonne Actions collante à
-           * droite, comme /dashboard/cles-api — chaque ligne active peut
+           * droite, comme /dashboard/cles-api - chaque ligne active peut
            * porter deux boutons (Réinitialiser, Révoquer) et les dates sont
            * en police fixe, donc le tableau peut dépasser son conteneur ;
            * sans colonne collante, le dernier bouton finit hors champ. En
@@ -589,7 +589,7 @@ export default function DashboardSmtpPage() {
         </div>
       )}
 
-      {/* Limites du canal SMTP — plan §4.5/§4.7, valeurs dans src/lib/smtp.ts */}
+      {/* Limites du canal SMTP - plan §4.5/§4.7, valeurs dans src/lib/smtp.ts */}
       <div className="rounded-2xl border border-white/[0.09] bg-white/[0.015] p-6">
         <h2 className="mb-3 font-heading text-base font-semibold text-[#EDEEF0]">
           Limites

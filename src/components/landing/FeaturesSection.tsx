@@ -33,7 +33,7 @@ export default function FeaturesSection() {
     >
       <div className="mx-auto max-w-[1160px] px-6 py-16 sm:px-8 sm:py-20 lg:py-[110px]">
         <div className="mb-4 font-mono text-xs tracking-[0.08em] text-[#5B7CFA]">
-          02 — CE QUE ÇA FAIT
+          02 - CE QUE ÇA FAIT
         </div>
         <h2 className="mb-3 max-w-[620px] font-heading text-[32px] leading-[1.12] font-semibold tracking-[-0.03em] text-balance sm:text-[38px]">
           Le strict nécessaire, fait sérieusement

@@ -6,7 +6,7 @@ import Callout from "@/components/docs/Callout";
 import CodeBlock from "@/components/docs/CodeBlock";
 
 export const metadata: Metadata = {
-  title: "Vérifier un domaine — Documentation Zendou",
+  title: "Vérifier un domaine - Documentation Zendou",
   description:
     "Ajoutez votre domaine, publiez les enregistrements DKIM, SPF et DMARC, et comprenez pourquoi ils comptent pour la délivrabilité.",
   alternates: { canonical: "/docs/verifier-un-domaine" },
@@ -90,7 +90,7 @@ export default function VerifierUnDomainePage() {
         À quoi ressemblent les 3 CNAME DKIM
       </h2>
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
-        Exemple pour un domaine <code>boutique-awa.gn</code> — vos valeurs
+        Exemple pour un domaine <code>boutique-awa.gn</code> - vos valeurs
         réelles, propres à votre domaine, sont affichées (et copiables) sur
         la page du domaine dans le tableau de bord.
       </p>
@@ -128,8 +128,8 @@ export default function VerifierUnDomainePage() {
         Chez votre registrar
       </h2>
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
-        La marche à suivre est la même partout dans son principe — ouvrir la
-        gestion DNS du domaine et ajouter 3 enregistrements de type CNAME —
+        La marche à suivre est la même partout dans son principe - ouvrir la
+        gestion DNS du domaine et ajouter 3 enregistrements de type CNAME -
         mais l&rsquo;écran diffère selon le registrar :
       </p>
       <div className="mb-6 flex flex-col gap-4">
@@ -169,7 +169,7 @@ export default function VerifierUnDomainePage() {
 
       <Callout variant="warning" title="Cloudflare : ne pas activer le proxy sur ces CNAME">
         Si votre domaine passe par Cloudflare, laissez le nuage en gris («
-        DNS only ») sur les 3 enregistrements DKIM — pas orange (« Proxied »).
+        DNS only ») sur les 3 enregistrements DKIM - pas orange (« Proxied »).
         Un CNAME proxié pointe vers l&rsquo;infrastructure Cloudflare au lieu
         de répondre avec la vraie valeur DKIM, et Amazon SES ne pourra jamais
         vérifier le domaine.
@@ -220,7 +220,7 @@ export default function VerifierUnDomainePage() {
                 TEMPORARY_FAILURE
               </td>
               <td className="px-5 py-3 text-[#9BA1A8]">
-                Échec temporaire côté SES — sans action de votre part,
+                Échec temporaire côté SES - sans action de votre part,
                 réessayez « Vérifier maintenant » plus tard.
               </td>
             </tr>
@@ -239,7 +239,7 @@ export default function VerifierUnDomainePage() {
       </p>
       <div className="mb-4 rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-5">
         <h3 className="mb-1.5 font-heading text-[14.5px] font-semibold text-[#EDEEF0]">
-          SPF — qui a le droit d&rsquo;envoyer pour votre domaine
+          SPF - qui a le droit d&rsquo;envoyer pour votre domaine
         </h3>
         <p className="mb-3 text-[13.5px] leading-relaxed text-[#9BA1A8] text-pretty">
           Un enregistrement TXT publié à la racine du domaine, qui liste les
@@ -258,7 +258,7 @@ Valeur : v=spf1 include:amazonses.com ~all`}
       </div>
       <div className="mb-8 rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-5">
         <h3 className="mb-1.5 font-heading text-[14.5px] font-semibold text-[#EDEEF0]">
-          DMARC — que faire des emails qui échouent SPF/DKIM
+          DMARC - que faire des emails qui échouent SPF/DKIM
         </h3>
         <p className="mb-3 text-[13.5px] leading-relaxed text-[#9BA1A8] text-pretty">
           Un second enregistrement TXT qui indique aux serveurs receveurs la

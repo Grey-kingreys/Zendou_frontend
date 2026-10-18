@@ -23,7 +23,7 @@ export interface User {
    * /v1/auth/me` au moment de l'écriture de ce commentaire (vague 11b) :
    * en son absence le champ vaut simplement `undefined` ici, et toute l'UI
    * qui en dépend se masque proprement plutôt que d'afficher une adresse
-   * devinée — voir /dashboard/cles-api. Ne jamais construire cette adresse
+   * devinée - voir /dashboard/cles-api. Ne jamais construire cette adresse
    * côté client, même partiellement.
    */
   testSenderAddress?: string | null;
@@ -55,7 +55,7 @@ export interface RegisterPayload {
   name: string;
   company?: string;
   declaredUsage?: string;
-  /** Jeton Cloudflare Turnstile — envoyé uniquement si le widget est actif (voir /inscription). */
+  /** Jeton Cloudflare Turnstile - envoyé uniquement si le widget est actif (voir /inscription). */
   captchaToken?: string;
 }
 
@@ -96,7 +96,7 @@ export interface RotateApiKeyResponse {
 // --- Identifiants SMTP (relais entrant, B6) --------------------------------
 
 /**
- * Élément de la liste des identifiants SMTP d'un utilisateur — jamais le
+ * Élément de la liste des identifiants SMTP d'un utilisateur - jamais le
  * secret ni son hash. Contrairement à `RotateSmtpCredentialResponse`, cette
  * forme ne porte pas `rotatedAt` : le backend (`SmtpCredentialsService.
  * findAllForUser`) ne le sélectionne pas, exactement comme `ApiKeySummary`
@@ -105,7 +105,7 @@ export interface RotateApiKeyResponse {
 export interface SmtpCredentialSummary {
   id: string;
   name: string;
-  /** Nom d'utilisateur opaque et généré (ex. `zdu_…`), en clair — pas l'adresse email du compte. */
+  /** Nom d'utilisateur opaque et généré (ex. `zdu_…`), en clair - pas l'adresse email du compte. */
   username: string;
   prefix: string;
   createdAt: string;
@@ -215,7 +215,7 @@ export interface DomainDnsCheckResult {
   checkedAt: string;
   /**
    * Dernier statut connu côté SES (aucun appel SES déclenché par cet
-   * endpoint) — sert à distinguer « enregistrements corrects, en attente de
+   * endpoint) - sert à distinguer « enregistrements corrects, en attente de
    * la validation d'Amazon » d'un véritable écart : les deux peuvent
    * diverger légitimement le temps qu'AWS refasse son propre contrôle.
    */
@@ -237,7 +237,7 @@ export type EmailStatus =
   | "FAILED"
   | "SUPPRESSED";
 
-/** Point d'entrée par lequel l'envoi est arrivé (chantier B6 — relais SMTP entrant). */
+/** Point d'entrée par lequel l'envoi est arrivé (chantier B6 - relais SMTP entrant). */
 export type EmailChannel = "API" | "SMTP";
 
 export interface EmailListItem {
@@ -257,7 +257,7 @@ export interface EmailDetail extends EmailListItem {
   errorMessage: string | null;
   sesMessageId: string | null;
   /**
-   * Identifiant SMTP ayant expédié cet envoi — `null` pour le canal API, ou
+   * Identifiant SMTP ayant expédié cet envoi - `null` pour le canal API, ou
    * pour un envoi SMTP dont l'identifiant a depuis été révoqué/supprimé.
    */
   smtpCredentialId: string | null;
@@ -489,7 +489,7 @@ export interface AdminUserAnonymizeResult {
 // --- Admin : statistiques plateforme (GET /v1/admin/stats/emails) ---------
 
 /**
- * Compteur ventilé système/client. `all` est toujours `system + client` —
+ * Compteur ventilé système/client. `all` est toujours `system + client` -
  * jamais un troisième chiffre calculé indépendamment côté backend.
  */
 export interface AdminPlatformCounts {

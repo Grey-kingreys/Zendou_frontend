@@ -127,12 +127,12 @@ export default function DashboardEmailDetailPage() {
           />
           <Row
             label="Identifiant SES"
-            value={email.sesMessageId ?? "—"}
+            value={email.sesMessageId ?? "-"}
             mono
           />
           <Row
             label="Identifiant SMTP"
-            value={email.smtpCredentialId ?? "—"}
+            value={email.smtpCredentialId ?? "-"}
             mono
           />
         </dl>

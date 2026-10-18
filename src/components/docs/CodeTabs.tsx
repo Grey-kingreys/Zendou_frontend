@@ -10,7 +10,7 @@ export interface CodeTab {
 /**
  * Bloc de code à onglets (curl / Node.js / PHP...) avec bouton de copie.
  * Reprend le langage visuel de `landing/IntegrationSection` (mêmes classes,
- * même sensation) sans importer un composant de la landing dans /docs — la
+ * même sensation) sans importer un composant de la landing dans /docs - la
  * landing reste indépendante des pages docs, et inversement.
  */
 export default function CodeTabs({ tabs }: { tabs: CodeTab[] }) {

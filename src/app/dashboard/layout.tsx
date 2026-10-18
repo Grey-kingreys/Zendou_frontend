@@ -4,7 +4,7 @@ import DashboardLayoutClient from "./DashboardLayoutClient";
 
 /**
  * Server Component uniquement pour porter le `noindex` (l'export
- * `metadata` n'est supporté que dans les Server Components — voir
+ * `metadata` n'est supporté que dans les Server Components - voir
  * node_modules/next/dist/docs/01-app/03-api-reference/04-functions/
  * generate-metadata.md). La logique interactive (garde de session côté
  * client) reste dans DashboardLayoutClient, inchangée.

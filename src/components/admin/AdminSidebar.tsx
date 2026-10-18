@@ -6,7 +6,7 @@ import { adminNavItems, isAdminNavItemActive } from "./nav-items";
 import { useAdminPendingCount } from "./admin-context";
 
 /**
- * Barre latérale de l'espace admin — délibérément distincte de celle de
+ * Barre latérale de l'espace admin - délibérément distincte de celle de
  * l'espace client (accent ambre au lieu de bleu, badge « Admin ») pour
  * qu'on ne confonde jamais les deux contextes : « mes chiffres » contre
  * « ceux de tout le monde ».

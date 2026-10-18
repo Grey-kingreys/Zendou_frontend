@@ -103,7 +103,7 @@ export default function AdminStatistiquesPage() {
           , sur chaque ligne ci-dessous. « Système » désigne les emails que
           Zendou envoie lui-même (confirmations d’adresse) ; « Client »
           désigne les emails envoyés par vos utilisateurs via l’API. Ce total
-          inclut donc le système — contrairement au compteur « Envois »
+          inclut donc le système - contrairement au compteur « Envois »
           affiché sur chaque fiche compte, qui l’exclut délibérément. Ne
           soyez pas surpris si les deux chiffres diffèrent.
         </p>

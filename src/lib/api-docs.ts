@@ -1,5 +1,5 @@
 /**
- * Constantes de l'hôte API public documenté aux clients (bug prod F6 —
+ * Constantes de l'hôte API public documenté aux clients (bug prod F6 -
  * l'ancien hôte documenté (TLD `.dev`) ne résolvait pas, la doc annonçait un
  * nom mort).
  *

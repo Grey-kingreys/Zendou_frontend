@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 /**
- * Instructions ciblées par fournisseur DNS (B12) — la saisie manuelle reste
+ * Instructions ciblées par fournisseur DNS (B12) - la saisie manuelle reste
  * la seule voie livrée : pas de jeton d'API, pas de publication automatique
  * (décision orchestrateur, voir docs/plans/BACKLOG.md § B12). Cloudflare en
  * premier, c'est le cas du porteur, et son piège (nuage orange = proxy actif
@@ -24,11 +24,11 @@ const PROVIDERS: Provider[] = [
     id: "cloudflare",
     label: "Cloudflare",
     warning:
-      "Le nuage à droite de la ligne doit rester GRIS (« DNS only »), jamais orange (proxy activé). Un nuage orange fait résoudre le CNAME vers une adresse Cloudflare au lieu d'Amazon : DKIM échoue systématiquement. C'est l'erreur la plus fréquente chez nos clients — c'est justement ce que le diagnostic ci-dessus détecte.",
+      "Le nuage à droite de la ligne doit rester GRIS (« DNS only »), jamais orange (proxy activé). Un nuage orange fait résoudre le CNAME vers une adresse Cloudflare au lieu d'Amazon : DKIM échoue systématiquement. C'est l'erreur la plus fréquente chez nos clients - c'est justement ce que le diagnostic ci-dessus détecte.",
     steps: [
       "Tableau de bord Cloudflare → votre domaine → onglet « DNS » → « Records ».",
       "« Add record », type CNAME.",
-      "Champ « Name » : collez uniquement la partie avant votre domaine (ex. le jeton avant « ._domainkey ») — Cloudflare complète automatiquement avec le reste de votre domaine.",
+      "Champ « Name » : collez uniquement la partie avant votre domaine (ex. le jeton avant « ._domainkey ») - Cloudflare complète automatiquement avec le reste de votre domaine.",
       "Champ « Target » : collez la valeur telle quelle, en entier.",
       "Avant d'enregistrer, cliquez sur l'icône nuage pour vérifier qu'elle est bien grise, pas orange.",
     ],
@@ -49,7 +49,7 @@ const PROVIDERS: Provider[] = [
     steps: [
       "« Mes produits » → votre domaine → « DNS » → « Gérer les zones DNS ».",
       "« Ajouter un enregistrement » → type CNAME.",
-      "Champ « Nom »/« Host » : collez uniquement la partie avant votre domaine — GoDaddy ajoute automatiquement le reste.",
+      "Champ « Nom »/« Host » : collez uniquement la partie avant votre domaine - GoDaddy ajoute automatiquement le reste.",
       "Champ « Valeur »/« Points to » : collez la valeur telle quelle.",
     ],
   },
@@ -59,14 +59,14 @@ const PROVIDERS: Provider[] = [
     steps: [
       "« Domain List » → « Manage » sur votre domaine → onglet « Advanced DNS ».",
       "« Add New Record » → type CNAME Record.",
-      "Champ « Host » : collez uniquement la partie avant votre domaine — Namecheap ajoute automatiquement le reste.",
+      "Champ « Host » : collez uniquement la partie avant votre domaine - Namecheap ajoute automatiquement le reste.",
       "Champ « Value » : collez la valeur telle quelle.",
     ],
   },
 ];
 
 const DUPLICATE_DOMAIN_WARNING =
-  "Piège fréquent, quel que soit le fournisseur : le champ « Nom »/« Host » n'attend en général que la partie avant votre domaine, que le registrar ajoute lui-même. Si vous y collez le nom complet, vous obtenez un enregistrement dupliqué (par exemple « jeton._domainkey.exemple.gn.exemple.gn ») qui ne correspond à rien — Amazon SES ne le trouvera jamais.";
+  "Piège fréquent, quel que soit le fournisseur : le champ « Nom »/« Host » n'attend en général que la partie avant votre domaine, que le registrar ajoute lui-même. Si vous y collez le nom complet, vous obtenez un enregistrement dupliqué (par exemple « jeton._domainkey.exemple.gn.exemple.gn ») qui ne correspond à rien - Amazon SES ne le trouvera jamais.";
 
 export default function DnsProviderGuide() {
   const [openId, setOpenId] = useState<ProviderId | null>("cloudflare");

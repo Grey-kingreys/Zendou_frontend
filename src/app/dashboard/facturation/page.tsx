@@ -65,7 +65,7 @@ type LedgerReferenceCell =
  *     rien à afficher.
  *   - SEND (emails.service.ts) : le `publicId` de l'email envoyé, pas un
  *     identifiant interne, celui-là même que le client retrouve dans son
- *     journal (`/dashboard/emails/[publicId]`) — affiché en lien vers cette
+ *     journal (`/dashboard/emails/[publicId]`) - affiché en lien vers cette
  *     page, c'est le rapprochement qui compte le plus puisque c'est la
  *     quasi-totalité des lignes d'un compte actif. Au-delà de 6 mois
  *     (RET-12), la ligne `Email` correspondante a été purgée : le lien

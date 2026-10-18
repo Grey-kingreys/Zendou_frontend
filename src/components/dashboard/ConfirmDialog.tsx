@@ -3,12 +3,12 @@
 import type { ReactNode } from "react";
 
 /**
- * Dialog de confirmation sobre, maison — remplace `window.confirm` pour les
+ * Dialog de confirmation sobre, maison - remplace `window.confirm` pour les
  * actions destructrices (révocation de clé, suppression de domaine) et pour
  * les actions sensibles côté admin (approbation/rejet d'une recharge).
  *
  * `children`, s'il est fourni, s'affiche entre la description et les
- * boutons — utile pour un champ complémentaire (ex. motif de rejet).
+ * boutons - utile pour un champ complémentaire (ex. motif de rejet).
  * `confirmDisabled` permet de désactiver le bouton de confirmation tant que
  * ce champ n'est pas valide, sans bloquer le bouton d'annulation.
  */

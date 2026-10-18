@@ -17,7 +17,7 @@ import type { User } from "@/lib/types";
  *
  * Contrepartie non négociable de la fermeture du dashboard : une faute de
  * frappe dans l'adresse ne doit jamais enfermer quelqu'un dehors sans
- * recours — l'adresse saisie est donc affichée ici en évidence (bloc dédié
+ * recours - l'adresse saisie est donc affichée ici en évidence (bloc dédié
  * ci-dessous), pas noyée dans une phrase.
  *
  * Cette page fait son propre appel à `/v1/auth/me` plutôt que de recevoir
@@ -121,7 +121,7 @@ export default function ConfirmezVotreEmailPage() {
             <Link href="/inscription" className="font-medium text-[#8AA4FF]">
               créez un nouveau compte
             </Link>{" "}
-            avec la bonne adresse — un compte non confirmé n’a reçu aucun
+            avec la bonne adresse - un compte non confirmé n’a reçu aucun
             crédit, vous ne perdez donc rien à recommencer.
           </p>
         </div>

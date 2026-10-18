@@ -17,14 +17,14 @@ type ResendState =
 /**
  * Bouton « Renvoyer l'email » + retours de POST /v1/auth/resend-confirmation,
  * partagé entre le bandeau du tableau de bord (UnconfirmedEmailBanner) et
- * l'état « lien expiré » de /confirmation — mêmes cas, même traitement.
+ * l'état « lien expiré » de /confirmation - mêmes cas, même traitement.
  *
  * Cas 422 (adresse en liste de suppression) : un rebond dur antérieur
  * signifie qu'aucun email ne pourra plus jamais arriver à cette adresse.
- * Renvoyer ne changera rien, donc on ne réaffiche pas le bouton — on explique
+ * Renvoyer ne changera rien, donc on ne réaffiche pas le bouton - on explique
  * le problème. IMPORTANT : l'email n'est pas modifiable une fois le compte
  * créé (voir backend/src/auth/dto/update-profile.dto.ts, qui l'exclut
- * explicitement) — il n'existe donc aucun moyen de « corriger » l'adresse
+ * explicitement) - il n'existe donc aucun moyen de « corriger » l'adresse
  * depuis le profil. Le seul recours réel est de créer un nouveau compte
  * avec la bonne adresse ; ça ne coûte rien puisque les crédits ne sont
  * accordés qu'à la confirmation, jamais à un compte resté non confirmé. On

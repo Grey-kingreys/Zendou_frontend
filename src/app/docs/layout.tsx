@@ -4,7 +4,7 @@ import DocsSidebar from "@/components/docs/DocsSidebar";
 import DocsMobileNav from "@/components/docs/DocsMobileNav";
 
 export const metadata: Metadata = {
-  title: "Documentation — Zendou",
+  title: "Documentation - Zendou",
   description:
     "Documentation développeur de l'API Zendou : envoi d'emails, vérification de domaine, clés API, relais SMTP, erreurs et facturation.",
 };

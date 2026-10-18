@@ -15,7 +15,7 @@ export default function Topbar({ user }: { user: User }) {
     try {
       await api.post("/v1/auth/logout");
     } catch {
-      // Even if the request fails, there is no useful recovery client-side —
+      // Even if the request fails, there is no useful recovery client-side -
       // send the user back to the login page regardless.
     } finally {
       router.push("/connexion");

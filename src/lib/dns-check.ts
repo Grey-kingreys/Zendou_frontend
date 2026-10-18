@@ -108,7 +108,7 @@ export interface DnsDiagnosticSummary {
  *
  * Le diagnostic est informatif, SES reste seul juge du statut (posé en B2) :
  * 3 enregistrements DKIM corrects avec un statut SES encore `PENDING` est un
- * état normal (ton `waiting`, pas `issue`) — Amazon peut mettre jusqu'à 72 h
+ * état normal (ton `waiting`, pas `issue`) - Amazon peut mettre jusqu'à 72 h
  * après la publication pour refaire son propre contrôle.
  */
 export function buildSummary(result: DomainDnsCheckResult): DnsDiagnosticSummary {
@@ -133,7 +133,7 @@ export function buildSummary(result: DomainDnsCheckResult): DnsDiagnosticSummary
   if (dkimAllOk) {
     return {
       tone: "waiting",
-      text: "Vos enregistrements sont corrects — en attente de la validation d'Amazon. Ce n'est pas une erreur : Amazon SES peut prendre jusqu'à 72 h après la publication pour refaire son contrôle.",
+      text: "Vos enregistrements sont corrects - en attente de la validation d'Amazon. Ce n'est pas une erreur : Amazon SES peut prendre jusqu'à 72 h après la publication pour refaire son contrôle.",
     };
   }
 

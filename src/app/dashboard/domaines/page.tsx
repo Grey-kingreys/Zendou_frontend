@@ -73,7 +73,7 @@ export default function DashboardDomainesPage() {
       loadDomains();
     } catch (err) {
       // Le backend renvoie déjà des messages en français pour 409 (domaine
-      // déjà pris) et 400 (nom invalide) — on les affiche tels quels.
+      // déjà pris) et 400 (nom invalide) - on les affiche tels quels.
       setCreateError(
         err instanceof ApiError
           ? err.message

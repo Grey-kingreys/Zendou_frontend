@@ -15,7 +15,7 @@ interface ConfirmEmailResponse {
 /**
  * Les quatre issues traitées ici correspondent au contrat figé de
  * `POST /v1/auth/confirm-email` : succès (200), jeton invalide/expiré (400),
- * déjà confirmé (409), et — cas purement front — absence de `token` dans
+ * déjà confirmé (409), et - cas purement front - absence de `token` dans
  * l'URL, qui ne déclenche même pas l'appel.
  */
 type Outcome =
@@ -91,7 +91,7 @@ export default function ConfirmationView({ token }: { token: string | null }) {
       >
         <p className="text-center text-sm text-[#9BA1A8] text-pretty">
           Vérifiez que vous avez copié l&rsquo;adresse complète depuis
-          l&rsquo;email de confirmation Zendou — un lien tronqué ne fonctionne
+          l&rsquo;email de confirmation Zendou - un lien tronqué ne fonctionne
           pas.
         </p>
       </AuthCard>
@@ -133,7 +133,7 @@ export default function ConfirmationView({ token }: { token: string | null }) {
     return (
       <AuthCard
         title="Déjà confirmée"
-        description="Cette adresse email est déjà confirmée — tout est en ordre."
+        description="Cette adresse email est déjà confirmée - tout est en ordre."
         footer={
           <Link href="/dashboard" className="font-medium text-[#8AA4FF]">
             Aller au tableau de bord

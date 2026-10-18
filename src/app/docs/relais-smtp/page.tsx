@@ -7,7 +7,7 @@ import DocsTable from "@/components/docs/DocsTable";
 import Callout from "@/components/docs/Callout";
 
 export const metadata: Metadata = {
-  title: "Relais SMTP — Documentation Zendou",
+  title: "Relais SMTP - Documentation Zendou",
   description:
     "Connectez WordPress, Laravel, Django ou tout logiciel SMTP à Zendou : hôte, ports, identifiants dédiés, exemples de configuration copiables et codes de réponse.",
   alternates: { canonical: "/docs/relais-smtp" },
@@ -18,7 +18,7 @@ const CONNECTION_ROWS = [
     port: "587",
     mode: "STARTTLS",
     usage:
-      "Port principal, recommandé par défaut — celui qu'utilisent WP Mail SMTP, PHPMailer, Laravel, Django, Rails et Nodemailer sans configuration particulière.",
+      "Port principal, recommandé par défaut - celui qu'utilisent WP Mail SMTP, PHPMailer, Laravel, Django, Rails et Nodemailer sans configuration particulière.",
   },
   {
     port: "465",
@@ -107,7 +107,7 @@ const REPLY_ROWS: {
     action: (
       <>
         Vérifiez le domaine de l&rsquo;adresse <code>From:</code> dans Zendou
-        avant d&rsquo;envoyer — voir{" "}
+        avant d&rsquo;envoyer - voir{" "}
         <Link href="/docs/verifier-un-domaine" className="text-[#8AA4FF]">
           Vérifier un domaine
         </Link>
@@ -139,7 +139,7 @@ const REPLY_ROWS: {
     cause: "Compte suspendu",
     message: "Ce compte est suspendu",
     action:
-      "Suspension automatique pour protéger la réputation d'envoi (taux de rebonds ou de plaintes trop élevé). Définitif tant qu'un administrateur ne réactive pas le compte — contactez le support.",
+      "Suspension automatique pour protéger la réputation d'envoi (taux de rebonds ou de plaintes trop élevé). Définitif tant qu'un administrateur ne réactive pas le compte - contactez le support.",
   },
   {
     code: "550",
@@ -184,7 +184,7 @@ const REPLY_ROWS: {
     message:
       "Limite journalière atteinte : réessayez demain ou demandez une augmentation de quota.",
     action:
-      "Temporaire, se réinitialise à minuit UTC — la plupart des logiciels SMTP relivrent automatiquement.",
+      "Temporaire, se réinitialise à minuit UTC - la plupart des logiciels SMTP relivrent automatiquement.",
   },
   {
     code: "451",
@@ -192,7 +192,7 @@ const REPLY_ROWS: {
     cause: "Trop de messages en peu de temps (rafale)",
     message: "Trop de messages en peu de temps ; réessayez dans un instant.",
     action:
-      "Ralentissez la cadence d'envoi — temporaire, réessayez après quelques instants.",
+      "Ralentissez la cadence d'envoi - temporaire, réessayez après quelques instants.",
   },
   {
     code: "452",
@@ -214,7 +214,7 @@ const REPLY_ROWS: {
         <Link href="/dashboard/smtp" className="text-[#8AA4FF]">
           /dashboard/smtp
         </Link>{" "}
-        — même message que l&rsquo;identifiant soit inconnu, révoqué, ou le
+        - même message que l&rsquo;identifiant soit inconnu, révoqué, ou le
         mot de passe faux (aucun indice n&rsquo;est donné sur la cause
         exacte).
       </>
@@ -226,7 +226,7 @@ const REPLY_ROWS: {
     cause: "Message trop volumineux",
     message:
       "Message trop volumineux : la taille dépasse la limite autorisée par ce relais.",
-    action: "Réduisez la taille du message, pièces jointes comprises — 10 Mo maximum.",
+    action: "Réduisez la taille du message, pièces jointes comprises - 10 Mo maximum.",
   },
   {
     code: "554",
@@ -243,7 +243,7 @@ const REPLY_ROWS: {
     message:
       "Message refusé : son contenu n'est pas encodé en UTF-8. Encodez le corps et les pièces jointes avec un transfer-encoding standard (quoted-printable ou base64).",
     action:
-      "Encodez le corps et les pièces jointes en quoted-printable ou en base64 — la quasi-totalité des clients SMTP le font par défaut dès qu'un jeu de caractères non-ASCII est déclaré.",
+      "Encodez le corps et les pièces jointes en quoted-printable ou en base64 - la quasi-totalité des clients SMTP le font par défaut dès qu'un jeu de caractères non-ASCII est déclaré.",
   },
 ];
 
@@ -259,7 +259,7 @@ const CONNECTION_REPLY_ROWS = [
   {
     code: "421 4.7.0",
     cause:
-      "Trop de connexions depuis la même IP, trop d'échecs d'authentification, trop de messages sur une même connexion, ou trop de destinataires refusés — la connexion est fermée dans les quatre cas.",
+      "Trop de connexions depuis la même IP, trop d'échecs d'authentification, trop de messages sur une même connexion, ou trop de destinataires refusés - la connexion est fermée dans les quatre cas.",
   },
 ];
 
@@ -277,7 +277,7 @@ export default function RelaisSmtpPage() {
       <PageHeader
         eyebrow="GUIDE"
         title="Relais SMTP"
-        description="Connectez WordPress, Laravel, Django, un ERP ou tout logiciel qui parle SMTP à Zendou, sans changer son code d'envoi. Même solde de crédits, même journal, mêmes règles de délivrabilité que l'API — juste un port SMTP à la place d'un appel HTTP."
+        description="Connectez WordPress, Laravel, Django, un ERP ou tout logiciel qui parle SMTP à Zendou, sans changer son code d'envoi. Même solde de crédits, même journal, mêmes règles de délivrabilité que l'API - juste un port SMTP à la place d'un appel HTTP."
       />
 
       <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
@@ -318,13 +318,13 @@ export default function RelaisSmtpPage() {
       </div>
       <p className="mb-8 text-[13px] leading-relaxed text-[#70767D]">
         Hôte : <code>smtp.zendou.app</code>, pour les trois ports. Le port 25
-        n&rsquo;est jamais écouté — c&rsquo;est un port de transit entre
+        n&rsquo;est jamais écouté - c&rsquo;est un port de transit entre
         serveurs de messagerie, pas de soumission depuis un logiciel client.
       </p>
 
       <Callout variant="info" title="Authentification uniquement sur canal chiffré">
         <code>AUTH PLAIN</code> et <code>AUTH LOGIN</code> ne sont acceptées
-        qu&rsquo;une fois la connexion chiffrée — après <code>STARTTLS</code>{" "}
+        qu&rsquo;une fois la connexion chiffrée - après <code>STARTTLS</code>{" "}
         sur les ports 587/2525, ou d&rsquo;emblée sur le port 465 (TLS
         implicite). Une tentative d&rsquo;authentification avant chiffrement
         est refusée.
@@ -335,7 +335,7 @@ export default function RelaisSmtpPage() {
       </h2>
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
         Le relais utilise des identifiants dédiés, distincts de votre clé API
-        (<code>zd_live_…</code>) — créés depuis le tableau de bord,{" "}
+        (<code>zd_live_…</code>) - créés depuis le tableau de bord,{" "}
         <Link href="/dashboard/smtp" className="text-[#8AA4FF]">
           Relais SMTP
         </Link>
@@ -347,14 +347,14 @@ export default function RelaisSmtpPage() {
           <code className="rounded bg-white/[0.08] px-1.5 py-0.5 font-mono text-[13px]">
             zdu_…
           </code>{" "}
-          — nom d&rsquo;utilisateur (16 caractères hexadécimaux), sans lien
+          - nom d&rsquo;utilisateur (16 caractères hexadécimaux), sans lien
           avec votre adresse email.
         </li>
         <li>
           <code className="rounded bg-white/[0.08] px-1.5 py-0.5 font-mono text-[13px]">
             zd_smtp_…
           </code>{" "}
-          — mot de passe généré, affiché une seule fois à la création.
+          - mot de passe généré, affiché une seule fois à la création.
         </li>
       </ul>
       <Callout variant="warning" title="Copiez le mot de passe avant de fermer l'écran">
@@ -407,8 +407,8 @@ export default function RelaisSmtpPage() {
             <strong>1 crédit par destinataire</strong> réellement remis. Le
             relais accepte le champ <code>Cc:</code> et la copie cachée
             (Bcc) : chaque adresse que votre logiciel soumet en{" "}
-            <code>RCPT TO</code> — que ce soit via <code>To:</code>,{" "}
-            <code>Cc:</code> ou un champ Bcc de votre bibliothèque — consomme
+            <code>RCPT TO</code> - que ce soit via <code>To:</code>,{" "}
+            <code>Cc:</code> ou un champ Bcc de votre bibliothèque - consomme
             un crédit, exactement comme un appel API distinct par
             destinataire. L&rsquo;en-tête <code>Bcc:</code> lui-même est
             retiré des octets transmis (les destinataires en copie ne se
@@ -429,7 +429,7 @@ export default function RelaisSmtpPage() {
           <span className="text-[#35D07F]">✓</span>
           <span>
             <strong>10 Mo maximum</strong> par message, pièces jointes
-            comprises — annoncé dans la poignée de main SMTP et vérifié à la
+            comprises - annoncé dans la poignée de main SMTP et vérifié à la
             réception.
           </span>
         </li>
@@ -451,7 +451,7 @@ export default function RelaisSmtpPage() {
               Journal
             </Link>{" "}
             au même titre qu&rsquo;un envoi API, avec le canal SMTP
-            renseigné, et suit le même cycle de statuts — voir{" "}
+            renseigné, et suit le même cycle de statuts - voir{" "}
             <Link href="/docs/envoyer-un-email" className="text-[#8AA4FF]">
               Envoyer un email
             </Link>
@@ -466,10 +466,10 @@ export default function RelaisSmtpPage() {
       <Callout variant="info" title="Une seule réponse 250 pour tout le message">
         Avec plusieurs destinataires, dès qu&rsquo;au moins un destinataire
         est accepté (ou reconnu supprimé), le message entier reçoit{" "}
-        <code>250</code> — le texte détaille alors chaque destinataire
+        <code>250</code> - le texte détaille alors chaque destinataire
         (accepté avec son identifiant, supprimé sans expédition, ou refusé
         avec son motif). Un code de refus (4xx/5xx) n&rsquo;est renvoyé que si{" "}
-        <strong>tous</strong> les destinataires sont refusés — sans quoi le
+        <strong>tous</strong> les destinataires sont refusés - sans quoi le
         logiciel client rejouerait tout le message et dupliquerait les
         destinataires déjà servis.
       </Callout>
@@ -517,7 +517,7 @@ export default function RelaisSmtpPage() {
 
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
         D&rsquo;autres refus, plus rares, protègent la connexion elle-même
-        plutôt qu&rsquo;un message précis — vous ne les rencontrerez pas avec
+        plutôt qu&rsquo;un message précis - vous ne les rencontrerez pas avec
         un logiciel correctement configuré :
       </p>
       <div className="mb-8">
@@ -553,7 +553,7 @@ export default function RelaisSmtpPage() {
         <Link href="/docs/erreurs" className="text-[#8AA4FF]">
           Erreurs
         </Link>{" "}
-        pour la référence complète des codes HTTP de l&rsquo;API — le canal
+        pour la référence complète des codes HTTP de l&rsquo;API - le canal
         SMTP a sa propre table de codes, ci-dessus, parce qu&rsquo;un serveur
         SMTP répond en codes à trois chiffres, pas en HTTP.
       </p>

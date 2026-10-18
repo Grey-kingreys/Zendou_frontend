@@ -55,14 +55,14 @@ export default function IntegrationSection() {
     <section className="mx-auto grid max-w-[1160px] grid-cols-1 items-center gap-12 px-6 py-16 sm:px-8 sm:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16 lg:py-[110px]">
       <div>
         <div className="mb-4 font-mono text-xs tracking-[0.08em] text-[#5B7CFA]">
-          01 — INTÉGRATION
+          01 - INTÉGRATION
         </div>
         <h2 className="mb-[18px] font-heading text-[32px] leading-[1.12] font-semibold tracking-[-0.03em] text-balance sm:text-[38px]">
           Cinq minutes entre la clé API et le premier email
         </h2>
         <p className="mb-[26px] text-base leading-[1.7] text-[#9BA1A8] text-pretty">
           {
-            "Un seul endpoint REST, une réponse immédiate, un identifiant de suivi. Le reste — file d'attente, retries, signature DKIM, gestion des bounces — se passe chez nous."
+            "Un seul endpoint REST, une réponse immédiate, un identifiant de suivi. Le reste - file d'attente, retries, signature DKIM, gestion des bounces - se passe chez nous."
           }
         </p>
         <div className="flex flex-col gap-3">

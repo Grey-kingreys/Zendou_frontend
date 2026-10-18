@@ -1,8 +1,8 @@
 /** Formatte une date/heure ISO en français (ex : "11 août 2026, 18:32"). */
 export function formatDateTimeFr(value: string | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "-";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
+  if (Number.isNaN(date.getTime())) return "-";
   return new Intl.DateTimeFormat("fr-FR", {
     dateStyle: "medium",
     timeStyle: "short",
@@ -15,9 +15,9 @@ export function formatDateTimeFr(value: string | null | undefined): string {
  * `formatDateTimeFr` (« 11 août 2026, 21:43 ») prend trop de place.
  */
 export function formatDateTimeShortFr(value: string | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "-";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
+  if (Number.isNaN(date.getTime())) return "-";
   const datePart = new Intl.DateTimeFormat("fr-FR", {
     day: "2-digit",
     month: "2-digit",
@@ -32,9 +32,9 @@ export function formatDateTimeShortFr(value: string | null | undefined): string 
 
 /** Formatte une date ISO en français, sans l'heure (ex : "11 août 2026"). */
 export function formatDateFr(value: string | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "-";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
+  if (Number.isNaN(date.getTime())) return "-";
   return new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" }).format(
     date
   );
@@ -52,7 +52,7 @@ export function formatGnf(value: number): string {
 
 /**
  * Accorde un mot (ou une expression) au singulier ou au pluriel selon
- * `count` — piège classique en français : l'accord après zéro suit la même
+ * `count` - piège classique en français : l'accord après zéro suit la même
  * règle que le pluriel normal ("0 email", jamais "0 emails"). `plural` peut
  * être omis quand un simple "s" suffit.
  */

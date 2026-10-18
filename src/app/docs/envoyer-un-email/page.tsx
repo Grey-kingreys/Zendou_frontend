@@ -8,7 +8,7 @@ import Callout from "@/components/docs/Callout";
 import { API_V1_BASE_URL } from "@/lib/api-docs";
 
 export const metadata: Metadata = {
-  title: "Envoyer un email transactionnel — Documentation Zendou",
+  title: "Envoyer un email transactionnel - Documentation Zendou",
   description:
     "Référence complète de POST /v1/emails pour envoyer un email transactionnel avec Zendou : paramètres, exemple de requête et de réponse, codes d'erreur et cycle de vie d'un envoi.",
   alternates: { canonical: "/docs/envoyer-un-email" },
@@ -58,7 +58,7 @@ const PARAMS = [
     type: "string",
     required: "Oui",
     description:
-      "Destinataire — une seule adresse nue (« client@exemple.gn »), sans nom affiché. Pas de liste ni de séparateur en v1.",
+      "Destinataire - une seule adresse nue (« client@exemple.gn »), sans nom affiché. Pas de liste ni de séparateur en v1.",
   },
   {
     name: "replyTo",
@@ -134,7 +134,7 @@ const ERROR_ROWS: {
     cause: "Contenu trop volumineux",
     message: "Chaque contenu (« html », « text ») est limité à 500 Ko.",
     action:
-      "Réduisez la taille du contenu — par exemple en hébergeant les images à part plutôt qu'en base64 inline.",
+      "Réduisez la taille du contenu - par exemple en hébergeant les images à part plutôt qu'en base64 inline.",
   },
   {
     code: "401",
@@ -186,7 +186,7 @@ const ERROR_ROWS: {
     message:
       "Limite journalière atteinte : réessayez demain ou demandez une augmentation de quota.",
     action:
-      "Réessayez le lendemain (minuit UTC) — la limite augmente automatiquement avec l'ancienneté et le volume du compte.",
+      "Réessayez le lendemain (minuit UTC) - la limite augmente automatiquement avec l'ancienneté et le volume du compte.",
   },
 ];
 
@@ -253,7 +253,7 @@ export default function EnvoyerUnEmailPage() {
         </span>
         <span className="text-[#C5CACF]">/v1/emails</span>
         <span className="text-[#5E646B]">
-          — authentifié par clé API (Authorization: Bearer zd_live_…)
+          - authentifié par clé API (Authorization: Bearer zd_live_…)
         </span>
       </div>
 
@@ -263,7 +263,7 @@ export default function EnvoyerUnEmailPage() {
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8] text-pretty">
         Pas encore de domaine vérifié ? Zendou fournit une adresse
         d&rsquo;expédition de test, prête à l&rsquo;emploi dès qu&rsquo;une
-        clé API existe — copiable sur{" "}
+        clé API existe - copiable sur{" "}
         <Link href="/dashboard/cles-api" className="text-[#8AA4FF]">
           Clés API
         </Link>
@@ -274,12 +274,12 @@ export default function EnvoyerUnEmailPage() {
       <div className="mb-4">
         <CodeBlock
           code={SANDBOX_REQUEST_EXAMPLE}
-          label="curl — mode bac à sable"
+          label="curl - mode bac à sable"
         />
       </div>
       <Callout variant="success" title="Une seule limite">
         Depuis cette adresse, vous ne pouvez écrire qu&rsquo;à l&rsquo;adresse
-        email de votre propre compte — largement de quoi tester
+        email de votre propre compte - largement de quoi tester
         l&rsquo;intégration de bout en bout dès aujourd&rsquo;hui.{" "}
         <Link href="/dashboard/domaines">Vérifiez un domaine</Link> quand
         vous passerez en production, pour écrire à vos utilisateurs.
@@ -384,17 +384,17 @@ export default function EnvoyerUnEmailPage() {
         <code className="rounded bg-white/[0.08] px-1.5 py-0.5 font-mono text-[13px]">
           202 Accepted
         </code>{" "}
-        — y compris quand le destinataire est bloqué : l&rsquo;email est
+        - y compris quand le destinataire est bloqué : l&rsquo;email est
         alors tracé avec le statut <code>suppressed</code>, sans être mis en
         file ni facturé.
       </p>
       <div className="mb-3">
-        <CodeBlock code={RESPONSE_QUEUED} label="202 Accepted — mis en file" />
+        <CodeBlock code={RESPONSE_QUEUED} label="202 Accepted - mis en file" />
       </div>
       <div className="mb-8">
         <CodeBlock
           code={RESPONSE_SUPPRESSED}
-          label="202 Accepted — adresse supprimée"
+          label="202 Accepted - adresse supprimée"
         />
       </div>
 
@@ -494,7 +494,7 @@ export default function EnvoyerUnEmailPage() {
         Les rebonds durs et les plaintes alimentent le taux de rebond et de
         plainte de votre compte, surveillé en continu. Au-delà des seuils
         tolérés, le compte est suspendu automatiquement pour protéger la
-        délivrabilité de tous les clients Zendou — mieux vaut nettoyer
+        délivrabilité de tous les clients Zendou - mieux vaut nettoyer
         régulièrement ses listes de diffusion que d&rsquo;atteindre ce seuil.
       </Callout>
     </div>

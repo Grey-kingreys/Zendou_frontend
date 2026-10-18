@@ -16,7 +16,7 @@ import { SITE_URL } from "@/lib/site";
  * (comportement vérifié dans resolve-metadata.js, postProcessMetadata).
  */
 export const alt =
-  "Zendou — l'email transactionnel à la bonne taille pour les équipes ouest-africaines";
+  "Zendou - l'email transactionnel à la bonne taille pour les équipes ouest-africaines";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -56,7 +56,7 @@ export default function Image() {
               backgroundColor: "#35D07F",
             }}
           />
-          EMAIL TRANSACTIONNEL — AFRIQUE DE L&apos;OUEST
+          EMAIL TRANSACTIONNEL - AFRIQUE DE L&apos;OUEST
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -97,7 +97,7 @@ export default function Image() {
           }}
         >
           <div style={{ display: "flex" }}>
-            OTP · Reçus · Notifications — API + relais SMTP
+            OTP · Reçus · Notifications - API + relais SMTP
           </div>
           <div style={{ display: "flex", color: "#5B7CFA" }}>
             {new URL(SITE_URL).host}

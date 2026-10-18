@@ -6,7 +6,7 @@ import Callout from "@/components/docs/Callout";
 import { API_V1_BASE_URL } from "@/lib/api-docs";
 
 export const metadata: Metadata = {
-  title: "Démarrage rapide — Documentation Zendou",
+  title: "Démarrage rapide - Documentation Zendou",
   description:
     "Vérifiez un domaine, créez une clé API et envoyez votre premier email transactionnel avec Zendou en trois étapes.",
   alternates: { canonical: "/docs" },
@@ -129,7 +129,7 @@ export default function DocsHomePage() {
       <PageHeader
         eyebrow="DOCUMENTATION"
         title="Documentation Zendou"
-        description="L'API d'email transactionnel pensée pour les équipes ouest-africaines. Cette documentation couvre l'envoi d'emails, la vérification de domaine, les clés API, le relais SMTP, les erreurs et la facturation — tout ce qu'il faut pour intégrer Zendou à votre produit."
+        description="L'API d'email transactionnel pensée pour les équipes ouest-africaines. Cette documentation couvre l'envoi d'emails, la vérification de domaine, les clés API, le relais SMTP, les erreurs et la facturation - tout ce qu'il faut pour intégrer Zendou à votre produit."
       />
 
       <h2 className="mb-5 font-heading text-xl font-semibold text-[#EDEEF0]">

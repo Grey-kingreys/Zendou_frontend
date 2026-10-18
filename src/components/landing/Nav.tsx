@@ -7,7 +7,7 @@ import Link from "next/link";
  * Nav de la landing. En dessous de `md`, les 3 liens centraux (Produit,
  * Documentation, Tarifs) n'ont plus de place dans la barre : ils
  * passent dans un panneau repliable ouvert par un bouton hamburger, seul
- * menu mobile de la page (les trois autres — dashboard/docs/admin — sont des
+ * menu mobile de la page (les trois autres - dashboard/docs/admin - sont des
  * bandeaux non repliables adaptés à une sidebar, pattern qui ne marche pas
  * pour une barre de nav horizontale déjà pleine). « Créer un compte » reste
  * dans la barre, visible sans ouvrir le menu : c'est l'action principale de

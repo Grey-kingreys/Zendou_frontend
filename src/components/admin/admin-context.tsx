@@ -6,7 +6,7 @@ import type { User } from "@/lib/types";
 interface AdminPendingCountValue {
   /** `null` tant que le premier chargement n'a pas abouti. */
   pendingCount: number | null;
-  /** Recharge le compteur — à appeler après chaque approbation/rejet. */
+  /** Recharge le compteur - à appeler après chaque approbation/rejet. */
   refreshPendingCount: () => void;
   /**
    * Identité de l'admin connecté (déjà vérifiée par le garde du layout).

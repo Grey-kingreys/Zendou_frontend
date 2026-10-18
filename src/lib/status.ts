@@ -176,7 +176,7 @@ export const ADMIN_ACCOUNT_ROLE_OPTIONS: {
 
 /**
  * `recentActions` peut aussi remonter des types écrits ailleurs dans l'admin
- * (revue des recharges : APPROVE_TOPUP / REJECT_TOPUP) — le journal d'audit
+ * (revue des recharges : APPROVE_TOPUP / REJECT_TOPUP) - le journal d'audit
  * d'un compte n'est pas limité aux 4 actions de cet écran.
  */
 export function adminActionTypeMeta(type: AdminActionType): {
@@ -217,7 +217,7 @@ const EMAIL_STATUS_VALUES: EmailStatus[] = [
 ];
 
 /**
- * Dérivé de `emailStatusMeta` pour n'avoir qu'une seule source de libellés —
+ * Dérivé de `emailStatusMeta` pour n'avoir qu'une seule source de libellés -
  * les deux listes avaient divergé (BOUNCED libellé différemment ici et dans
  * `emailStatusMeta`), ce qui a laissé vivre un doublon de texte quasi
  * identique à celui de REJECTED sur l'écran admin des statistiques.

@@ -12,7 +12,7 @@ import { SITE_URL } from "@/lib/site";
  * `/confirmez-votre-email` sont volontairement absentes : ce sont des
  * pages d'entonnoir ou de flux transitoire, pas du contenu à faire remonter
  * en recherche, et elles ne définissent pas de `canonical` propre (voir
- * ces pages) — les lister ici sans canonical serait incohérent.
+ * ces pages) - les lister ici sans canonical serait incohérent.
  * `/dashboard` et `/admin` sont exclues pour la raison inverse : elles sont
  * en `noindex` (voir leurs layouts).
  */

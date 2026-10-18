@@ -6,7 +6,7 @@ import Callout from "@/components/docs/Callout";
 import { API_V1_BASE_URL } from "@/lib/api-docs";
 
 export const metadata: Metadata = {
-  title: "Facturation — Documentation Zendou",
+  title: "Facturation - Documentation Zendou",
   description:
     "Crédits, packs, recharge par Orange Money ou MTN MoMo, et limite journalière d'envoi de l'API Zendou.",
   alternates: { canonical: "/docs/facturation" },
@@ -60,7 +60,7 @@ export default function FacturationPage() {
       <PageHeader
         eyebrow="RÉFÉRENCE API"
         title="Facturation"
-        description="Zendou fonctionne par crédits prépayés : 1 crédit = 1 email accepté par l'API. Pas d'abonnement, pas de carte bancaire internationale — la recharge se fait en Orange Money ou MTN MoMo."
+        description="Zendou fonctionne par crédits prépayés : 1 crédit = 1 email accepté par l'API. Pas d'abonnement, pas de carte bancaire internationale - la recharge se fait en Orange Money ou MTN MoMo."
       />
 
       <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
@@ -69,7 +69,7 @@ export default function FacturationPage() {
       <p className="mb-10 text-[15px] leading-[1.7] text-[#9BA1A8]">
         Chaque email accepté par <code>POST /v1/emails</code> (statut{" "}
         <code>queued</code>) débite un crédit au moment de l&rsquo;acceptation
-        de la requête — pas à la livraison. Un email bloqué par la liste de
+        de la requête - pas à la livraison. Un email bloqué par la liste de
         suppression (statut <code>suppressed</code>) n&rsquo;est jamais
         facturé. Votre solde est simplement la somme de tous les mouvements
         de crédits de votre compte : recharges approuvées et crédits offerts,
@@ -122,7 +122,7 @@ export default function FacturationPage() {
 
       <Callout variant="success" title="Les crédits n'expirent pas">
         Un crédit acheté ou offert reste valable jusqu&rsquo;à ce qu&rsquo;il
-        soit consommé par un envoi — aucune date de péremption, aucun crédit
+        soit consommé par un envoi - aucune date de péremption, aucun crédit
         perdu en fin de mois.
       </Callout>
 
@@ -177,7 +177,7 @@ export default function FacturationPage() {
             <p className="text-[13.5px] leading-relaxed text-[#9BA1A8] text-pretty">
               Après rapprochement avec le transfert reçu, la demande passe à{" "}
               <code>APPROVED</code> et les crédits sont ajoutés à votre solde
-              — ou à <code>REJECTED</code>, avec un motif, si le transfert
+              - ou à <code>REJECTED</code>, avec un motif, si le transfert
               n&rsquo;a pas pu être rapproché.
             </p>
           </div>
@@ -192,7 +192,7 @@ export default function FacturationPage() {
       </div>
       <p className="mb-10 text-[13px] leading-relaxed text-[#70767D]">
         Une même référence de transaction ne peut avoir qu&rsquo;une seule
-        demande en attente à la fois — une seconde tentative avec la même
+        demande en attente à la fois - une seconde tentative avec la même
         référence répond <code>409 Conflict</code>.
       </p>
 

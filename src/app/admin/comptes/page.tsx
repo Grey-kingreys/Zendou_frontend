@@ -33,7 +33,7 @@ export default function AdminComptesPage() {
   const hasFilters = Boolean(status || role || q);
 
   // Debounce le champ de recherche libre (~400 ms) avant de déclencher un
-  // nouvel appel — évite une requête par frappe (même logique que la page
+  // nouvel appel - évite une requête par frappe (même logique que la page
   // Emails du dashboard client).
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -181,7 +181,7 @@ export default function AdminComptesPage() {
         <>
           {/*
            * >= md : tableau classique, en lecture seule (pas de bouton
-           * d'action dans les lignes — toute la ligne mène à la fiche, comme
+           * d'action dans les lignes - toute la ligne mène à la fiche, comme
            * la liste des domaines côté client). 7 colonnes compactes tiennent
            * largement sous 1280px une fois la sidebar admin déduite, mais on
            * garde quand même le `overflow-x-auto` par prudence, à l'image des

@@ -47,7 +47,7 @@ export default function DashboardDomainDetailPage() {
   const [checkMessage, setCheckMessage] = useState<string | null>(null);
   const [checkTone, setCheckTone] = useState<SummaryTone | null>(null);
 
-  // Diagnostic DNS (B2) — état levé ici plutôt que dans `DnsDiagnostic` : le
+  // Diagnostic DNS (B2) - état levé ici plutôt que dans `DnsDiagnostic` : le
   // même résultat alimente à la fois le panneau de diagnostic et le bandeau
   // du bouton « Vérifier maintenant » (B14), pour ne jamais raconter deux
   // histoires différentes sur la même question.
@@ -98,7 +98,7 @@ export default function DashboardDomainDetailPage() {
    * manuel du panneau `DnsDiagnostic`, et par `handleCheck` ci-dessous.
    * `silent` couvre le cas de l'auto-lancement : un 429 (ou toute autre
    * panne) au chargement de la page ne doit jamais afficher de bandeau
-   * rouge — on retombe silencieusement sur le bouton manuel.
+   * rouge - on retombe silencieusement sur le bouton manuel.
    */
   const runDnsDiagnostic = useCallback(
     async ({
@@ -142,7 +142,7 @@ export default function DashboardDomainDetailPage() {
   // N'appelle pas `runDnsDiagnostic` directement : cette fonction capture
   // des setters de state (setDnsLoading...), et un effet qui appelle,
   // même indirectement, une fonction qui appelle `setState` est rejeté par
-  // la règle `react-hooks/set-state-in-effect` (react-compiler, ESLint) —
+  // la règle `react-hooks/set-state-in-effect` (react-compiler, ESLint) -
   // rendus en cascade. Le fetch est donc dupliqué ici en miniature, à
   // l'identique du patron déjà utilisé par l'effet de chargement du domaine
   // ci-dessus ; la classification (`buildSummary`) reste elle strictement
@@ -176,12 +176,12 @@ export default function DashboardDomainDetailPage() {
     setCheckMessage(null);
     setCheckTone(null);
 
-    // 1) Diagnostic DNS d'abord (gratuit, 30/h) — bloc indépendant du bloc
+    // 1) Diagnostic DNS d'abord (gratuit, 30/h) - bloc indépendant du bloc
     // SES ci-dessous : un échec ou un 429 ici ne doit jamais empêcher
     // l'appel SES, ni effacer le résultat qu'il produira.
     const diagnostic = await runDnsDiagnostic();
 
-    // 2) SES ensuite (coûte un appel AWS, 10/h) — bloc try séparé du
+    // 2) SES ensuite (coûte un appel AWS, 10/h) - bloc try séparé du
     // précédent, pour la même raison en sens inverse : un échec ici ne doit
     // pas effacer le diagnostic déjà obtenu.
     try {
@@ -194,7 +194,7 @@ export default function DashboardDomainDetailPage() {
           : current
       );
       // Garde le panneau de diagnostic (juste au-dessus) synchronisé avec le
-      // statut SES tout frais — sinon son propre résumé (`buildSummary`,
+      // statut SES tout frais - sinon son propre résumé (`buildSummary`,
       // basé sur le `sesStatus` du diagnostic, capturé *avant* cet appel)
       // pourrait rester sur « en attente d'Amazon » un instant après que ce
       // bandeau annonce déjà « Domaine vérifié ».
@@ -203,19 +203,19 @@ export default function DashboardDomainDetailPage() {
       );
 
       if (result.status === "VERIFIED") {
-        // Cas 3 — inchangé.
+        // Cas 3 - inchangé.
         setCheckMessage("Domaine vérifié.");
         setCheckTone("success");
       } else if (diagnostic) {
         // Cas 1 (écarts ou absence) ou cas 2 (corrects, en attente
-        // d'Amazon) — classification réutilisée telle quelle depuis le
+        // d'Amazon) - classification réutilisée telle quelle depuis le
         // panneau de diagnostic (`buildSummary`), pas une seconde logique.
         const summary = buildSummary({ ...diagnostic, sesStatus: result.status });
         setCheckMessage(summary.text);
         setCheckTone(summary.tone);
       } else if (result.status === "PENDING") {
         // Cas dégradé : diagnostic indisponible (429, panne réseau...), on
-        // retombe sur le comportement actuel — message SES seul.
+        // retombe sur le comportement actuel - message SES seul.
         setCheckMessage(
           "Vérification en cours chez AWS, cela peut prendre jusqu’à 72 h."
         );

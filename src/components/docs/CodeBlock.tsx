@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 /**
- * Bloc de code à un seul langage/exemple, avec bouton de copie — variante
+ * Bloc de code à un seul langage/exemple, avec bouton de copie - variante
  * simplifiée de `CodeTabs` pour les exemples de requête/réponse isolés
  * (JSON, un seul curl...).
  */

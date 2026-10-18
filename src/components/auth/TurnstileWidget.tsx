@@ -58,7 +58,7 @@ const TurnstileWidget = forwardRef<TurnstileWidgetHandle, TurnstileWidgetProps>(
 
     // Les callbacks les plus récentes vivent dans des refs : l'effet de
     // rendu ci-dessous ne doit se relancer que si le script vient de charger
-    // ou si la clé de site change — pas à chaque re-render du formulaire
+    // ou si la clé de site change - pas à chaque re-render du formulaire
     // parent (qui recrée ces fonctions à chaque frappe).
     const onVerifyRef = useRef(onVerify);
     const onExpireRef = useRef(onExpire);

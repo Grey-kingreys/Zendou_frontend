@@ -6,7 +6,7 @@ import Callout from "@/components/docs/Callout";
 import DocsTable from "@/components/docs/DocsTable";
 
 export const metadata: Metadata = {
-  title: "Erreurs — Documentation Zendou",
+  title: "Erreurs - Documentation Zendou",
   description:
     "Référence de tous les codes HTTP renvoyés par l'API Zendou, la forme du corps d'erreur et leurs causes concrètes.",
   alternates: { canonical: "/docs/erreurs" },
@@ -151,7 +151,7 @@ const CODES = [
     causes: [
       "Domaine d'envoi non vérifié sur POST /v1/emails.",
       "Envoi depuis l'adresse de test (mode bac à sable) vers un destinataire autre que l'adresse email de votre compte sur POST /v1/emails.",
-      "Compte suspendu (réputation d'envoi dégradée) — sur toute route authentifiée, API key ou session.",
+      "Compte suspendu (réputation d'envoi dégradée) - sur toute route authentifiée, API key ou session.",
     ],
   },
   {
@@ -159,7 +159,7 @@ const CODES = [
     error: "Not Found",
     summary: "Ressource introuvable",
     causes: [
-      "Domaine, clé API ou email référencé par :id qui n'existe pas — ou qui appartient à un autre compte : Zendou renvoie volontairement la même 404 dans les deux cas, pour ne jamais révéler l'existence de la ressource d'un tiers.",
+      "Domaine, clé API ou email référencé par :id qui n'existe pas - ou qui appartient à un autre compte : Zendou renvoie volontairement la même 404 dans les deux cas, pour ne jamais révéler l'existence de la ressource d'un tiers.",
     ],
   },
   {
@@ -176,7 +176,7 @@ const CODES = [
     error: "Too Many Requests",
     summary: "Limite journalière atteinte, rafale d'envoi trop rapide, ou trop d'échecs d'authentification",
     causes: [
-      "Quota journalier : POST /v1/emails alors que le nombre d'emails envoyés depuis minuit UTC a atteint la limite journalière du compte (200 par défaut, relevée automatiquement avec l'ancienneté et le volume — voir Facturation). Message : « Limite journalière atteinte : réessayez demain ou demandez une augmentation de quota. »",
+      "Quota journalier : POST /v1/emails alors que le nombre d'emails envoyés depuis minuit UTC a atteint la limite journalière du compte (200 par défaut, relevée automatiquement avec l'ancienneté et le volume - voir Facturation). Message : « Limite journalière atteinte : réessayez demain ou demandez une augmentation de quota. »",
       "Rafale : plus de 60 requêtes par minute sur POST /v1/emails, indépendamment du quota journalier et du solde de crédits. Message : « Trop de requêtes. Réessayez dans quelques instants. »",
       "Trop d'échecs d'authentification depuis une même adresse IP sur POST /v1/emails (clé API inconnue ou révoquée présentée à répétition). Utile à savoir en intégration : tester avec une mauvaise clé peut donc, après plusieurs essais, renvoyer un 429 plutôt qu'un 401. Une clé valide n'est jamais concernée, même si l'IP est bloquée.",
     ],
@@ -202,20 +202,20 @@ export default function ErreursPage() {
         <code>errors</code> est <strong>toujours un tableau de chaînes non
         vide</strong> : le détail, un élément par champ invalide quand
         plusieurs champs sont en cause. Les deux sont liés par un invariant :
-        <code> message === errors.join(&#39; &#39;)</code> —{" "}
+        <code> message === errors.join(&#39; &#39;)</code> -{" "}
         <code>message</code> n&rsquo;est que la concaténation de{" "}
         <code>errors</code>, séparée par un espace.
       </p>
       <div className="mb-3">
         <CodeBlock
           code={ERROR_BODY_EXAMPLE}
-          label="400 Bad Request — un champ invalide"
+          label="400 Bad Request - un champ invalide"
         />
       </div>
       <div className="mb-4">
         <CodeBlock
           code={VALIDATION_ERROR_EXAMPLE}
-          label="400 Bad Request — plusieurs champs invalides"
+          label="400 Bad Request - plusieurs champs invalides"
         />
       </div>
       <div className="mb-10">
@@ -228,7 +228,7 @@ export default function ErreursPage() {
           un tableau pour les erreurs de validation agrégées par NestJS. Un
           code qui lisait <code>message[0]</code> pour afficher la phrase
           recevait donc, sans erreur visible, soit la phrase entière soit sa
-          première lettre — selon le chemin emprunté. Remplacez{" "}
+          première lettre - selon le chemin emprunté. Remplacez{" "}
           <code>message[0]</code> par <code>errors[0]</code> :{" "}
           <code>message</code> est désormais toujours la chaîne complète à
           afficher, et <code>errors</code> porte le détail champ par champ.
@@ -261,7 +261,7 @@ export default function ErreursPage() {
                   key={index}
                   className="flex gap-2 text-[13.5px] leading-relaxed text-[#9BA1A8] text-pretty"
                 >
-                  <span className="text-[#5E646B]">–</span>
+                  <span className="text-[#5E646B]">-</span>
                   <span>{cause}</span>
                 </li>
               ))}
@@ -350,7 +350,7 @@ export default function ErreursPage() {
         <Link href="/docs/relais-smtp" className="text-[#8AA4FF]">
           relais SMTP
         </Link>{" "}
-        répond en codes à trois chiffres (RFC 5321), pas en HTTP — sa propre
+        répond en codes à trois chiffres (RFC 5321), pas en HTTP - sa propre
         table de correspondance est documentée sur cette page.
       </p>
     </div>

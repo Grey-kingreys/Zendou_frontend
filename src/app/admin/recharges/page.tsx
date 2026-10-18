@@ -32,7 +32,7 @@ const EMPTY_MESSAGES: Record<TopUpStatus, string> = {
 /**
  * `packId` est un identifiant technique brut (ex. "essentiel"), le catalogue
  * complet des packs vit côté backend (src/billing/packs.ts) et n'est pas
- * dupliqué ici — on se contente d'une capitalisation de confort.
+ * dupliqué ici - on se contente d'une capitalisation de confort.
  */
 function formatPackLabel(packId: string): string {
   if (!packId) return packId;
@@ -63,7 +63,7 @@ export default function AdminRechargesPage() {
 
   const [statusFilter, setStatusFilter] = useState<TopUpStatus>("PENDING");
   // `items === null` sert d'indicateur de chargement (pas de state `loading`
-  // séparé), comme sur les autres pages du dashboard — évite d'avoir à
+  // séparé), comme sur les autres pages du dashboard - évite d'avoir à
   // déclencher un setState synchrone dans l'effet de chargement.
   const [items, setItems] = useState<AdminTopUpRequestItem[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -204,7 +204,7 @@ export default function AdminRechargesPage() {
   const dialogDescription = confirmAction
     ? confirmAction.type === "approve"
       ? `${confirmAction.item.user.name} (${confirmAction.item.user.email}) sera crédité de ${formatNumberFr(confirmAction.item.credits)} crédits pour un paiement de ${formatGnf(confirmAction.item.amountGnf)}. Cette action crédite réellement le compte, elle n’est pas anodine.`
-      : `La demande de ${confirmAction.item.user.name} (${confirmAction.item.user.email}) — ${formatGnf(confirmAction.item.amountGnf)} pour ${formatNumberFr(confirmAction.item.credits)} crédits — sera rejetée. Aucun crédit ne sera ajouté.`
+      : `La demande de ${confirmAction.item.user.name} (${confirmAction.item.user.email}) - ${formatGnf(confirmAction.item.amountGnf)} pour ${formatNumberFr(confirmAction.item.credits)} crédits - sera rejetée. Aucun crédit ne sera ajouté.`
     : "";
 
   return (
@@ -271,11 +271,11 @@ export default function AdminRechargesPage() {
         <>
           {/*
            * >= md : tableau classique. En dessous, 9 colonnes ne tiennent
-           * jamais lisiblement — on bascule sur des cartes empilées (voir
+           * jamais lisiblement - on bascule sur des cartes empilées (voir
            * plus bas). La colonne Actions est collante à droite : à 1280px
            * (fenêtre courante la plus étroite visée), le tableau dépasse la
            * largeur du conteneur admin une fois la sidebar déduite, et sans
-           * ça seul le bouton « Approuver » restait visible — dangereux sur
+           * ça seul le bouton « Approuver » restait visible - dangereux sur
            * l'écran qui crédite réellement de l'argent.
            */}
           <div className="hidden overflow-hidden rounded-2xl border border-white/[0.09] bg-[#0C0D0F] md:block">

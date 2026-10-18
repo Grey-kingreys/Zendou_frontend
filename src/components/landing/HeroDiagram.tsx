@@ -59,7 +59,7 @@ function MobileBeamConnector({
 export default function HeroDiagram() {
   return (
     <>
-      {/* Desktop / large-tablet diagram — faithful to the reference design. */}
+      {/* Desktop / large-tablet diagram - faithful to the reference design. */}
       <div className="relative hidden aspect-[1200/360] min-h-[300px] w-full lg:block">
         <svg
           viewBox="0 0 1200 360"
@@ -188,7 +188,7 @@ export default function HeroDiagram() {
         </div>
       </div>
 
-      {/* Small-screen fallback — same nodes, stacked vertically so nothing overflows. */}
+      {/* Small-screen fallback - same nodes, stacked vertically so nothing overflows. */}
       <div className="flex flex-col items-center gap-3 lg:hidden">
         <div className="grid w-full max-w-sm grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="flex min-h-[58px] flex-col justify-center rounded-xl border border-white/[0.09] bg-[#0E1013] px-3.5 py-3">

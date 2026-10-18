@@ -2,7 +2,7 @@ import Link from "next/link";
 
 /**
  * En-tête de la section /docs : logo Zendou (retour à l'accueil) + accès
- * direct au tableau de bord. Reste visible en mobile comme en desktop —
+ * direct au tableau de bord. Reste visible en mobile comme en desktop -
  * c'est `DocsSidebar` / `DocsMobileNav` qui changent de forme.
  */
 export default function DocsHeader() {

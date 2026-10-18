@@ -68,7 +68,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     try {
       body = await response.json();
     } catch {
-      // Response had no JSON body — fall back to a generic message below.
+      // Response had no JSON body - fall back to a generic message below.
     }
     throw new ApiError(
       response.status,

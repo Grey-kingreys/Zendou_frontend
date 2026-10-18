@@ -71,7 +71,7 @@ export default function InscriptionPage() {
     try {
       await api.post<User>("/v1/auth/register", payload);
       // Compte créé mais pas encore confirmé (vague 8) : le tableau de bord
-      // reste fermé jusqu'au clic sur le lien reçu par email — direction
+      // reste fermé jusqu'au clic sur le lien reçu par email - direction
       // l'écran dédié plutôt que /dashboard, qui renverrait de toute façon
       // ici via son garde (dashboard/layout.tsx).
       router.push("/confirmez-votre-email");
