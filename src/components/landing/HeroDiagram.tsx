@@ -1,13 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
-const BASES = [240, 310, 288] as const;
-
-function jitter(base: number) {
-  return Math.max(150, base + Math.round((Math.random() - 0.5) * 46));
-}
-
 /**
  * Faisceau vertical du diagramme compact (< lg). Même principe que les
  * faisceaux du SVG desktop (dégradé + trait animé en pointillés) mais sur un
@@ -67,21 +57,6 @@ function MobileBeamConnector({
 }
 
 export default function HeroDiagram() {
-  const [ms, setMs] = useState<number[]>([...BASES]);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (document.hidden) return;
-      const i = Math.floor(Math.random() * 3);
-      setMs((prev) => {
-        const next = [...prev];
-        next[i] = jitter(BASES[i]);
-        return next;
-      });
-    }, 2400);
-    return () => clearInterval(timer);
-  }, []);
-
   return (
     <>
       {/* Desktop / large-tablet diagram — faithful to the reference design. */}
@@ -194,21 +169,21 @@ export default function HeroDiagram() {
           <div className="font-mono text-xs">gmail.com</div>
           <div className="mt-1 flex items-center gap-1.5 text-xs text-[#35D07F]">
             <span className="h-[5px] w-[5px] flex-none rounded-full bg-[#35D07F] [animation:zd-blip_2.4s_ease-in-out_infinite]" />
-            delivered · <span className="tabular-nums">{ms[0]}</span> ms
+            delivered
           </div>
         </div>
         <div className="absolute top-[41.1%] right-0 flex h-[17.8%] min-h-[58px] w-[12.5%] min-w-[126px] flex-col justify-center rounded-xl border border-white/[0.09] bg-[#0E1013] px-3.5">
           <div className="font-mono text-xs">outlook.com</div>
           <div className="mt-1 flex items-center gap-1.5 text-xs text-[#35D07F]">
             <span className="h-[5px] w-[5px] flex-none rounded-full bg-[#35D07F] [animation:zd-blip_2.4s_ease-in-out_.8s_infinite]" />
-            delivered · <span className="tabular-nums">{ms[1]}</span> ms
+            delivered
           </div>
         </div>
         <div className="absolute top-[77.8%] right-0 flex h-[17.8%] min-h-[58px] w-[12.5%] min-w-[126px] flex-col justify-center rounded-xl border border-white/[0.09] bg-[#0E1013] px-3.5">
           <div className="font-mono text-xs">yahoo.fr</div>
           <div className="mt-1 flex items-center gap-1.5 text-xs text-[#35D07F]">
             <span className="h-[5px] w-[5px] flex-none rounded-full bg-[#35D07F] [animation:zd-blip_2.4s_ease-in-out_1.6s_infinite]" />
-            delivered · <span className="tabular-nums">{ms[2]}</span> ms
+            delivered
           </div>
         </div>
       </div>
@@ -256,21 +231,21 @@ export default function HeroDiagram() {
             <div className="font-mono text-xs">gmail.com</div>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-[#35D07F]">
               <span className="h-[5px] w-[5px] flex-none rounded-full bg-[#35D07F] [animation:zd-blip_2.4s_ease-in-out_infinite]" />
-              delivered · <span className="tabular-nums">{ms[0]}</span> ms
+              delivered
             </div>
           </div>
           <div className="flex min-h-[58px] flex-col justify-center rounded-xl border border-white/[0.09] bg-[#0E1013] px-3.5 py-3">
             <div className="font-mono text-xs">outlook.com</div>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-[#35D07F]">
               <span className="h-[5px] w-[5px] flex-none rounded-full bg-[#35D07F] [animation:zd-blip_2.4s_ease-in-out_.8s_infinite]" />
-              delivered · <span className="tabular-nums">{ms[1]}</span> ms
+              delivered
             </div>
           </div>
           <div className="flex min-h-[58px] flex-col justify-center rounded-xl border border-white/[0.09] bg-[#0E1013] px-3.5 py-3">
             <div className="font-mono text-xs">yahoo.fr</div>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-[#35D07F]">
               <span className="h-[5px] w-[5px] flex-none rounded-full bg-[#35D07F] [animation:zd-blip_2.4s_ease-in-out_1.6s_infinite]" />
-              delivered · <span className="tabular-nums">{ms[2]}</span> ms
+              delivered
             </div>
           </div>
         </div>

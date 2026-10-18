@@ -577,7 +577,7 @@ export default function AdminCompteDetailPage() {
               Créditer / débiter
             </h3>
             <p className="mb-4 text-[13px] leading-relaxed text-[#9BA1A8] text-pretty">
-              Ajoute ou retire des crédits du solde. Un montant négatif
+              Ajouter ou retirer des crédits du solde. Un montant négatif
               reprend un geste accordé à tort.
             </p>
             {isSelf ? (

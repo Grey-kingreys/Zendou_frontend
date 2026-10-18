@@ -16,7 +16,7 @@ export default function PricingSection() {
         <p className="mx-auto max-w-[520px] text-base text-[#9BA1A8] text-pretty">
           Pas d&rsquo;abonnement : vous achetez des packs de crédits
           prépayés. 1 crédit = 1 email. Les packs se cumulent et
-          n&rsquo;expirent jamais.
+          n&rsquo;expirent jamais. Le paiement se fait par Orange Money ou MTN MoMo, et la recharge est validée manuellement par l&rsquo;équipe.
         </p>
       </div>
 

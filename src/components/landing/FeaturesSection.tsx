@@ -21,7 +21,7 @@ const FEATURES = [
     icon: "₵",
     iconFont: "text-[15px]",
     title: "Paiement local",
-    body: "Rechargez en Orange Money ou MTN MoMo, prix en GNF. Aucune carte bancaire internationale requise.",
+    body: "Rechargez en Orange Money ou MTN MoMo (recharge validée manuellement par l'équipe), prix en GNF. Aucune carte bancaire internationale requise.",
   },
 ];
 

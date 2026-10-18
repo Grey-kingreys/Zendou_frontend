@@ -49,7 +49,7 @@ const jsonLd = {
         price: "0",
         priceCurrency: "GNF",
         description:
-          "Forfait Découverte : 1 000 emails offerts, sans carte bancaire internationale.",
+          "Pack Découverte : 1 000 emails offerts, sans carte bancaire internationale.",
       },
     },
   ],
