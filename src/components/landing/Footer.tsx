@@ -33,9 +33,6 @@ export default function Footer() {
           <Link href="/docs/relais-smtp" className="text-[#8A9099]">
             Relais SMTP
           </Link>
-          <a href="#" className="text-[#8A9099]">
-            Changelog
-          </a>
         </div>
 
         <div className="flex flex-col gap-2.5 text-sm text-[#8A9099]">
@@ -51,39 +48,32 @@ export default function Footer() {
           <Link href="/docs/verifier-un-domaine" className="text-[#8A9099]">
             Vérifier un domaine
           </Link>
-          <a href="#" className="text-[#8A9099]">
-            Statut
-          </a>
         </div>
 
         <div className="flex flex-col gap-2.5 text-sm text-[#8A9099]">
           <span className="mb-0.5 text-[13px] font-semibold text-[#EDEEF0]">
             Entreprise
           </span>
-          <a href="#" className="text-[#8A9099]">
+          <Link href="/a-propos" className="text-[#8A9099]">
             À propos
-          </a>
+          </Link>
           <a href="mailto:contact@zendou.app" className="text-[#8A9099]">
             Contact
           </a>
           <Link href="/confidentialite" className="text-[#8A9099]">
             Confidentialité
           </Link>
-          <a href="#" className="text-[#8A9099]">
+          <Link href="/cgu" className="text-[#8A9099]">
             CGU
-          </a>
-          <a href="#" className="text-[#8A9099]">
+          </Link>
+          <Link href="/politique-anti-spam" className="text-[#8A9099]">
             Politique anti-spam
-          </a>
+          </Link>
         </div>
       </div>
 
       <div className="mx-auto flex max-w-[1160px] flex-col gap-3 border-t border-white/[0.06] px-6 pt-[22px] pb-10 font-mono text-[13px] text-[#5E646B] sm:flex-row sm:items-center sm:justify-between sm:px-8">
         <span>© 2026 Zendou · Conakry, Guinée</span>
-        <span className="flex items-center gap-2">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#35D07F]" />
-          Tous les systèmes opérationnels
-        </span>
       </div>
     </footer>
   );
