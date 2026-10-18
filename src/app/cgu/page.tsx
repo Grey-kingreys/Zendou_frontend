@@ -68,7 +68,7 @@ export default function CguPage() {
         </P>
         <H2>Le service</H2>
         <P>
-          Zendou permet d&rsquo;envoyer des emails transactionnels (codes de connexion, reçus, notifications) depuis vos applications. Le service comprend une API HTTP (<code></code>), un relais SMTP, la vérification de vos domaines d&rsquo;envoi, un journal des envois conservé 6 mois et un tableau de bord. La <Link href="/docs" className="text-[#8AA4FF] underline underline-offset-2">documentation</Link> décrit le fonctionnement en détail. Zendou n&rsquo;est pas un outil de campagnes d&rsquo;emailing.
+          Zendou permet d&rsquo;envoyer des emails transactionnels (codes de connexion, reçus, notifications) depuis vos applications. Le service comprend une API HTTP (<code>POST /v1/emails</code>), un relais SMTP, la vérification de vos domaines d&rsquo;envoi, un journal des envois conservé 6 mois et un tableau de bord. La <Link href="/docs" className="text-[#8AA4FF] underline underline-offset-2">documentation</Link> décrit le fonctionnement en détail. Zendou n&rsquo;est pas un outil de campagnes d&rsquo;emailing.
         </P>
         <H2>Votre compte</H2>
         <P>

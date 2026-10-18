@@ -177,9 +177,9 @@ export type MailFromStatus =
 
 export interface DomainDetail extends DomainSummary {
   /** Domaine MAIL FROM personnalisé : `bounce.<domaine>`. */
-  mailFromDomain: string;
+  mailFromDomain?: string;
   /** Dernier statut MAIL FROM connu de SES, `null` avant le premier rafraîchissement. */
-  mailFromStatus: MailFromStatus | null;
+  mailFromStatus?: MailFromStatus | null;
   dkimRecords: DnsRecord[];
   recommendedRecords: RecommendedDnsRecord[];
 }
@@ -188,7 +188,7 @@ export interface DomainCheckResult {
   id: string;
   status: DomainStatus;
   verifiedAt: string | null;
-  mailFromStatus: MailFromStatus | null;
+  mailFromStatus?: MailFromStatus | null;
 }
 
 // --- Domaines : diagnostic DNS (GET /v1/domains/:id/dns-check) ------------
@@ -244,10 +244,10 @@ export interface DomainDnsCheckResult {
    */
   sesStatus: DomainStatus;
   /** Dernier `MailFromDomainStatus` connu de SES, `null` si jamais lu. */
-  mailFromStatus: MailFromStatus | null;
+  mailFromStatus?: MailFromStatus | null;
   dkim: DkimDnsRecordCheck[];
   /** MX du MAIL FROM personnalisé, sur `bounce.<domaine>`. */
-  mailFromMx: MxDnsRecordCheck;
+  mailFromMx?: MxDnsRecordCheck;
   spf: TxtDnsRecordCheck;
   dmarc: TxtDnsRecordCheck;
 }

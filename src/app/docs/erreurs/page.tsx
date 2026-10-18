@@ -56,17 +56,17 @@ const SEND_ERROR_CODES: { code: string; status: string; meaning: string }[] = [
   {
     code: "INVALID_FROM",
     status: "400",
-    meaning: "Adresse d'expédition (from) illisible.",
+    meaning: "Adresse d'expédition (from) illisible, ou nom d'affichage de plus de 128 caractères.",
   },
   {
     code: "INVALID_TO",
     status: "400",
-    meaning: "Adresse destinataire (to) illisible.",
+    meaning: "Adresse destinataire (to) illisible, ou nom d'affichage de plus de 128 caractères.",
   },
   {
     code: "INVALID_REPLY_TO",
     status: "400",
-    meaning: "Adresse de réponse (replyTo) illisible. Nouveau.",
+    meaning: "Adresse de réponse (replyTo) illisible, ou nom d'affichage de plus de 128 caractères.",
   },
   {
     code: "MISSING_BODY",

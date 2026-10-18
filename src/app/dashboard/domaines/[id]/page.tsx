@@ -336,11 +336,16 @@ export default function DashboardDomainDetailPage() {
             {domain.verifiedAt &&
               ` · Vérifié le ${formatDateTimeFr(domain.verifiedAt)}`}
           </p>
-          <p className="mt-1 text-sm text-[#9BA1A8]">
-            Domaine MAIL FROM : <span className="font-mono">{domain.mailFromDomain}</span>
-            {" · "}
-            {mailFromStatusLabel(domain.mailFromStatus)}
-          </p>
+          {domain.mailFromDomain && (
+            <p className="mt-1 text-sm text-[#9BA1A8]">
+              Domaine MAIL FROM :{" "}
+              <span className="font-mono break-all">
+                {domain.mailFromDomain}
+              </span>
+              {" · "}
+              {mailFromStatusLabel(domain.mailFromStatus ?? null)}
+            </p>
+          )}
         </div>
         <div className="flex shrink-0 gap-3">
           <button

@@ -385,6 +385,13 @@ export default function EnvoyerUnEmailPage() {
           guillemets ;
         </li>
         <li>
+          le nom d&rsquo;affichage est limité à 128 caractères (un accent ou
+          un emoji compte pour 1) : au-delà, l&rsquo;API répond 400 avant tout
+          débit, par exemple « Le nom d&rsquo;affichage de l&rsquo;adresse
+          d&rsquo;expédition est trop long : il ne doit pas dépasser 128
+          caractères. » ;
+        </li>
+        <li>
           un nom avec des accents (par exemple « Boutique Awa Diallo ») peut
           être envoyé tel quel : Zendou l&rsquo;encode pour la messagerie ;
         </li>
@@ -431,14 +438,14 @@ export default function EnvoyerUnEmailPage() {
       </ul>
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8] text-pretty">
         Toute autre valeur donne une réponse 400 avant tout débit de crédit.
-        Le relais SMTP transmet les en-têtes tels quels.
+        Le relais SMTP transmet les en-têtes tels quels, à l&rsquo;exception de <code>Bcc</code>, <code>Return-Path</code>, <code>Sender</code> et des <code>Resent-*</code>, qu&rsquo;il retire.
       </p>
       <h3 className="mb-2.5 font-heading text-[15px] font-semibold text-[#EDEEF0]">
         Désinscription en un clic
       </h3>
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8] text-pretty">
         Pour les envois réguliers (rappels, bilans, lettres d&rsquo;information),
-        Gmail et Yahoo exigent un lien de désinscription en un clic. Ajoutez
+        Gmail et Yahoo exigent la désinscription en un clic pour les envois en volume. Ajoutez
         les deux en-têtes ci-dessous, puis traitez la désinscription de votre
         côté : Zendou ne gère pas vos listes d&rsquo;abonnés.
       </p>

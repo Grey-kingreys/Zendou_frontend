@@ -149,16 +149,20 @@ export default function DnsDiagnostic({
             )}
           </div>
 
-          <div>
-            <h3 className="mb-3 text-[13.5px] font-semibold text-[#EDEEF0]">
-              MX (MAIL FROM)
-            </h3>
-            <DnsCheckRow title="MX" record={result.mailFromMx} />
-          </div>
+          {result.mailFromMx && (
+            <div>
+              <h3 className="mb-3 text-[13.5px] font-semibold text-[#EDEEF0]">
+                MX (MAIL FROM)
+              </h3>
+              <DnsCheckRow title="MX" record={result.mailFromMx} />
+            </div>
+          )}
 
           <div>
             <h3 className="mb-3 text-[13.5px] font-semibold text-[#EDEEF0]">
-              SPF (MAIL FROM)
+              {result.mailFromMx || result.spf.name.startsWith("bounce.")
+                ? "SPF (MAIL FROM)"
+                : "SPF"}
             </h3>
             <DnsCheckRow title="TXT" record={result.spf} />
           </div>

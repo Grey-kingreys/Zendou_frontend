@@ -68,7 +68,7 @@ export default function AntiSpamPage() {
         </P>
         <H2>Envois réguliers et désinscription</H2>
         <P>
-          Les messages purement transactionnels (code de connexion, reçu, confirmation de commande) n&rsquo;ont pas besoin de lien de désinscription. En revanche, tout envoi régulier ou d&rsquo;information (rappels, bilans, lettres d&rsquo;information) doit permettre au destinataire de se désinscrire simplement, et vous devez traiter cette demande rapidement. Gmail et Yahoo exigent d&rsquo;ailleurs la désinscription en un clic pour ces envois : Zendou vous permet d&rsquo;ajouter les en-têtes <code></code> et <code></code>, comme expliqué dans la <Link href="/docs/envoyer-un-email" className="text-[#8AA4FF] underline underline-offset-2">référence d&rsquo;envoi</Link>.
+          Les messages purement transactionnels (code de connexion, reçu, confirmation de commande) n&rsquo;ont pas besoin de lien de désinscription. En revanche, tout envoi régulier ou d&rsquo;information (rappels, bilans, lettres d&rsquo;information) doit permettre au destinataire de se désinscrire simplement, et vous devez traiter cette demande rapidement. Gmail et Yahoo exigent d&rsquo;ailleurs la désinscription en un clic pour les envois en volume : Zendou vous permet d&rsquo;ajouter les en-têtes <code>List-Unsubscribe</code> et <code>List-Unsubscribe-Post</code>, comme expliqué dans la <Link href="/docs/envoyer-un-email" className="text-[#8AA4FF] underline underline-offset-2">référence d&rsquo;envoi</Link>.
         </P>
         <H2>Contenus interdits</H2>
         <P>
@@ -92,7 +92,7 @@ export default function AntiSpamPage() {
         </P>
         <ul className="mb-4 flex list-disc flex-col gap-2 pl-5 text-[15px] leading-[1.7] text-[#9BA1A8]">
           <li>au-delà de 5 % de rebonds définitifs, ou de 0,1 % de plaintes, votre compte est suspendu automatiquement ;</li>
-          <li>à partir de 60 % de ces seuils (3 % de rebonds, 0,06 % de plaintes), une alerte est émise sans sanction ;</li>
+          <li>à partir de 60 % de ces seuils (3 % de rebonds, 0,06 % de plaintes), un avertissement interne est enregistré, sans sanction ;</li>
           <li>aucune sanction n&rsquo;est prise sous 50 envois, volume trop faible pour que les taux soient significatifs.</li>
         </ul>
         <P>
