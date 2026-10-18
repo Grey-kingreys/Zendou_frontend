@@ -156,17 +156,30 @@ export interface DomainSummary {
 }
 
 export interface DnsRecord {
-  type: "CNAME" | "TXT";
+  type: "CNAME" | "TXT" | "MX";
   name: string;
   value: string;
+  /** Priorité, pour un enregistrement MX seulement. */
+  priority?: number;
 }
 
 export interface RecommendedDnsRecord extends DnsRecord {
-  purpose: "SPF" | "DMARC";
+  purpose: "MX" | "SPF" | "DMARC";
   note: string;
 }
 
+/** `MailFromDomainStatus` d'Amazon SES. */
+export type MailFromStatus =
+  | "PENDING"
+  | "SUCCESS"
+  | "FAILED"
+  | "TEMPORARY_FAILURE";
+
 export interface DomainDetail extends DomainSummary {
+  /** Domaine MAIL FROM personnalisé : `bounce.<domaine>`. */
+  mailFromDomain: string;
+  /** Dernier statut MAIL FROM connu de SES, `null` avant le premier rafraîchissement. */
+  mailFromStatus: MailFromStatus | null;
   dkimRecords: DnsRecord[];
   recommendedRecords: RecommendedDnsRecord[];
 }
@@ -175,6 +188,7 @@ export interface DomainCheckResult {
   id: string;
   status: DomainStatus;
   verifiedAt: string | null;
+  mailFromStatus: MailFromStatus | null;
 }
 
 // --- Domaines : diagnostic DNS (GET /v1/domains/:id/dns-check) ------------
@@ -209,6 +223,15 @@ export interface TxtDnsRecordCheck {
   ttl: number | null;
 }
 
+/** Vérification du MX du MAIL FROM (`<priorité> <hôte>` attendu). */
+export interface MxDnsRecordCheck {
+  name: string;
+  status: DnsRecordCheckStatus;
+  attendu: string;
+  trouve: string | null;
+  ttl: number | null;
+}
+
 export interface DomainDnsCheckResult {
   domainId: string;
   domainName: string;
@@ -220,7 +243,11 @@ export interface DomainDnsCheckResult {
    * diverger légitimement le temps qu'AWS refasse son propre contrôle.
    */
   sesStatus: DomainStatus;
+  /** Dernier `MailFromDomainStatus` connu de SES, `null` si jamais lu. */
+  mailFromStatus: MailFromStatus | null;
   dkim: DkimDnsRecordCheck[];
+  /** MX du MAIL FROM personnalisé, sur `bounce.<domaine>`. */
+  mailFromMx: MxDnsRecordCheck;
   spf: TxtDnsRecordCheck;
   dmarc: TxtDnsRecordCheck;
 }

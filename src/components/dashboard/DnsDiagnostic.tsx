@@ -7,6 +7,7 @@ import { dnsRecordCheckStatusMeta } from "@/lib/status";
 import type {
   DkimDnsRecordCheck,
   DomainDnsCheckResult,
+  MxDnsRecordCheck,
   TxtDnsRecordCheck,
 } from "@/lib/types";
 
@@ -34,7 +35,7 @@ function DnsCheckRow({
   record,
 }: {
   title: string;
-  record: DkimDnsRecordCheck | TxtDnsRecordCheck;
+  record: DkimDnsRecordCheck | TxtDnsRecordCheck | MxDnsRecordCheck;
 }) {
   const meta = dnsRecordCheckStatusMeta(record.status);
   const message = "message" in record ? record.message : undefined;
@@ -108,8 +109,8 @@ export default function DnsDiagnostic({
         </button>
       </div>
       <p className="mb-4 text-[13.5px] text-[#9BA1A8] text-pretty">
-        Interroge directement le DNS pour chaque enregistrement DKIM, SPF et
-        DMARC, et repère les erreurs les plus fréquentes (proxy Cloudflare,
+        Interroge directement le DNS pour chaque enregistrement DKIM, MX et SPF du
+        MAIL FROM, et DMARC, et repère les erreurs les plus fréquentes (proxy Cloudflare,
         domaine dupliqué, aplatissement CNAME). Limité à 30 vérifications par
         heure.
       </p>
@@ -150,7 +151,14 @@ export default function DnsDiagnostic({
 
           <div>
             <h3 className="mb-3 text-[13.5px] font-semibold text-[#EDEEF0]">
-              SPF
+              MX (MAIL FROM)
+            </h3>
+            <DnsCheckRow title="MX" record={result.mailFromMx} />
+          </div>
+
+          <div>
+            <h3 className="mb-3 text-[13.5px] font-semibold text-[#EDEEF0]">
+              SPF (MAIL FROM)
             </h3>
             <DnsCheckRow title="TXT" record={result.spf} />
           </div>

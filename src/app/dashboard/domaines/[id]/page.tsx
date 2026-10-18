@@ -22,12 +22,26 @@ import { formatDateTimeFr } from "@/lib/format";
 import { domainStatusMeta } from "@/lib/status";
 import type {
   DnsRecord,
+  MailFromStatus,
   DomainCheckResult,
   DomainDetail,
   DomainDnsCheckResult,
 } from "@/lib/types";
 
 /** Texte tabulé (type, nom, valeur) pour le bouton « Tout copier » (B12). */
+const MAIL_FROM_STATUS_LABELS: Record<MailFromStatus, string> = {
+  PENDING: "En attente de vérification par Amazon SES",
+  SUCCESS: "Actif",
+  FAILED: "Échec : vérifiez les enregistrements MX et SPF",
+  TEMPORARY_FAILURE: "Échec temporaire : Amazon SES réessaiera",
+};
+
+function mailFromStatusLabel(status: MailFromStatus | null): string {
+  return status
+    ? MAIL_FROM_STATUS_LABELS[status]
+    : "Pas encore vérifié (enregistrements facultatifs)";
+}
+
 function buildDkimCopyText(records: DnsRecord[]): string {
   const header = "Type\tNom\tValeur";
   const rows = records.map((record) => `${record.type}\t${record.name}\t${record.value}`);
@@ -190,7 +204,12 @@ export default function DashboardDomainDetailPage() {
       );
       setDomain((current) =>
         current
-          ? { ...current, status: result.status, verifiedAt: result.verifiedAt }
+          ? {
+              ...current,
+              status: result.status,
+              verifiedAt: result.verifiedAt,
+              mailFromStatus: result.mailFromStatus,
+            }
           : current
       );
       // Garde le panneau de diagnostic (juste au-dessus) synchronisé avec le
@@ -317,6 +336,11 @@ export default function DashboardDomainDetailPage() {
             {domain.verifiedAt &&
               ` · Vérifié le ${formatDateTimeFr(domain.verifiedAt)}`}
           </p>
+          <p className="mt-1 text-sm text-[#9BA1A8]">
+            Domaine MAIL FROM : <span className="font-mono">{domain.mailFromDomain}</span>
+            {" · "}
+            {mailFromStatusLabel(domain.mailFromStatus)}
+          </p>
         </div>
         <div className="flex shrink-0 gap-3">
           <button
@@ -398,11 +422,12 @@ export default function DashboardDomainDetailPage() {
 
       <section className="mb-8">
         <h2 className="mb-1.5 font-heading text-base font-semibold text-[#EDEEF0]">
-          2. Enregistrements recommandés (SPF, DMARC)
+          2. Enregistrements recommandés (MAIL FROM, SPF, DMARC)
         </h2>
         <p className="mb-4 text-[13.5px] text-[#9BA1A8] text-pretty">
           Facultatifs pour la vérification, fortement conseillés pour la
-          délivrabilité.
+          délivrabilité. Sans le MX et le SPF du MAIL FROM, vos envois
+          continuent normalement.
         </p>
         <div className="flex flex-col gap-4">
           {domain.recommendedRecords.map((record, index) => (
@@ -429,6 +454,14 @@ export default function DashboardDomainDetailPage() {
                   </p>
                   <CopyField value={record.value} />
                 </div>
+                {record.priority !== undefined && (
+                  <div>
+                    <p className="mb-1 text-[11.5px] tracking-[0.02em] text-[#70767D] uppercase">
+                      Priorité
+                    </p>
+                    <CopyField value={String(record.priority)} />
+                  </div>
+                )}
               </div>
               <p className="mt-3 text-[13px] leading-relaxed text-[#9BA1A8] text-pretty">
                 {record.note}
