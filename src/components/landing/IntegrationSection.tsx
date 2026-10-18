@@ -15,24 +15,37 @@ const SNIPPETS = [
     "subject": "Votre code de connexion",
     "html": "<p>Votre code : <b>498 217</b></p>"
   }'`,
-  `import { Zendou } from "zendou";
-
-const zendou = new Zendou(process.env.ZENDOU_API_KEY);
-
-await zendou.emails.send({
-  from: "Boutique Awa <no-reply@boutique.gn>",
-  to: "awa@exemple.gn",
-  subject: "Votre code de connexion",
-  html: "<p>Votre code : <b>498 217</b></p>",
+  `const response = await fetch("https://${API_HOST}/v1/emails", {
+  method: "POST",
+  headers: {
+    Authorization: \`Bearer \${process.env.ZENDOU_API_KEY}\`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    from: "Boutique Awa <no-reply@boutique.gn>",
+    to: "awa@exemple.gn",
+    subject: "Votre code de connexion",
+    html: "<p>Votre code : <b>498 217</b></p>",
+  }),
 });`,
-  `$zendou = new Zendou\\Client(getenv('ZENDOU_API_KEY'));
+  `$ch = curl_init('https://${API_HOST}/v1/emails');
 
-$zendou->emails->send([
-  'from'    => 'Boutique Awa <no-reply@boutique.gn>',
-  'to'      => 'awa@exemple.gn',
-  'subject' => 'Votre code de connexion',
-  'html'    => '<p>Votre code : <b>498 217</b></p>',
-]);`,
+curl_setopt_array($ch, [
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST  => 'POST',
+  CURLOPT_HTTPHEADER => [
+    'Authorization: Bearer ' . getenv('ZENDOU_API_KEY'),
+    'Content-Type: application/json',
+  ],
+  CURLOPT_POSTFIELDS => json_encode([
+    'from'    => 'Boutique Awa <no-reply@boutique.gn>',
+    'to'      => 'awa@exemple.gn',
+    'subject' => 'Votre code de connexion',
+    'html'    => '<p>Votre code : <b>498 217</b></p>',
+  ]),
+]);
+
+curl_exec($ch);`,
 ];
 
 export default function IntegrationSection() {
@@ -55,7 +68,7 @@ export default function IntegrationSection() {
         <div className="flex flex-col gap-3">
           <div className="flex items-baseline gap-2.5 text-[15px] text-[#C5CACF]">
             <span className="text-[#35D07F]">✓</span>
-            SDK Node, PHP, Python — ou un simple{" "}
+            Un simple appel HTTP depuis n&rsquo;importe quel langage, par exemple{" "}
             <span className="font-mono text-[13px] text-[#EDEEF0]">curl</span>
           </div>
           <div className="flex items-baseline gap-2.5 text-[15px] text-[#C5CACF]">
@@ -92,7 +105,7 @@ export default function IntegrationSection() {
         </pre>
         <div className="flex gap-4 border-t border-white/[0.07] px-6 py-3.5 font-mono text-[12.5px] text-[#5E646B]">
           <span className="text-[#35D07F]">202 Accepted</span>
-          <span>{'{ "id": "e_7f3a91c2", "status": "queued" }'}</span>
+          <span>{'{ "id": "e_7f3a91c2b8d1", "status": "queued" }'}</span>
         </div>
       </div>
     </section>

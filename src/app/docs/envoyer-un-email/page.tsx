@@ -346,7 +346,7 @@ export default function EnvoyerUnEmailPage() {
         </li>
         <li>
           le nom peut être entre guillemets, et doit l&rsquo;être s&rsquo;il
-          contient l&rsquo;un des caractères <code>{'" ( ) , : ; < > @ [ \ ]'}</code>,
+          contient l&rsquo;un des caractères <code>{'" ( ) , : ; < > @ [ \\ ]'}</code>,
           par exemple <code>{'"Awa, Boutique" <no-reply@boutique-awa.gn>'}</code>{" "}
           (dans du JSON, les guillemets s&rsquo;échappent avec{" "}
           <code>{"\\"}</code>) ;

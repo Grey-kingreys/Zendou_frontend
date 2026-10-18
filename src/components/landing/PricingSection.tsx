@@ -14,8 +14,9 @@ export default function PricingSection() {
           Payez pour ce que vous envoyez
         </h2>
         <p className="mx-auto max-w-[520px] text-base text-[#9BA1A8] text-pretty">
-          Entre le gratuit vite saturé et le grand écart vers les offres
-          pro, il manquait quelque chose. Le voici.
+          Pas d&rsquo;abonnement : vous achetez des packs de crédits
+          prépayés. 1 crédit = 1 email. Les packs se cumulent et
+          n&rsquo;expirent jamais.
         </p>
       </div>
 
@@ -35,9 +36,8 @@ export default function PricingSection() {
             1 000 emails offerts
           </div>
           <div className="mb-7 flex flex-col gap-2.5 text-sm text-[#A8AEB4]">
-            <span>1 domaine vérifié</span>
-            <span>Journal des envois 7 jours</span>
-            <span>Support communautaire</span>
+            <span>Offerts après confirmation de votre email</span>
+            <span>Sans carte bancaire</span>
           </div>
           <Link
             href="/inscription"
@@ -50,7 +50,7 @@ export default function PricingSection() {
         {/* Starter — mis en avant */}
         <div className="relative flex flex-col rounded-2xl border border-[rgba(91,124,250,0.45)] bg-[linear-gradient(180deg,rgba(91,124,250,0.07),rgba(91,124,250,0.01))] p-[30px_26px] shadow-[0_0_60px_rgba(91,124,250,0.10)]">
           <div className="absolute -top-[11px] left-[26px] rounded-[6px] bg-[#5B7CFA] px-2.5 py-[3px] text-[11.5px] font-semibold tracking-[0.02em] text-[#F7F9FF]">
-            LE PLUS CHOISI
+            POUR DÉMARRER
           </div>
           <div className="mb-1.5 font-heading text-base font-semibold">
             Starter
@@ -68,10 +68,8 @@ export default function PricingSection() {
             15 000 emails, sans expiration
           </div>
           <div className="mb-7 flex flex-col gap-2.5 text-sm text-[#C5CACF]">
-            <span>Domaines illimités</span>
-            <span>Relais SMTP + webhooks</span>
-            <span>Journal 30 jours</span>
-            <span>Support en français</span>
+            <span>Pack prépayé, achat unique</span>
+            <span>Environ 3,33 GNF par email</span>
           </div>
           <Link
             href="/inscription"
@@ -99,10 +97,8 @@ export default function PricingSection() {
             30 000 emails, sans expiration
           </div>
           <div className="mb-7 flex flex-col gap-2.5 text-sm text-[#A8AEB4]">
-            <span>Tout Starter</span>
-            <span>Sous-comptes / équipe</span>
-            <span>Journal 90 jours</span>
-            <span>Alertes de réputation</span>
+            <span>Pack prépayé, achat unique</span>
+            <span>3 GNF par email</span>
           </div>
           <Link
             href="/inscription"
@@ -127,13 +123,11 @@ export default function PricingSection() {
             100 000 emails et +
           </div>
           <div className="mb-7 flex flex-col gap-2.5 text-sm text-[#A8AEB4]">
-            <span>Tout Growth</span>
-            <span>IP dédiée possible</span>
-            <span>Facture GNF détaillée</span>
+            <span>Volume et tarif discutés avec vous</span>
             <span>Accompagnement direct</span>
           </div>
           <a
-            href="#"
+            href="mailto:contact@zendou.app"
             className="mt-auto rounded-[9px] border border-white/[0.14] py-[11px] text-center text-[14.5px] font-medium"
           >
             Nous écrire
@@ -141,22 +135,15 @@ export default function PricingSection() {
         </div>
       </div>
 
-      <div className="mt-5 flex flex-col items-start justify-between gap-6 rounded-2xl border border-dashed border-white/[0.13] bg-white/[0.015] p-6 sm:flex-row sm:items-center sm:gap-8 sm:p-[24px_28px]">
-        <div>
-          <div className="mb-1.5 font-heading text-base font-semibold">
-            Packs de crédits — sans expiration
-          </div>
-          <p className="max-w-[620px] text-[14.5px] text-[#8A9099] text-pretty">
-            Vos envois sont irréguliers ? Achetez 15 000 crédits une fois,
-            consommez-les quand vous voulez. Rien ne périme à la fin du mois.
-          </p>
+      <div className="mt-5 rounded-2xl border border-dashed border-white/[0.13] bg-white/[0.015] p-6 sm:p-[24px_28px]">
+        <div className="mb-1.5 font-heading text-base font-semibold">
+          Les mêmes fonctions pour tous les packs
         </div>
-        <a
-          href="#"
-          className="rounded-[9px] border border-white/[0.14] px-[18px] py-[11px] text-[14.5px] font-medium whitespace-nowrap"
-        >
-          Voir les packs
-        </a>
+        <p className="max-w-[760px] text-[14.5px] text-[#8A9099] text-pretty">
+          API REST et relais SMTP, domaines vérifiés sans limite de nombre,
+          liste de suppression automatique, journal des envois conservé 6
+          mois, support en français. Seul le volume de crédits change.
+        </p>
       </div>
     </section>
   );

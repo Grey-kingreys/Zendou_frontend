@@ -8,8 +8,8 @@ export default function CtaSection() {
           Envoyez votre premier email ce soir.
         </h2>
         <p className="mx-auto mb-8 max-w-[500px] text-[17px] leading-[1.65] text-[#9BA1A8] text-pretty">
-          Compte créé en une minute, 1 000 emails offerts, aucune carte
-          demandée.
+          Création de compte rapide, 1 000 emails offerts après confirmation de
+          votre adresse, aucune carte demandée.
         </p>
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
@@ -19,7 +19,7 @@ export default function CtaSection() {
             Créer mon compte
           </Link>
           <a
-            href="#"
+            href="mailto:contact@zendou.app"
             className="rounded-[9px] border border-white/[0.14] px-6 py-[14px] text-[15px] font-medium text-[#EDEEF0]"
           >
             {"Parler à l'équipe"}

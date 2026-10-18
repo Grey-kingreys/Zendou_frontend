@@ -3,7 +3,7 @@ const FEATURES = [
     icon: "{ }",
     iconFont: "font-mono text-sm",
     title: "API simple",
-    body: "Un endpoint, quatre champs. Clés scopées, révocables, et un relais SMTP si tu préfères.",
+    body: "Un endpoint, quatre champs. Clés API révocables et renouvelables, et un relais SMTP si vous préférez.",
   },
   {
     icon: "↗",
@@ -15,13 +15,13 @@ const FEATURES = [
     icon: "▤",
     iconFont: "text-[15px]",
     title: "Tableau de bord",
-    body: "Chaque envoi tracé : livré, bounce, plainte. Webhooks pour brancher tes propres alertes.",
+    body: "Chaque envoi tracé : livré, bounce, plainte. Journal des envois conservé 6 mois.",
   },
   {
     icon: "₵",
     iconFont: "text-[15px]",
     title: "Paiement local",
-    body: "Orange Money et MTN MoMo, factures en GNF. Aucune carte bancaire internationale requise.",
+    body: "Rechargez en Orange Money ou MTN MoMo, prix en GNF. Aucune carte bancaire internationale requise.",
   },
 ];
 

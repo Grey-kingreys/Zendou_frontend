@@ -4,8 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 
 /**
- * Nav de la landing. En dessous de `md`, les 4 liens centraux (Produit,
- * Documentation, Tarifs, Changelog) n'ont plus de place dans la barre : ils
+ * Nav de la landing. En dessous de `md`, les 3 liens centraux (Produit,
+ * Documentation, Tarifs) n'ont plus de place dans la barre : ils
  * passent dans un panneau repliable ouvert par un bouton hamburger, seul
  * menu mobile de la page (les trois autres — dashboard/docs/admin — sont des
  * bandeaux non repliables adaptés à une sidebar, pattern qui ne marche pas
@@ -40,9 +40,6 @@ export default function Nav() {
           <Link href="#tarifs" className="text-[#9BA1A8]">
             Tarifs
           </Link>
-          <a href="#" className="text-[#9BA1A8]">
-            Changelog
-          </a>
         </div>
 
         <div className="flex items-center gap-1 text-sm sm:gap-3 md:gap-4">
@@ -116,16 +113,6 @@ export default function Nav() {
           >
             Tarifs
           </Link>
-          {/* Placeholder assumé du design (href="#") : pas de onClick, sinon
-              eslint-plugin-jsx-a11y (anchor-is-valid) le traite comme un
-              bouton déguisé — cf. Défaut 1 du plan, ne pas lui inventer de
-              destination ni de comportement. */}
-          <a
-            href="#"
-            className="rounded-lg px-3 py-2.5 text-[15px] text-[#EDEEF0]"
-          >
-            Changelog
-          </a>
           <div className="my-1 h-px bg-white/[0.06]" />
           <Link
             href="/connexion"

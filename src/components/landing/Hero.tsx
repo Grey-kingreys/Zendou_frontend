@@ -10,7 +10,7 @@ export default function Hero() {
       <div className="mx-auto max-w-[900px] px-6 pt-12 text-center [animation:zd-rise_.7s_ease_both] sm:px-8 sm:pt-16">
         <div className="mb-7 inline-flex items-center gap-2.5 rounded-full border border-white/[0.10] bg-white/[0.03] px-3.5 py-1.5 text-[13px] text-[#9BA1A8]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#35D07F] shadow-[0_0_8px_#35D07F]" />
-          Paiement Orange Money &amp; MTN MoMo — facturation en GNF
+          Paiement Orange Money &amp; MTN MoMo, prix en GNF
         </div>
         <h1 className="mb-5 font-heading text-4xl font-semibold text-balance sm:text-5xl md:text-[60px] md:leading-[1.06] md:tracking-[-0.035em]">
           {"L'email transactionnel,"}
@@ -19,7 +19,7 @@ export default function Hero() {
         </h1>
         <p className="mx-auto mb-8 max-w-[600px] text-lg leading-relaxed text-[#9BA1A8] text-pretty">
           {
-            "OTP, reçus, notifications : une requête HTTP et c'est parti. Des paliers pensés pour les petites équipes ouest-africaines, sans carte bancaire internationale."
+            "OTP, reçus, notifications : une requête HTTP et c'est parti. Des packs de crédits pensés pour les petites équipes ouest-africaines, sans carte bancaire internationale."
           }
         </p>
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">

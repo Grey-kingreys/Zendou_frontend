@@ -168,7 +168,7 @@ export default function HeroDiagram() {
 
         <div className="absolute top-[4.4%] left-0 flex h-[17.8%] min-h-[58px] w-[12.5%] min-w-[126px] flex-col justify-center rounded-xl border border-white/[0.09] bg-[#0E1013] px-3.5">
           <div className="font-mono text-xs text-[#5B7CFA]">POST /emails</div>
-          <div className="mt-1 text-xs text-[#70767D]">Ton application</div>
+          <div className="mt-1 text-xs text-[#70767D]">Votre application</div>
         </div>
         <div className="absolute top-[41.1%] left-0 flex h-[17.8%] min-h-[58px] w-[12.5%] min-w-[126px] flex-col justify-center rounded-xl border border-white/[0.09] bg-[#0E1013] px-3.5">
           <div className="font-mono text-xs text-[#5B7CFA]">SMTP relay</div>
@@ -218,7 +218,7 @@ export default function HeroDiagram() {
         <div className="grid w-full max-w-sm grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="flex min-h-[58px] flex-col justify-center rounded-xl border border-white/[0.09] bg-[#0E1013] px-3.5 py-3">
             <div className="font-mono text-xs text-[#5B7CFA]">POST /emails</div>
-            <div className="mt-1 text-xs text-[#70767D]">Ton application</div>
+            <div className="mt-1 text-xs text-[#70767D]">Votre application</div>
           </div>
           <div className="flex min-h-[58px] flex-col justify-center rounded-xl border border-white/[0.09] bg-[#0E1013] px-3.5 py-3">
             <div className="font-mono text-xs text-[#5B7CFA]">SMTP relay</div>
