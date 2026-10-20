@@ -59,9 +59,58 @@ export interface RegisterPayload {
   captchaToken?: string;
 }
 
+// --- Portée par domaine (B27) ------------------------------------------
+
+/** `ALL` : tous les domaines vérifiés du compte ; `SELECTED` : une sélection. */
+export type CredentialDomainScope = "ALL" | "SELECTED";
+
+export interface CredentialScopeDomain {
+  id: string;
+  name: string;
+}
+
+/**
+ * Champs de portée portés par une clé API ou un identifiant SMTP. Optionnels :
+ * un ancien backend (avant la vague 22) ne les renvoie pas, et l'absence se
+ * lit comme « tous les domaines ».
+ */
+export interface CredentialScopeFields {
+  domainScope?: CredentialDomainScope;
+  domains?: CredentialScopeDomain[];
+}
+
+/** Corps de création commun : `domainIds` absent ou vide donne la portée `ALL`. */
+export interface CreateCredentialBody {
+  name: string;
+  domainIds?: string[];
+}
+
+/** Aperçu d'impact (GET /v1/domains/:id/usage) : éléments actifs liés au domaine. */
+export interface DomainUsage {
+  apiKeys: { id: string; name: string; prefix: string; willBeRevoked: boolean }[];
+  smtpCredentials: {
+    id: string;
+    name: string;
+    username: string;
+    prefix: string;
+    willBeRevoked: boolean;
+  }[];
+}
+
+/** Réponse de DELETE /v1/domains/:id (200). Un ancien backend répond 204 sans corps. */
+export interface DomainRemoveResult {
+  revokedApiKeys?: { id: string; name: string; prefix: string }[];
+  revokedSmtpCredentials?: {
+    id: string;
+    name: string;
+    username: string;
+    prefix: string;
+  }[];
+}
+
 // --- Clés API ---------------------------------------------------------
 
-export interface ApiKeySummary {
+export interface ApiKeySummary extends CredentialScopeFields {
   id: string;
   name: string;
   prefix: string;
@@ -71,7 +120,7 @@ export interface ApiKeySummary {
 }
 
 /** Réponse à la création : `key` (clé complète) n'apparaît qu'ici. */
-export interface CreateApiKeyResponse {
+export interface CreateApiKeyResponse extends CredentialScopeFields {
   id: string;
   name: string;
   prefix: string;
@@ -102,7 +151,7 @@ export interface RotateApiKeyResponse {
  * findAllForUser`) ne le sélectionne pas, exactement comme `ApiKeySummary`
  * ne porte pas non plus de trace de rotation dans la liste.
  */
-export interface SmtpCredentialSummary {
+export interface SmtpCredentialSummary extends CredentialScopeFields {
   id: string;
   name: string;
   /** Nom d'utilisateur opaque et généré (ex. `zdu_…`), en clair - pas l'adresse email du compte. */
@@ -114,7 +163,7 @@ export interface SmtpCredentialSummary {
 }
 
 /** Réponse à la création : `password` (`zd_smtp_…`, mot de passe complet) n'apparaît qu'ici. */
-export interface CreateSmtpCredentialResponse {
+export interface CreateSmtpCredentialResponse extends CredentialScopeFields {
   id: string;
   name: string;
   username: string;
