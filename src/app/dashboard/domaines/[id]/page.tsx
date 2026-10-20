@@ -26,6 +26,8 @@ import type {
   DomainCheckResult,
   DomainDetail,
   DomainDnsCheckResult,
+  DomainRemoveResult,
+  DomainUsage,
 } from "@/lib/types";
 
 /** Texte tabulé (type, nom, valeur) pour le bouton « Tout copier » (B12). */
@@ -77,6 +79,15 @@ export default function DashboardDomainDetailPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  // Aperçu d'impact (B27) : `null` tant qu'il charge ou s'il est indisponible
+  // (ancien backend : 404) - la confirmation actuelle s'affiche alors seule.
+  const [usage, setUsage] = useState<DomainUsage | null>(null);
+  const [usageLoading, setUsageLoading] = useState(false);
+  // Résultat de la suppression quand des clés ou identifiants ont été révoqués.
+  const [removed, setRemoved] = useState<{
+    name: string;
+    result: DomainRemoveResult;
+  } | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -257,11 +268,39 @@ export default function DashboardDomainDetailPage() {
     }
   }
 
+  async function openDelete() {
+    setDeleteOpen(true);
+    setUsage(null);
+    setUsageLoading(true);
+    try {
+      const data = await api.get<DomainUsage>(`/v1/domains/${id}/usage`);
+      setUsage(data);
+    } catch {
+      // Aperçu indisponible (404 d'un ancien backend, réseau...) : on garde
+      // la confirmation sans liste plutôt que de bloquer la suppression.
+      setUsage(null);
+    } finally {
+      setUsageLoading(false);
+    }
+  }
+
   async function handleDelete() {
     setDeleting(true);
     setDeleteError(null);
     try {
-      await api.del(`/v1/domains/${id}`);
+      // 204 sans corps (ancien backend) ou 200 avec la liste des révocations.
+      const result = await api.del<DomainRemoveResult | undefined>(
+        `/v1/domains/${id}`
+      );
+      const revokedCount =
+        (result?.revokedApiKeys?.length ?? 0) +
+        (result?.revokedSmtpCredentials?.length ?? 0);
+      if (result && revokedCount > 0 && domain) {
+        setDeleteOpen(false);
+        setRemoved({ name: domain.name, result });
+        setDeleting(false);
+        return;
+      }
       router.push("/dashboard/domaines");
     } catch (err) {
       setDeleteError(
@@ -271,6 +310,65 @@ export default function DashboardDomainDetailPage() {
       );
       setDeleting(false);
     }
+  }
+
+  if (removed) {
+    const keys = removed.result.revokedApiKeys ?? [];
+    const creds = removed.result.revokedSmtpCredentials ?? [];
+    return (
+      <div className="mx-auto max-w-[880px]">
+        <div className="rounded-2xl border border-[#35D07F]/25 bg-[#35D07F]/10 p-6">
+          <h1 className="mb-2 font-heading text-lg font-semibold text-[#EDEEF0]">
+            Domaine « {removed.name} » supprimé
+          </h1>
+          <p className="mb-4 text-[13.5px] leading-relaxed text-[#9BA1A8] text-pretty">
+            Ce domaine était le dernier autorisé pour les clés et identifiants
+            ci-dessous : ils ont été révoqués et ne peuvent plus envoyer
+            d’emails.
+          </p>
+          {keys.length > 0 && (
+            <div className="mb-3">
+              <p className="mb-1.5 text-[12px] tracking-[0.02em] text-[#70767D] uppercase">
+                Clés API révoquées
+              </p>
+              <ul className="space-y-1 text-[13.5px] text-[#EDEEF0]">
+                {keys.map((key) => (
+                  <li key={key.id} className="break-words">
+                    {key.name}{" "}
+                    <span className="font-mono text-[#9BA1A8]">
+                      ({key.prefix}…)
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {creds.length > 0 && (
+            <div className="mb-3">
+              <p className="mb-1.5 text-[12px] tracking-[0.02em] text-[#70767D] uppercase">
+                Identifiants SMTP révoqués
+              </p>
+              <ul className="space-y-1 text-[13.5px] text-[#EDEEF0]">
+                {creds.map((cred) => (
+                  <li key={cred.id} className="break-words">
+                    {cred.name}{" "}
+                    <span className="font-mono break-all text-[#9BA1A8]">
+                      ({cred.username})
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <Link
+            href="/dashboard/domaines"
+            className="mt-2 inline-block rounded-lg bg-[#5B7CFA] px-4 py-2.5 text-[13.5px] font-semibold text-[#F7F9FF] transition-opacity hover:opacity-90"
+          >
+            Retour aux domaines
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   if (notFound) {
@@ -358,7 +456,7 @@ export default function DashboardDomainDetailPage() {
           </button>
           <button
             type="button"
-            onClick={() => setDeleteOpen(true)}
+            onClick={openDelete}
             className="rounded-lg border border-white/[0.14] px-4 py-2.5 text-[13.5px] font-medium text-[#EDEEF0] transition-opacity hover:opacity-90"
           >
             Supprimer
@@ -493,13 +591,91 @@ export default function DashboardDomainDetailPage() {
         confirmLabel="Supprimer"
         danger
         loading={deleting}
+        confirmDisabled={usageLoading}
         onConfirm={handleDelete}
         onCancel={() => setDeleteOpen(false)}
-      />
+      >
+        {usageLoading && (
+          <p className="text-[13px] text-[#70767D]">
+            Recherche des clés et identifiants liés…
+          </p>
+        )}
+        {usage && <DomainUsagePreview usage={usage} />}
+      </ConfirmDialog>
       {deleteError && (
         <p className="mt-4 rounded-lg border border-[#E5484D]/30 bg-[#E5484D]/10 px-3.5 py-2.5 text-[13.5px] text-[#FF9592]">
           {deleteError}
         </p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Aperçu d'impact d'une suppression de domaine (B27) : distingue ce qui sera
+ * révoqué (dernier domaine autorisé) de ce qui garde d'autres domaines.
+ */
+function DomainUsagePreview({ usage }: { usage: DomainUsage }) {
+  const revoked = [
+    ...usage.apiKeys
+      .filter((key) => key.willBeRevoked)
+      .map((key) => ({ id: key.id, label: `Clé API « ${key.name} »` })),
+    ...usage.smtpCredentials
+      .filter((cred) => cred.willBeRevoked)
+      .map((cred) => ({
+        id: cred.id,
+        label: `Identifiant SMTP « ${cred.name} »`,
+      })),
+  ];
+  const kept = [
+    ...usage.apiKeys
+      .filter((key) => !key.willBeRevoked)
+      .map((key) => ({ id: key.id, label: `Clé API « ${key.name} »` })),
+    ...usage.smtpCredentials
+      .filter((cred) => !cred.willBeRevoked)
+      .map((cred) => ({
+        id: cred.id,
+        label: `Identifiant SMTP « ${cred.name} »`,
+      })),
+  ];
+
+  if (revoked.length === 0 && kept.length === 0) {
+    return (
+      <p className="text-[13px] text-[#9BA1A8]">
+        Aucune clé API ni aucun identifiant SMTP n’est limité à ce domaine.
+      </p>
+    );
+  }
+
+  return (
+    <div className="max-h-[240px] space-y-3 overflow-y-auto text-[13px]">
+      {revoked.length > 0 && (
+        <div className="rounded-lg border border-[#E5484D]/30 bg-[#E5484D]/10 px-3.5 py-2.5">
+          <p className="mb-1.5 font-medium text-[#FF9592]">
+            Seront révoqués (ce domaine est leur dernier)
+          </p>
+          <ul className="space-y-1 text-[#EDEEF0]">
+            {revoked.map((item) => (
+              <li key={item.id} className="break-words">
+                {item.label}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {kept.length > 0 && (
+        <div className="rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5">
+          <p className="mb-1.5 font-medium text-[#C5CACF]">
+            Garderont leurs autres domaines
+          </p>
+          <ul className="space-y-1 text-[#9BA1A8]">
+            {kept.map((item) => (
+              <li key={item.id} className="break-words">
+                {item.label}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );
