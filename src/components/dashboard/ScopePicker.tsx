@@ -41,6 +41,7 @@ export default function ScopePicker({
   noun: string;
 }) {
   const [verified, setVerified] = useState<DomainSummary[] | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -51,6 +52,7 @@ export default function ScopePicker({
         setVerified(data.filter((domain) => domain.status === "VERIFIED"));
       } catch {
         if (!active) return;
+        setLoadFailed(true);
         setVerified([]);
       }
     })();
@@ -76,7 +78,14 @@ export default function ScopePicker({
         <p className="text-[12.5px] text-[#70767D]">Chargement des domaines…</p>
       )}
 
-      {verified !== null && verified.length === 0 && (
+      {verified !== null && verified.length === 0 && loadFailed && (
+        <p className="text-[12.5px] leading-relaxed text-[#F5C177] text-pretty">
+          Impossible de charger vos domaines : seule l’option Tous les
+          domaines est proposée. Réessayez plus tard.
+        </p>
+      )}
+
+      {verified !== null && verified.length === 0 && !loadFailed && (
         <p className="text-[12.5px] leading-relaxed text-[#70767D] text-pretty">
           Tous les domaines vérifiés, y compris ceux que vous vérifierez plus
           tard. Vous pourrez limiter {noun} à des domaines précis dès que vous
@@ -150,7 +159,11 @@ export default function ScopePicker({
           )}
 
           {value.mode === "selected" && value.domainIds.length === 0 && (
-            <p className="mt-2 text-[12.5px] text-[#F5C177]">
+            <p
+              role="alert"
+              aria-live="polite"
+              className="mt-2 text-[12.5px] text-[#F5C177]"
+            >
               Cochez au moins un domaine.
             </p>
           )}

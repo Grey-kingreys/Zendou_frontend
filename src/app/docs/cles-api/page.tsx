@@ -105,6 +105,15 @@ export default function ClesApiPage() {
         Avec plusieurs domaines, le message devient «&nbsp;Cette clé API
         n&rsquo;est autorisée que pour les domaines A, B.&nbsp;».
       </p>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        Une clé dont tous les domaines ont disparu n&rsquo;est autorisée pour
+        aucun domaine : tout envoi est refusé avec le même code{" "}
+        <code>403</code>, et le message «&nbsp;Cette clé API n&rsquo;est
+        autorisée pour aucun domaine : créez-en une nouvelle avec la portée
+        voulue.&nbsp;». Une sélection est limitée à 50 domaines : au-delà, la
+        création est refusée avec un <code>400</code> et le message «&nbsp;Une
+        portée ne peut pas contenir plus de 50 domaines&nbsp;».
+      </p>
       <Callout variant="success" title="Le bac à sable reste permis">
         L&rsquo;adresse d&rsquo;expédition de test de votre compte reste
         utilisable avec toute clé, quelle que soit sa portée, avec la

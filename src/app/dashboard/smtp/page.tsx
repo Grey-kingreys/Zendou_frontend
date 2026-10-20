@@ -580,7 +580,7 @@ export default function DashboardSmtpPage() {
                       </dd>
                     </div>
                   </div>
-                  <div className="min-w-0">
+                  <div className="col-span-2 min-w-0">
                     <dt className="mb-1 text-[11px] tracking-[0.02em] text-[#70767D] uppercase">
                       Portée
                     </dt>

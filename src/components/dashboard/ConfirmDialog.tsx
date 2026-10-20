@@ -46,7 +46,7 @@ export default function ConfirmDialog({
       role="presentation"
     >
       <div
-        className="w-full max-w-[420px] rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.55)]"
+        className="max-h-[90dvh] w-full max-w-[420px] overflow-y-auto rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.55)]"
         onClick={(event) => event.stopPropagation()}
         role="alertdialog"
         aria-modal="true"

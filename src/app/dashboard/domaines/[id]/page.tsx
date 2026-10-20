@@ -83,6 +83,8 @@ export default function DashboardDomainDetailPage() {
   // (ancien backend : 404) - la confirmation actuelle s'affiche alors seule.
   const [usage, setUsage] = useState<DomainUsage | null>(null);
   const [usageLoading, setUsageLoading] = useState(false);
+  // Compteur de requêtes d'aperçu : une réponse obsolète est ignorée.
+  const usageRequestRef = useRef(0);
   // Résultat de la suppression quand des clés ou identifiants ont été révoqués.
   const [removed, setRemoved] = useState<{
     name: string;
@@ -272,15 +274,18 @@ export default function DashboardDomainDetailPage() {
     setDeleteOpen(true);
     setUsage(null);
     setUsageLoading(true);
+    const requestId = ++usageRequestRef.current;
     try {
       const data = await api.get<DomainUsage>(`/v1/domains/${id}/usage`);
+      if (requestId !== usageRequestRef.current) return;
       setUsage(data);
     } catch {
       // Aperçu indisponible (404 d'un ancien backend, réseau...) : on garde
       // la confirmation sans liste plutôt que de bloquer la suppression.
+      if (requestId !== usageRequestRef.current) return;
       setUsage(null);
     } finally {
-      setUsageLoading(false);
+      if (requestId === usageRequestRef.current) setUsageLoading(false);
     }
   }
 
@@ -295,7 +300,8 @@ export default function DashboardDomainDetailPage() {
       const revokedCount =
         (result?.revokedApiKeys?.length ?? 0) +
         (result?.revokedSmtpCredentials?.length ?? 0);
-      if (result && revokedCount > 0 && domain) {
+      const remaining = result?.remainingActions ?? [];
+      if (result && (revokedCount > 0 || remaining.length > 0) && domain) {
         setDeleteOpen(false);
         setRemoved({ name: domain.name, result });
         setDeleting(false);
@@ -315,17 +321,32 @@ export default function DashboardDomainDetailPage() {
   if (removed) {
     const keys = removed.result.revokedApiKeys ?? [];
     const creds = removed.result.revokedSmtpCredentials ?? [];
+    const remaining = removed.result.remainingActions ?? [];
     return (
       <div className="mx-auto max-w-[880px]">
         <div className="rounded-2xl border border-[#35D07F]/25 bg-[#35D07F]/10 p-6">
           <h1 className="mb-2 font-heading text-lg font-semibold text-[#EDEEF0]">
             Domaine « {removed.name} » supprimé
           </h1>
-          <p className="mb-4 text-[13.5px] leading-relaxed text-[#9BA1A8] text-pretty">
-            Ce domaine était le dernier autorisé pour les clés et identifiants
-            ci-dessous : ils ont été révoqués et ne peuvent plus envoyer
-            d’emails.
-          </p>
+          {keys.length + creds.length > 0 && (
+            <p className="mb-4 text-[13.5px] leading-relaxed text-[#9BA1A8] text-pretty">
+              Ce domaine était le dernier autorisé pour les clés et
+              identifiants ci-dessous : ils ont été révoqués et ne peuvent
+              plus envoyer d’emails.
+            </p>
+          )}
+          {remaining.length > 0 && (
+            <div className="mb-4 rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[13px] text-[#F5C177]">
+              <p className="mb-1.5 font-medium">Il reste une action de votre part</p>
+              <ul className="space-y-1">
+                {remaining.map((action, index) => (
+                  <li key={index} className="break-words">
+                    {action}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {keys.length > 0 && (
             <div className="mb-3">
               <p className="mb-1.5 text-[12px] tracking-[0.02em] text-[#70767D] uppercase">

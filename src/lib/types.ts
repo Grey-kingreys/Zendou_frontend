@@ -106,6 +106,8 @@ export interface DomainRemoveResult {
     username: string;
     prefix: string;
   }[];
+  /** Actions manuelles restantes (ex. identité SES à supprimer à la main). */
+  remainingActions?: string[];
 }
 
 // --- Clés API ---------------------------------------------------------

@@ -396,6 +396,13 @@ export default function RelaisSmtpPage() {
         <code>550 5.7.1</code> et le texte «&nbsp;Cet identifiant SMTP
         n&rsquo;est pas autorisé à expédier depuis ce domaine.&nbsp;».
       </p>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        Une sélection est limitée à 50 domaines : au-delà, la création est
+        refusée avec le message «&nbsp;Une portée ne peut pas contenir plus
+        de 50 domaines&nbsp;». Un identifiant dont tous les domaines ont
+        disparu n&rsquo;est autorisé pour aucun domaine et reçoit le même
+        refus <code>550 5.7.1</code>.
+      </p>
       <Callout variant="success" title="Le bac à sable reste permis">
         L&rsquo;adresse d&rsquo;expédition de test de votre compte reste
         utilisable avec tout identifiant, quelle que soit sa portée, avec la
