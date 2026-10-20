@@ -3,7 +3,7 @@ const FEATURES = [
     icon: "{ }",
     iconFont: "font-mono text-sm",
     title: "API simple",
-    body: "Un endpoint, quatre champs. Clés API révocables et renouvelables, et un relais SMTP si vous préférez.",
+    body: "Un endpoint, quatre champs. Clés API révocables, renouvelables et limitées aux domaines de votre choix, et un relais SMTP si vous préférez.",
   },
   {
     icon: "↗",

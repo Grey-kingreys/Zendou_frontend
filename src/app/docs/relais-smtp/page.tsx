@@ -136,6 +136,20 @@ const REPLY_ROWS: {
   {
     code: "550",
     status: "5.7.1",
+    cause: "Domaine hors de la portée de l'identifiant",
+    message:
+      "Cet identifiant SMTP n'est pas autorisé à expédier depuis ce domaine.",
+    action: (
+      <>
+        Utilisez un domaine autorisé pour cet identifiant, ou créez un
+        identifiant dont la portée inclut ce domaine (la portée ne peut pas
+        être modifiée après la création).
+      </>
+    ),
+  },
+  {
+    code: "550",
+    status: "5.7.1",
     cause: "Compte suspendu",
     message: "Ce compte est suspendu",
     action:
@@ -363,6 +377,38 @@ export default function RelaisSmtpPage() {
         l&rsquo;identifiant et créez-en un nouveau. Révoquer un identifiant
         n&rsquo;affecte ni votre clé API ni vos autres identifiants SMTP.
       </Callout>
+
+      <h2 className="mt-12 mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
+        Portée par domaine
+      </h2>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        À la création, un identifiant est soit valable pour{" "}
+        <strong>tous les domaines vérifiés</strong> de votre compte (par
+        défaut, y compris ceux que vous vérifierez plus tard), soit limité à
+        un ou plusieurs <strong>domaines choisis</strong>. La portée est fixée
+        à la création et ne peut plus être modifiée : pour la changer, créez
+        un nouvel identifiant et révoquez l&rsquo;ancien. La
+        réinitialisation du mot de passe conserve la portée.
+      </p>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        Si l&rsquo;adresse <code>From:</code> appartient à un domaine hors de
+        la portée de l&rsquo;identifiant, le relais refuse le message avec{" "}
+        <code>550 5.7.1</code> et le texte «&nbsp;Cet identifiant SMTP
+        n&rsquo;est pas autorisé à expédier depuis ce domaine.&nbsp;».
+      </p>
+      <Callout variant="success" title="Le bac à sable reste permis">
+        L&rsquo;adresse d&rsquo;expédition de test de votre compte reste
+        utilisable avec tout identifiant, quelle que soit sa portée, avec la
+        restriction habituelle (écrire uniquement à l&rsquo;adresse de votre
+        compte).
+      </Callout>
+      <p className="mt-4 mb-2 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        Si vous supprimez un domaine, le tableau de bord vous prévient
+        d&rsquo;abord en listant les identifiants liés : celui dont c&rsquo;est
+        le dernier domaine est <strong>révoqué</strong> à la suppression,
+        jamais élargi ; celui qui garde d&rsquo;autres domaines continue de
+        fonctionner pour ceux-là.
+      </p>
 
       <h2 className="mt-12 mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
         Exemples de configuration

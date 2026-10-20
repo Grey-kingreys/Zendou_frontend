@@ -44,6 +44,86 @@ export default function ClesApiPage() {
       </div>
 
       <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
+        Portée par domaine
+      </h2>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        À la création, vous choisissez les domaines depuis lesquels la clé
+        peut envoyer :
+      </p>
+      <ul className="mb-4 flex flex-col gap-3">
+        <li className="flex gap-3 text-[14px] leading-relaxed text-[#C5CACF]">
+          <span className="text-[#35D07F]">✓</span>
+          <span>
+            <strong>Tous les domaines vérifiés</strong> (par défaut) : la clé
+            peut envoyer depuis n&rsquo;importe quel domaine vérifié de votre
+            compte, y compris ceux que vous vérifierez plus tard.
+          </span>
+        </li>
+        <li className="flex gap-3 text-[14px] leading-relaxed text-[#C5CACF]">
+          <span className="text-[#35D07F]">✓</span>
+          <span>
+            <strong>Domaines choisis</strong> : un ou plusieurs domaines
+            vérifiés de votre compte. La clé ne peut envoyer que depuis
+            ceux-là. Une clé qui fuite n&rsquo;expose alors que ces domaines.
+          </span>
+        </li>
+      </ul>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        La portée est fixée à la création et ne peut plus être modifiée :
+        pour la changer, créez une nouvelle clé et révoquez l&rsquo;ancienne.
+        La réinitialisation (rotation) d&rsquo;une clé conserve sa portée.
+        Côté API, <code>POST /v1/api-keys</code> accepte un champ optionnel{" "}
+        <code>domainIds</code> (liste d&rsquo;identifiants de domaines
+        vérifiés, sans doublon) ; absent ou vide, la portée est « tous les
+        domaines ». La réponse et la liste des clés renvoient{" "}
+        <code>domainScope</code> (<code>ALL</code> ou <code>SELECTED</code>)
+        et <code>domains</code> (<code>id</code> et <code>name</code>).
+      </p>
+      <h3 className="mb-3 font-heading text-base font-semibold text-[#EDEEF0]">
+        Envoi hors de la portée
+      </h3>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        Si l&rsquo;adresse <code>from</code> appartient à un domaine que la
+        clé n&rsquo;est pas autorisée à utiliser, l&rsquo;API répond{" "}
+        <code className="rounded bg-white/[0.08] px-1.5 py-0.5 font-mono text-[12.5px]">
+          403
+        </code>{" "}
+        avec le code <code>CREDENTIAL_DOMAIN_OUT_OF_SCOPE</code> et un
+        message qui nomme les domaines autorisés :
+      </p>
+      <div className="mb-4">
+        <CodeBlock
+          code={`{
+  "message": "Cette clé API n'est autorisée que pour le domaine boutique-awa.gn.",
+  "error": "Forbidden",
+  "statusCode": 403,
+  "code": "CREDENTIAL_DOMAIN_OUT_OF_SCOPE"
+}`}
+        />
+      </div>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        Avec plusieurs domaines, le message devient «&nbsp;Cette clé API
+        n&rsquo;est autorisée que pour les domaines A, B.&nbsp;».
+      </p>
+      <Callout variant="success" title="Le bac à sable reste permis">
+        L&rsquo;adresse d&rsquo;expédition de test de votre compte reste
+        utilisable avec toute clé, quelle que soit sa portée, avec la
+        restriction habituelle : vous ne pouvez écrire qu&rsquo;à
+        l&rsquo;adresse email de votre compte.
+      </Callout>
+      <h3 className="mt-10 mb-3 font-heading text-base font-semibold text-[#EDEEF0]">
+        Supprimer un domaine
+      </h3>
+      <p className="mb-10 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        Avant de supprimer un domaine, le tableau de bord liste les clés API
+        et identifiants SMTP qui lui sont liés. Une clé dont c&rsquo;est le
+        dernier domaine est <strong>révoquée</strong> à la suppression
+        (jamais élargie à d&rsquo;autres domaines) ; une clé qui garde
+        d&rsquo;autres domaines continue de fonctionner pour ceux-là. Après la
+        suppression, le tableau de bord affiche ce qui a été révoqué.
+      </p>
+
+      <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
         Affichage unique
       </h2>
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
@@ -118,8 +198,8 @@ export default function ClesApiPage() {
       </h2>
       <p className="mb-8 text-[15px] leading-[1.7] text-[#9BA1A8]">
         Une clé API permet aussi de lire le solde de crédits du compte avec{" "}
-        <code>GET /v1/billing/balance</code> (toute clé active suffit, les
-        clés n&rsquo;ont pas de portée distincte). Voir{" "}
+        <code>GET /v1/billing/balance</code> (toute clé active suffit, quelle que
+        soit sa portée par domaine). Voir{" "}
         <Link
           href="/docs/facturation"
           className="text-[#8AA4FF] underline underline-offset-2"
@@ -158,8 +238,10 @@ export default function ClesApiPage() {
                 POST /v1/api-keys
               </td>
               <td className="px-5 py-3 text-[#9BA1A8]">
-                Crée une clé. Corps : <code>{"{ name }"}</code>. La clé
-                complète n&rsquo;est renvoyée que dans cette réponse.
+                Crée une clé. Corps : <code>{"{ name, domainIds? }"}</code>.
+                La clé complète n&rsquo;est renvoyée que dans cette réponse,
+                avec sa portée (<code>domainScope</code>,{" "}
+                <code>domains</code>).
               </td>
             </tr>
             <tr className="border-b border-white/[0.05]">
@@ -167,8 +249,8 @@ export default function ClesApiPage() {
                 GET /v1/api-keys
               </td>
               <td className="px-5 py-3 text-[#9BA1A8]">
-                Liste vos clés (nom, préfixe, dates, statut) - jamais la clé
-                complète.
+                Liste vos clés (nom, préfixe, dates, statut, portée) - jamais
+                la clé complète.
               </td>
             </tr>
             <tr className="last:border-b-0">

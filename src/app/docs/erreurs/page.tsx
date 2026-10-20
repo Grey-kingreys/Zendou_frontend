@@ -85,6 +85,12 @@ const SEND_ERROR_CODES: { code: string; status: string; meaning: string }[] = [
       "Domaine de l'adresse d'expédition non vérifié ou non rattaché au compte.",
   },
   {
+    code: "CREDENTIAL_DOMAIN_OUT_OF_SCOPE",
+    status: "403",
+    meaning:
+      "La clé API n'est pas autorisée pour le domaine de l'adresse d'expédition (portée limitée à certains domaines). L'adresse de test du bac à sable reste permise.",
+  },
+  {
     code: "REPLY_TO_NOT_VERIFIED",
     status: "403",
     meaning:
@@ -122,6 +128,7 @@ const CODES = [
       "Paramètre manquant, mal typé ou hors bornes (POST /v1/emails : from, to, subject, html/text).",
       "Nom de domaine syntaxiquement invalide sur POST /v1/domains.",
       "Nom de clé API vide ou trop long sur POST /v1/api-keys.",
+      "Domaine sélectionné inexistant, non vérifié ou en double sur POST /v1/api-keys ou POST /v1/smtp-credentials (portée par domaine).",
       "Pack de recharge inconnu, méthode de paiement invalide, ou numéro de téléphone mal formé sur POST /v1/billing/topup-requests.",
       "Paramètre de pagination (page, limit) non numérique ou hors bornes.",
       "Champ non déclaré dans le corps JSON, par exemple une faute de frappe dans un nom de paramètre : désormais refusé par un 400 (« Le champ « X » n'est pas accepté. »), là où il était auparavant ignoré silencieusement.",
@@ -150,6 +157,7 @@ const CODES = [
     summary: "Action refusée malgré une authentification valide",
     causes: [
       "Domaine d'envoi non vérifié sur POST /v1/emails.",
+      "Clé API limitée à certains domaines, utilisée avec une adresse from d'un autre domaine sur POST /v1/emails (code CREDENTIAL_DOMAIN_OUT_OF_SCOPE).",
       "Envoi depuis l'adresse de test (mode bac à sable) vers un destinataire autre que l'adresse email de votre compte sur POST /v1/emails.",
       "Compte suspendu (réputation d'envoi dégradée) - sur toute route authentifiée, API key ou session.",
     ],
