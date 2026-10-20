@@ -4,6 +4,13 @@ import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import Badge from "@/components/dashboard/Badge";
 import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
 import CopyField from "@/components/dashboard/CopyField";
+import ScopeBadge from "@/components/dashboard/ScopeBadge";
+import ScopePicker, {
+  DEFAULT_SCOPE,
+  isScopeValid,
+  scopeToBody,
+  type ScopeValue,
+} from "@/components/dashboard/ScopePicker";
 import { api, ApiError } from "@/lib/api";
 import { formatDateTimeShortFr } from "@/lib/format";
 import {
@@ -31,6 +38,7 @@ export default function DashboardSmtpPage() {
 
   const [formOpen, setFormOpen] = useState(false);
   const [name, setName] = useState("");
+  const [scope, setScope] = useState<ScopeValue>(DEFAULT_SCOPE);
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   // 403 spécifique : compte pas encore confirmé (même garde que la création
@@ -109,11 +117,12 @@ export default function DashboardSmtpPage() {
     try {
       const created = await api.post<CreateSmtpCredentialResponse>(
         "/v1/smtp-credentials",
-        { name: name.trim() }
+        { name: name.trim(), ...scopeToBody(scope) }
       );
       setRevealedSecret({ kind: "created", data: created });
       setFormOpen(false);
       setName("");
+      setScope(DEFAULT_SCOPE);
       loadCredentials();
     } catch (err) {
       if (err instanceof ApiError && err.status === 403) {
@@ -206,6 +215,16 @@ export default function DashboardSmtpPage() {
     }
   }
 
+  // Portée affichée avec le secret révélé : la réponse de création la porte ;
+  // la rotation la conserve mais ne la renvoie pas, on la relit dans la liste.
+  const revealedScope = revealedSecret
+    ? revealedSecret.kind === "created"
+      ? revealedSecret.data
+      : (credentials?.find(
+          (credential) => credential.id === revealedSecret.data.id
+        ) ?? {})
+    : {};
+
   return (
     <div className="mx-auto max-w-[880px]">
       <div className="mb-8">
@@ -260,6 +279,7 @@ export default function DashboardSmtpPage() {
             type="button"
             onClick={() => {
               setFormOpen((open) => !open);
+              setScope(DEFAULT_SCOPE);
               setCreateError(null);
               setCreateForbidden(false);
             }}
@@ -281,6 +301,11 @@ export default function DashboardSmtpPage() {
             Copiez le mot de passe maintenant : il ne sera plus jamais
             affiché en entier. Utilisez-le avec l’hôte et le port ci-dessus.
           </p>
+
+          <div className="mb-3 flex min-w-0 flex-wrap items-center gap-2 text-[13px] text-[#9BA1A8]">
+            <span>Portée :</span>
+            <ScopeBadge {...revealedScope} />
+          </div>
 
           <div className="mb-3">
             <ConnectionField
@@ -352,12 +377,17 @@ export default function DashboardSmtpPage() {
             />
             <button
               type="submit"
-              disabled={creating || !name.trim()}
+              disabled={creating || !name.trim() || !isScopeValid(scope)}
               className="shrink-0 rounded-lg bg-[#5B7CFA] px-5 py-2.5 text-[13.5px] font-semibold text-[#F7F9FF] transition-opacity disabled:opacity-60"
             >
               {creating ? "Création…" : "Créer l’identifiant"}
             </button>
           </div>
+          <ScopePicker
+            value={scope}
+            onChange={setScope}
+            noun="cet identifiant"
+          />
           {createForbidden && (
             <p className="mt-3 rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[13.5px] text-[#F5C177]">
               Confirmez votre adresse email avant de créer un identifiant
@@ -438,6 +468,12 @@ export default function DashboardSmtpPage() {
                     >
                       <td className="px-4 py-3.5 font-medium text-[#EDEEF0]">
                         {credential.name}
+                        <div className="mt-1.5 max-w-[240px] font-normal">
+                          <ScopeBadge
+                            domainScope={credential.domainScope}
+                            domains={credential.domains}
+                          />
+                        </div>
                       </td>
                       <td className="px-1 py-1.5">
                         <CopyField value={credential.username} />
@@ -543,6 +579,17 @@ export default function DashboardSmtpPage() {
                         {formatDateTimeShortFr(credential.createdAt)}
                       </dd>
                     </div>
+                  </div>
+                  <div className="min-w-0">
+                    <dt className="mb-1 text-[11px] tracking-[0.02em] text-[#70767D] uppercase">
+                      Portée
+                    </dt>
+                    <dd>
+                      <ScopeBadge
+                        domainScope={credential.domainScope}
+                        domains={credential.domains}
+                      />
+                    </dd>
                   </div>
                   <div>
                     <dt className="text-[11px] tracking-[0.02em] text-[#70767D] uppercase">

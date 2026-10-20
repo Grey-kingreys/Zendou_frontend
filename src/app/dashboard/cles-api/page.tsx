@@ -5,6 +5,13 @@ import Link from "next/link";
 import Badge from "@/components/dashboard/Badge";
 import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
 import CopyField from "@/components/dashboard/CopyField";
+import ScopeBadge from "@/components/dashboard/ScopeBadge";
+import ScopePicker, {
+  DEFAULT_SCOPE,
+  isScopeValid,
+  scopeToBody,
+  type ScopeValue,
+} from "@/components/dashboard/ScopePicker";
 import { useDashboardUser } from "@/components/dashboard/dashboard-context";
 import { api, ApiError } from "@/lib/api";
 import { formatDateTimeShortFr } from "@/lib/format";
@@ -26,6 +33,7 @@ export default function DashboardClesApiPage() {
 
   const [formOpen, setFormOpen] = useState(false);
   const [name, setName] = useState("");
+  const [scope, setScope] = useState<ScopeValue>(DEFAULT_SCOPE);
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   // 403 spécifique : compte pas encore confirmé. En pratique inatteignable
@@ -101,10 +109,12 @@ export default function DashboardClesApiPage() {
     try {
       const created = await api.post<CreateApiKeyResponse>("/v1/api-keys", {
         name: name.trim(),
+        ...scopeToBody(scope),
       });
       setRevealedSecret({ kind: "created", data: created });
       setFormOpen(false);
       setName("");
+      setScope(DEFAULT_SCOPE);
       loadKeys();
     } catch (err) {
       if (err instanceof ApiError && err.status === 403) {
@@ -197,6 +207,14 @@ export default function DashboardClesApiPage() {
     }
   }
 
+  // Portée affichée avec le secret révélé : la réponse de création la porte ;
+  // la rotation la conserve mais ne la renvoie pas, on la relit dans la liste.
+  const revealedScope = revealedSecret
+    ? revealedSecret.kind === "created"
+      ? revealedSecret.data
+      : (keys?.find((key) => key.id === revealedSecret.data.id) ?? {})
+    : {};
+
   return (
     <div className="mx-auto max-w-[880px]">
       <div className="mb-8 flex items-start justify-between gap-4">
@@ -214,6 +232,7 @@ export default function DashboardClesApiPage() {
             type="button"
             onClick={() => {
               setFormOpen((open) => !open);
+              setScope(DEFAULT_SCOPE);
               setCreateError(null);
               setCreateForbidden(false);
             }}
@@ -271,10 +290,14 @@ export default function DashboardClesApiPage() {
               ? `Clé « ${revealedSecret.data.name} » créée`
               : `Clé « ${revealedSecret.data.name} » réinitialisée`}
           </p>
-          <p className="mb-4 text-[13.5px] text-[#9BA1A8]">
+          <p className="mb-3 text-[13.5px] text-[#9BA1A8]">
             Copiez-la maintenant : elle ne sera plus jamais affichée en
             entier.
           </p>
+          <div className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-[13px] text-[#9BA1A8]">
+            <span>Portée :</span>
+            <ScopeBadge {...revealedScope} />
+          </div>
           <div className="mb-4 flex flex-col gap-2 rounded-lg border border-white/[0.09] bg-[#0E1013] p-4 sm:flex-row sm:items-center sm:justify-between">
             <code className="min-w-0 flex-1 truncate font-mono text-[14px] text-[#EDEEF0]">
               {revealedSecret.data.key}
@@ -338,12 +361,13 @@ export default function DashboardClesApiPage() {
             />
             <button
               type="submit"
-              disabled={creating || !name.trim()}
+              disabled={creating || !name.trim() || !isScopeValid(scope)}
               className="shrink-0 rounded-lg bg-[#5B7CFA] px-5 py-2.5 text-[13.5px] font-semibold text-[#F7F9FF] transition-opacity disabled:opacity-60"
             >
               {creating ? "Création…" : "Créer la clé"}
             </button>
           </div>
+          <ScopePicker value={scope} onChange={setScope} noun="cette clé" />
           {createForbidden && (
             <p className="mt-3 rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[13.5px] text-[#F5C177]">
               Confirmez votre adresse email avant de créer une clé API.{" "}
@@ -427,6 +451,12 @@ export default function DashboardClesApiPage() {
                     >
                       <td className="px-4 py-3.5 font-medium text-[#EDEEF0]">
                         {key.name}
+                        <div className="mt-1.5 max-w-[240px] font-normal">
+                          <ScopeBadge
+                            domainScope={key.domainScope}
+                            domains={key.domains}
+                          />
+                        </div>
                       </td>
                       <td className="px-3 py-3.5 font-mono whitespace-nowrap text-[#9BA1A8]">
                         {key.prefix}…
@@ -515,6 +545,17 @@ export default function DashboardClesApiPage() {
                     </dt>
                     <dd className="text-[#9BA1A8]">
                       {formatDateTimeShortFr(key.createdAt)}
+                    </dd>
+                  </div>
+                  <div className="col-span-2 min-w-0">
+                    <dt className="mb-1 text-[11px] tracking-[0.02em] text-[#70767D] uppercase">
+                      Portée
+                    </dt>
+                    <dd>
+                      <ScopeBadge
+                        domainScope={key.domainScope}
+                        domains={key.domains}
+                      />
                     </dd>
                   </div>
                   <div className="col-span-2">
