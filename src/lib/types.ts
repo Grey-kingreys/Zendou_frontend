@@ -119,6 +119,8 @@ export interface ApiKeySummary extends CredentialScopeFields {
   createdAt: string;
   lastUsedAt: string | null;
   revokedAt: string | null;
+  /** Lecture du journal et des domaines autorisée (immuable). Absent sur un ancien backend. */
+  canRead?: boolean;
 }
 
 /** Réponse à la création : `key` (clé complète) n'apparaît qu'ici. */
@@ -128,6 +130,13 @@ export interface CreateApiKeyResponse extends CredentialScopeFields {
   prefix: string;
   key: string;
   createdAt: string;
+  /** Lecture autorisée (immuable). Absent sur un ancien backend. */
+  canRead?: boolean;
+}
+
+/** Corps de POST /v1/api-keys : `canRead` absent vaut `false`. */
+export interface CreateApiKeyBody extends CreateCredentialBody {
+  canRead?: boolean;
 }
 
 /**

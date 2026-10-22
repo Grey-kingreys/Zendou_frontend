@@ -165,6 +165,7 @@ const CODES = [
       "Domaine d'envoi non vérifié sur POST /v1/emails.",
       "Clé API limitée à certains domaines, utilisée avec une adresse from d'un autre domaine sur POST /v1/emails (code CREDENTIAL_DOMAIN_OUT_OF_SCOPE).",
       "Envoi depuis l'adresse de test (mode bac à sable) vers un destinataire autre que l'adresse email de votre compte sur POST /v1/emails.",
+      "Clé API créée sans la permission de lecture, utilisée sur GET /v1/emails, GET /v1/emails/:publicId, GET /v1/domains ou GET /v1/domains/:id : « Cette clé API n'a pas l'autorisation de lecture : créez une clé avec la lecture autorisée. »",
       "Compte suspendu (réputation d'envoi dégradée) - sur toute route authentifiée, API key ou session.",
     ],
   },

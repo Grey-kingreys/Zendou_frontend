@@ -34,6 +34,7 @@ export default function DashboardClesApiPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [name, setName] = useState("");
   const [scope, setScope] = useState<ScopeValue>(DEFAULT_SCOPE);
+  const [canRead, setCanRead] = useState(false);
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   // 403 spécifique : compte pas encore confirmé. En pratique inatteignable
@@ -110,11 +111,13 @@ export default function DashboardClesApiPage() {
       const created = await api.post<CreateApiKeyResponse>("/v1/api-keys", {
         name: name.trim(),
         ...scopeToBody(scope),
+        ...(canRead ? { canRead: true } : {}),
       });
       setRevealedSecret({ kind: "created", data: created });
       setFormOpen(false);
       setName("");
       setScope(DEFAULT_SCOPE);
+      setCanRead(false);
       loadKeys();
     } catch (err) {
       if (err instanceof ApiError && err.status === 403) {
@@ -233,6 +236,7 @@ export default function DashboardClesApiPage() {
             onClick={() => {
               setFormOpen((open) => !open);
               setScope(DEFAULT_SCOPE);
+              setCanRead(false);
               setCreateError(null);
               setCreateForbidden(false);
             }}
@@ -297,6 +301,9 @@ export default function DashboardClesApiPage() {
           <div className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-[13px] text-[#9BA1A8]">
             <span>Portée :</span>
             <ScopeBadge {...revealedScope} />
+            {"canRead" in revealedScope && revealedScope.canRead === true && (
+              <Badge color="blue" label="Lecture" />
+            )}
           </div>
           <div className="mb-4 flex flex-col gap-2 rounded-lg border border-white/[0.09] bg-[#0E1013] p-4 sm:flex-row sm:items-center sm:justify-between">
             <code className="min-w-0 flex-1 truncate font-mono text-[14px] text-[#EDEEF0]">
@@ -369,6 +376,34 @@ export default function DashboardClesApiPage() {
             </button>
           </div>
           <ScopePicker value={scope} onChange={setScope} noun="cette clé" />
+          <label
+            htmlFor="key-can-read"
+            className="mt-4 flex cursor-pointer items-start gap-2.5 rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[13.5px] text-[#EDEEF0]"
+          >
+            <input
+              id="key-can-read"
+              name="canRead"
+              type="checkbox"
+              checked={canRead}
+              onChange={(event) => setCanRead(event.target.checked)}
+              className="mt-1 accent-[#5B7CFA]"
+            />
+            <span className="min-w-0">
+              Autoriser la lecture (journal des envois et domaines)
+              <span className="mt-1 block text-[12.5px] leading-relaxed text-[#70767D]">
+                Utile pour le serveur MCP et les tableaux de bord qui
+                consultent vos envois et vos domaines.
+              </span>
+              <span className="mt-1 block text-[12.5px] leading-relaxed text-[#F5C177]">
+                Si une clé avec lecture fuit, les destinataires et les sujets
+                des envois de sa portée sont exposés.
+              </span>
+              <span className="mt-1 block text-[12.5px] leading-relaxed text-[#70767D]">
+                Ce réglage est définitif : il ne pourra plus être modifié
+                après la création.
+              </span>
+            </span>
+          </label>
           {createForbidden && (
             <p className="mt-3 rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[13.5px] text-[#F5C177]">
               Confirmez votre adresse email avant de créer une clé API.{" "}
@@ -458,6 +493,11 @@ export default function DashboardClesApiPage() {
                             domains={key.domains}
                           />
                         </div>
+                        {key.canRead === true && (
+                          <div className="mt-1.5 font-normal">
+                            <Badge color="blue" label="Lecture" />
+                          </div>
+                        )}
                       </td>
                       <td className="px-3 py-3.5 font-mono whitespace-nowrap text-[#9BA1A8]">
                         {key.prefix}…
@@ -552,11 +592,14 @@ export default function DashboardClesApiPage() {
                     <dt className="mb-1 text-[11px] tracking-[0.02em] text-[#70767D] uppercase">
                       Portée
                     </dt>
-                    <dd>
+                    <dd className="flex min-w-0 flex-wrap items-center gap-2">
                       <ScopeBadge
                         domainScope={key.domainScope}
                         domains={key.domains}
                       />
+                      {key.canRead === true && (
+                        <Badge color="blue" label="Lecture" />
+                      )}
                     </dd>
                   </div>
                   <div className="col-span-2">

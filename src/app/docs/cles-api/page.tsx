@@ -133,6 +133,119 @@ export default function ClesApiPage() {
       </p>
 
       <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
+        Permission de lecture
+      </h2>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        Par défaut, une clé sert à envoyer des emails et à lire le solde. À la
+        création, vous pouvez en plus cocher «&nbsp;Autoriser la lecture
+        (journal des envois et domaines)&nbsp;», par exemple pour le{" "}
+        <Link
+          href="/docs/mcp"
+          className="text-[#8AA4FF] underline underline-offset-2"
+        >
+          serveur MCP
+        </Link>{" "}
+        ou un tableau de bord interne. Côté API, <code>POST /v1/api-keys</code>{" "}
+        accepte un champ optionnel <code>canRead</code> (booléen,{" "}
+        <code>false</code> par défaut). La réponse de création et la liste des
+        clés renvoient <code>canRead</code>.
+      </p>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        Ce réglage est <strong>immuable</strong>, comme la portée : il ne peut
+        pas être modifié après la création, mais la réinitialisation
+        (rotation) le conserve. Pour changer, créez une nouvelle clé et
+        révoquez l&rsquo;ancienne.
+      </p>
+      <h3 className="mb-3 font-heading text-base font-semibold text-[#EDEEF0]">
+        Routes lisibles par une clé avec lecture
+      </h3>
+      <div className="mb-4">
+        <DocsTable minWidth={480}>
+          <thead>
+            <tr className="border-b border-white/[0.07] text-[12px] tracking-[0.02em] text-[#70767D] uppercase">
+              <th className="px-5 py-3 font-medium">Endpoint</th>
+              <th className="px-5 py-3 font-medium">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="border-b border-white/[0.05]">
+              <td className="px-5 py-3 font-mono text-[13px] text-[#EDEEF0]">
+                GET /v1/emails
+              </td>
+              <td className="px-5 py-3 text-[#9BA1A8]">
+                Journal des envois, avec filtres et pagination.
+              </td>
+            </tr>
+            <tr className="border-b border-white/[0.05]">
+              <td className="px-5 py-3 font-mono text-[13px] text-[#EDEEF0]">
+                GET /v1/emails/:publicId
+              </td>
+              <td className="px-5 py-3 text-[#9BA1A8]">
+                Détail et état de livraison d&rsquo;un email.
+              </td>
+            </tr>
+            <tr className="border-b border-white/[0.05]">
+              <td className="px-5 py-3 font-mono text-[13px] text-[#EDEEF0]">
+                GET /v1/domains
+              </td>
+              <td className="px-5 py-3 text-[#9BA1A8]">
+                Domaines du compte et leur statut.
+              </td>
+            </tr>
+            <tr>
+              <td className="px-5 py-3 font-mono text-[13px] text-[#EDEEF0]">
+                GET /v1/domains/:id
+              </td>
+              <td className="px-5 py-3 text-[#9BA1A8]">
+                Statut d&rsquo;un domaine et enregistrements DNS à créer.
+              </td>
+            </tr>
+          </tbody>
+        </DocsTable>
+      </div>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        La lecture est limitée à la portée par domaine de la clé : les listes
+        sont filtrées, <code>total</code> et la pagination ne comptent que les
+        éléments de la portée, et un détail hors portée répond{" "}
+        <code>404</code>.
+      </p>
+      <h3 className="mb-3 font-heading text-base font-semibold text-[#EDEEF0]">
+        Clé sans permission de lecture
+      </h3>
+      <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        Sur ces quatre routes, une clé créée sans lecture reçoit un{" "}
+        <code className="rounded bg-white/[0.08] px-1.5 py-0.5 font-mono text-[12.5px]">
+          403
+        </code>{" "}
+        :
+      </p>
+      <div className="mb-4">
+        <CodeBlock
+          code={`{
+  "message": "Cette clé API n'a pas l'autorisation de lecture : créez une clé avec la lecture autorisée.",
+  "error": "Forbidden",
+  "statusCode": 403
+}`}
+        />
+      </div>
+      <div className="mb-4">
+        <Callout variant="info" title="Le solde reste lisible par toute clé">
+          <code>GET /v1/billing/balance</code> ne demande pas la permission de
+          lecture : toute clé active peut lire le solde.
+        </Callout>
+      </div>
+      <div className="mb-10">
+        <Callout
+          variant="warning"
+          title="Une clé avec lecture expose des données"
+        >
+          Si une clé avec lecture fuit, les destinataires et les sujets des
+          envois de sa portée sont exposés. Activez la lecture seulement si
+          vous en avez besoin, et limitez la portée aux domaines utiles.
+        </Callout>
+      </div>
+
+      <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
         Affichage unique
       </h2>
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
@@ -247,10 +360,10 @@ export default function ClesApiPage() {
                 POST /v1/api-keys
               </td>
               <td className="px-5 py-3 text-[#9BA1A8]">
-                Crée une clé. Corps : <code>{"{ name, domainIds? }"}</code>.
+                Crée une clé. Corps : <code>{"{ name, domainIds?, canRead? }"}</code>.
                 La clé complète n&rsquo;est renvoyée que dans cette réponse,
                 avec sa portée (<code>domainScope</code>,{" "}
-                <code>domains</code>).
+                <code>domains</code>) et <code>canRead</code>.
               </td>
             </tr>
             <tr className="border-b border-white/[0.05]">
@@ -258,7 +371,7 @@ export default function ClesApiPage() {
                 GET /v1/api-keys
               </td>
               <td className="px-5 py-3 text-[#9BA1A8]">
-                Liste vos clés (nom, préfixe, dates, statut, portée) - jamais
+                Liste vos clés (nom, préfixe, dates, statut, portée, lecture) - jamais
                 la clé complète.
               </td>
             </tr>

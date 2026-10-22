@@ -5,7 +5,7 @@ import { SITE_URL } from "@/lib/site";
  * La vraie surface SEO du produit est `/docs` (docs/plans/BACKLOG.md,
  * fiche B8) : le beachhead visé, ce sont des développeurs qui cherchent
  * « envoyer un email transactionnel », « API email Guinée », « alternative
- * Mailgun Afrique de l'Ouest ». Les 7 pages de documentation sont donc
+ * Mailgun Afrique de l'Ouest ». Les 8 pages de documentation sont donc
  * toutes listées ici, à une priorité proche de la landing.
  *
  * `/connexion`, `/inscription`, `/confirmation` et
@@ -27,6 +27,7 @@ const STATIC_ROUTES: Array<{
   { path: "/docs/verifier-un-domaine", priority: 0.8, changeFrequency: "monthly" },
   { path: "/docs/cles-api", priority: 0.8, changeFrequency: "monthly" },
   { path: "/docs/relais-smtp", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/docs/mcp", priority: 0.7, changeFrequency: "monthly" },
   { path: "/docs/facturation", priority: 0.7, changeFrequency: "monthly" },
   { path: "/docs/erreurs", priority: 0.7, changeFrequency: "monthly" },
   { path: "/a-propos", priority: 0.3, changeFrequency: "yearly" },
