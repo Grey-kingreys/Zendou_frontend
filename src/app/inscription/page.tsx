@@ -123,7 +123,7 @@ export default function InscriptionPage() {
       }
     >
       {googleAvailable && <GoogleContinueButton next={googleNextPath} />}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form method="post" onSubmit={handleSubmit} className="flex flex-col gap-4">
         <TextField
           label="Nom"
           type="text"

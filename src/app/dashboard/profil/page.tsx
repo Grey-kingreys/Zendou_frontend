@@ -301,6 +301,7 @@ export default function DashboardProfilPage() {
             </div>
 
             <form
+              method="post"
               onSubmit={handleSaveProfile}
               className="flex flex-col gap-4"
             >
@@ -375,6 +376,7 @@ export default function DashboardProfilPage() {
               </p>
 
               <form
+                method="post"
                 onSubmit={handlePasswordSubmit}
                 className="flex flex-col gap-4"
               >

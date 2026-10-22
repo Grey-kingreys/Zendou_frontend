@@ -60,6 +60,11 @@ function noStore(response: NextResponse): NextResponse {
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
+  // 303 pour un POST natif (formulaire soumis avant hydratation) : le
+  // navigateur refait un GET et ne renvoie pas le corps a la destination.
+  const redirectStatus =
+    request.method === "GET" || request.method === "HEAD" ? 307 : 303;
+
   const loginRedirect = () =>
     noStore(
       NextResponse.redirect(
@@ -67,7 +72,7 @@ export async function proxy(request: NextRequest) {
           `/connexion?next=${encodeURIComponent(pathname + search)}`,
           request.url
         ),
-        307
+        redirectStatus
       )
     );
 
@@ -104,7 +109,7 @@ export async function proxy(request: NextRequest) {
       const me = (await response.json()) as { role?: string };
       if (me.role !== "ADMIN") {
         return noStore(
-          NextResponse.redirect(new URL("/dashboard", request.url), 307)
+          NextResponse.redirect(new URL("/dashboard", request.url), redirectStatus)
         );
       }
     }

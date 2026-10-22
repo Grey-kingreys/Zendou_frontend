@@ -110,6 +110,7 @@ export default function DashboardDomainesPage() {
 
       {formOpen && (
         <form
+          method="post"
           onSubmit={handleCreate}
           className="mb-6 rounded-2xl border border-white/[0.09] bg-[#0C0D0F] p-6"
         >

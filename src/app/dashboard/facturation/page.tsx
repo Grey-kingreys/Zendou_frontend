@@ -480,6 +480,7 @@ export default function DashboardFacturationPage() {
               </ol>
 
               <form
+                method="post"
                 onSubmit={handleSubmit}
                 className="flex flex-col gap-4"
               >

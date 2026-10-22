@@ -102,7 +102,7 @@ function ConnexionForm() {
       }
     >
       {googleAvailable && <GoogleContinueButton next={nextPath} />}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form method="post" onSubmit={handleSubmit} className="flex flex-col gap-4">
         <TextField
           label="Email"
           type="email"
