@@ -18,7 +18,6 @@ const CLAUDE_CODE_CLI = `claude mcp add --env ZENDOU_API_KEY=zd_live_VOTRE_CLE -
 const CLAUDE_CODE_JSON = `{
   "mcpServers": {
     "zendou": {
-      "type": "stdio",
       "command": "npx",
       "args": ["-y", "@zendou/mcp"],
       "env": { "ZENDOU_API_KEY": "\${ZENDOU_API_KEY}" }
@@ -45,6 +44,25 @@ const CURSOR_JSON = `{
       "env": { "ZENDOU_API_KEY": "\${env:ZENDOU_API_KEY}" }
     }
   }
+}`;
+
+const READ_FORBIDDEN_EXAMPLE = `{
+  "message": "Cette clé API n'a pas l'autorisation de lecture : créez une clé avec la lecture autorisée.",
+  "error": "Forbidden",
+  "statusCode": 403,
+  "errors": [
+    "Cette clé API n'a pas l'autorisation de lecture : créez une clé avec la lecture autorisée."
+  ]
+}`;
+
+const OUT_OF_SCOPE_EXAMPLE = `{
+  "message": "Cette clé API n'est autorisée que pour le domaine boutique-awa.gn.",
+  "error": "Forbidden",
+  "statusCode": 403,
+  "code": "CREDENTIAL_DOMAIN_OUT_OF_SCOPE",
+  "errors": [
+    "Cette clé API n'est autorisée que pour le domaine boutique-awa.gn."
+  ]
 }`;
 
 const TOOLS: { name: string; role: string; key: string }[] = [
@@ -206,34 +224,39 @@ export default function McpPage() {
       <h2 className="mb-4 font-heading text-xl font-semibold text-[#EDEEF0]">
         Configuration des clients
       </h2>
-      <p className="mb-6 text-[15px] leading-[1.7] text-[#9BA1A8]">
+      <p className="mb-2 text-[15px] leading-[1.7] text-[#9BA1A8]">
         Remplacez <code>zd_live_VOTRE_CLE</code> par votre clé. Une variable
         facultative, <code>ZENDOU_API_URL</code>, permet de changer
         l&rsquo;adresse de l&rsquo;API ; par défaut, le serveur utilise{" "}
-        <code>https://api.zendou.app</code>.
+        <code>https://api.zendou.app</code>. Ne la renseignez que pour
+        l&rsquo;API Zendou (voir la section Sécurité).
       </p>
-
-      <ConfigBlock
-        title="Claude Code"
-        intro={<>Avec la ligne de commande&nbsp;:</>}
-      >
-        <CodeBlock code={CLAUDE_CODE_CLI} label="Terminal" />
-        <p className="text-[15px] leading-[1.7] text-[#9BA1A8]">
-          Ou, pour partager la configuration d&rsquo;un projet, un fichier{" "}
-          <code>.mcp.json</code> à la racine. La clé y est lue dans votre
-          environnement : ne la committez pas.
-        </p>
-        <CodeBlock code={CLAUDE_CODE_JSON} label=".mcp.json" />
-      </ConfigBlock>
+      <p className="mb-6 text-[13px] leading-relaxed text-[#70767D]">
+        Formats vérifiés le 23/10/2026 aux documentations officielles.
+      </p>
 
       <ConfigBlock
         title="Claude Desktop"
         intro={
           <>
-            Ouvrez{" "}
-            <strong>Paramètres, Développeur, Modifier la configuration</strong>{" "}
-            pour accéder à <code>claude_desktop_config.json</code>, puis
-            ajoutez&nbsp;:
+            Dans le menu <strong>Claude</strong> de la barre de menus du
+            système (et non dans les réglages de la fenêtre), choisissez{" "}
+            <strong>Settings...</strong>, onglet <strong>Developer</strong>,
+            puis le bouton <strong>Edit Config</strong>. Le fichier{" "}
+            <code>claude_desktop_config.json</code> se trouve à&nbsp;:
+            <ul className="mt-2 mb-2 list-disc pl-5">
+              <li>
+                macOS&nbsp;:{" "}
+                <code>
+                  ~/Library/Application Support/Claude/claude_desktop_config.json
+                </code>
+              </li>
+              <li>
+                Windows&nbsp;:{" "}
+                <code>%APPDATA%\Claude\claude_desktop_config.json</code>
+              </li>
+            </ul>
+            Ajoutez&nbsp;:
           </>
         }
       >
@@ -242,16 +265,42 @@ export default function McpPage() {
           label="claude_desktop_config.json"
         />
         <p className="text-[15px] leading-[1.7] text-[#9BA1A8]">
-          Redémarrez Claude Desktop ensuite.
+          Quittez complètement Claude Desktop, puis relancez-le. En cas de
+          souci, consultez les journaux <code>mcp*.log</code> dans{" "}
+          <code>~/Library/Logs/Claude</code> (macOS) ou{" "}
+          <code>%APPDATA%\Claude\logs</code> (Windows).
         </p>
+      </ConfigBlock>
+
+      <ConfigBlock
+        title="Claude Code"
+        intro={<>Avec la ligne de commande&nbsp;:</>}
+      >
+        <CodeBlock code={CLAUDE_CODE_CLI} label="Terminal" />
+        <p className="text-[15px] leading-[1.7] text-[#9BA1A8]">
+          Les options de Claude Code viennent avant le nom du serveur, et{" "}
+          <code>--</code> sépare la commande du serveur. Si une autre option
+          suit <code>--env</code>, elle la sépare du nom.
+        </p>
+        <p className="text-[15px] leading-[1.7] text-[#9BA1A8]">
+          Pour partager la configuration d&rsquo;un projet, un fichier{" "}
+          <code>.mcp.json</code> à la racine, au même format{" "}
+          <code>mcpServers</code> (une entrée sans <code>type</code> est lue
+          comme stdio). Il accepte <code>{"${VAR}"}</code> et{" "}
+          <code>{"${VAR:-defaut}"}</code> dans <code>command</code>,{" "}
+          <code>args</code> et <code>env</code> : la clé y est lue dans votre
+          environnement, ne la committez pas.
+        </p>
+        <CodeBlock code={CLAUDE_CODE_JSON} label=".mcp.json" />
       </ConfigBlock>
 
       <ConfigBlock
         title="Cursor"
         intro={
           <>
-            Fichier <code>.cursor/mcp.json</code> (projet) ou{" "}
-            <code>~/.cursor/mcp.json</code> (tous vos projets)&nbsp;:
+            Fichier <code>.cursor/mcp.json</code> (dans le projet) ou{" "}
+            <code>~/.cursor/mcp.json</code> (global), avec l&rsquo;interpolation{" "}
+            <code>{"${env:NOM}"}</code>&nbsp;:
           </>
         }
       >
@@ -304,6 +353,18 @@ export default function McpPage() {
             <strong>La clé reste sur votre machine.</strong> Elle est lue dans
             l&rsquo;environnement du processus et envoyée uniquement à
             l&rsquo;API Zendou.
+          </span>
+        </li>
+        <li className="flex gap-3 text-[14px] leading-relaxed text-[#C5CACF]">
+          <span className="text-[#35D07F]">✓</span>
+          <span>
+            <strong>
+              <code>ZENDOU_API_URL</code> reçoit votre clé.
+            </strong>{" "}
+            Ne la renseignez que pour l&rsquo;API Zendou, en{" "}
+            <code>https://</code> seulement : le paquet refuse{" "}
+            <code>http://</code>, sauf pour <code>localhost</code> et{" "}
+            <code>127.0.0.1</code>. Une adresse tierce lirait votre clé.
           </span>
         </li>
         <li className="flex gap-3 text-[14px] leading-relaxed text-[#C5CACF]">
@@ -367,6 +428,19 @@ export default function McpPage() {
             ))}
           </tbody>
         </DocsTable>
+      </div>
+      <p className="mb-3 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        Le <code>403</code> d&rsquo;une clé sans lecture renvoie&nbsp;:
+      </p>
+      <div className="mb-6">
+        <CodeBlock code={READ_FORBIDDEN_EXAMPLE} />
+      </div>
+      <p className="mb-3 text-[15px] leading-[1.7] text-[#9BA1A8]">
+        Le <code>403</code> d&rsquo;un envoi hors de la portée de la clé
+        renvoie&nbsp;:
+      </p>
+      <div className="mb-4">
+        <CodeBlock code={OUT_OF_SCOPE_EXAMPLE} />
       </div>
 
       <p className="mt-10 text-[13px] leading-relaxed text-[#70767D]">
