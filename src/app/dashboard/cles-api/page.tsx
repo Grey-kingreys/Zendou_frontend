@@ -17,6 +17,7 @@ import { api, ApiError } from "@/lib/api";
 import { formatDateTimeShortFr } from "@/lib/format";
 import type {
   ApiKeySummary,
+  CreateApiKeyBody,
   CreateApiKeyResponse,
   RotateApiKeyResponse,
 } from "@/lib/types";
@@ -108,11 +109,12 @@ export default function DashboardClesApiPage() {
     setCreating(true);
 
     try {
-      const created = await api.post<CreateApiKeyResponse>("/v1/api-keys", {
+      const body: CreateApiKeyBody = {
         name: name.trim(),
         ...scopeToBody(scope),
         ...(canRead ? { canRead: true } : {}),
-      });
+      };
+      const created = await api.post<CreateApiKeyResponse>("/v1/api-keys", body);
       setRevealedSecret({ kind: "created", data: created });
       setFormOpen(false);
       setName("");
@@ -376,34 +378,43 @@ export default function DashboardClesApiPage() {
             </button>
           </div>
           <ScopePicker value={scope} onChange={setScope} noun="cette clé" />
-          <label
-            htmlFor="key-can-read"
-            className="mt-4 flex cursor-pointer items-start gap-2.5 rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[13.5px] text-[#EDEEF0]"
-          >
+          <div className="mt-4 flex items-start gap-2.5 rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[13.5px] text-[#EDEEF0]">
             <input
               id="key-can-read"
               name="canRead"
               type="checkbox"
               checked={canRead}
               onChange={(event) => setCanRead(event.target.checked)}
+              aria-describedby="key-can-read-use key-can-read-risk key-can-read-final"
               className="mt-1 accent-[#5B7CFA]"
             />
-            <span className="min-w-0">
-              Autoriser la lecture (journal des envois et domaines)
-              <span className="mt-1 block text-[12.5px] leading-relaxed text-[#70767D]">
-                Utile pour le serveur MCP et les tableaux de bord qui
-                consultent vos envois et vos domaines.
-              </span>
-              <span className="mt-1 block text-[12.5px] leading-relaxed text-[#F5C177]">
+            <div className="min-w-0">
+              <label htmlFor="key-can-read" className="cursor-pointer">
+                Autoriser la lecture
+              </label>
+              <p
+                id="key-can-read-use"
+                className="mt-1 text-[12.5px] leading-relaxed text-[#70767D]"
+              >
+                Journal des envois et domaines. Utile pour le serveur MCP et
+                les tableaux de bord qui consultent vos envois et vos domaines.
+              </p>
+              <p
+                id="key-can-read-risk"
+                className="mt-1 text-[12.5px] leading-relaxed text-[#F5C177]"
+              >
                 Si une clé avec lecture fuit, les destinataires et les sujets
                 des envois de sa portée sont exposés.
-              </span>
-              <span className="mt-1 block text-[12.5px] leading-relaxed text-[#70767D]">
+              </p>
+              <p
+                id="key-can-read-final"
+                className="mt-1 text-[12.5px] leading-relaxed text-[#70767D]"
+              >
                 Ce réglage est définitif : il ne pourra plus être modifié
                 après la création.
-              </span>
-            </span>
-          </label>
+              </p>
+            </div>
+          </div>
           {createForbidden && (
             <p className="mt-3 rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[13.5px] text-[#F5C177]">
               Confirmez votre adresse email avant de créer une clé API.{" "}
