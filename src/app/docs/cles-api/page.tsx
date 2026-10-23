@@ -97,7 +97,10 @@ export default function ClesApiPage() {
   "message": "Cette clé API n'est autorisée que pour le domaine boutique-awa.gn.",
   "error": "Forbidden",
   "statusCode": 403,
-  "code": "CREDENTIAL_DOMAIN_OUT_OF_SCOPE"
+  "code": "CREDENTIAL_DOMAIN_OUT_OF_SCOPE",
+  "errors": [
+    "Cette clé API n'est autorisée que pour le domaine boutique-awa.gn."
+  ]
 }`}
         />
       </div>
@@ -224,7 +227,10 @@ export default function ClesApiPage() {
           code={`{
   "message": "Cette clé API n'a pas l'autorisation de lecture : créez une clé avec la lecture autorisée.",
   "error": "Forbidden",
-  "statusCode": 403
+  "statusCode": 403,
+  "errors": [
+    "Cette clé API n'a pas l'autorisation de lecture : créez une clé avec la lecture autorisée."
+  ]
 }`}
         />
       </div>
