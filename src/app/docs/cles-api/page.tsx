@@ -88,7 +88,7 @@ export default function ClesApiPage() {
         <code className="rounded bg-white/[0.08] px-1.5 py-0.5 font-mono text-[12.5px]">
           403
         </code>{" "}
-        avec le code <code>CREDENTIAL_DOMAIN_OUT_OF_SCOPE</code> et un
+        avec le code <code className="[overflow-wrap:anywhere]">CREDENTIAL_DOMAIN_OUT_OF_SCOPE</code> et un
         message qui nomme les domaines autorisés :
       </p>
       <div className="mb-4">
@@ -140,8 +140,7 @@ export default function ClesApiPage() {
       </h2>
       <p className="mb-4 text-[15px] leading-[1.7] text-[#9BA1A8]">
         Par défaut, une clé sert à envoyer des emails et à lire le solde. À la
-        création, vous pouvez en plus cocher «&nbsp;Autoriser la lecture
-        (journal des envois et domaines)&nbsp;», par exemple pour le{" "}
+        création, vous pouvez en plus cocher «&nbsp;Autoriser la lecture&nbsp;», par exemple pour le{" "}
         <Link
           href="/docs/mcp"
           className="text-[#8AA4FF] underline underline-offset-2"

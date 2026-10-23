@@ -378,43 +378,42 @@ export default function DashboardClesApiPage() {
             </button>
           </div>
           <ScopePicker value={scope} onChange={setScope} noun="cette clé" />
-          <div className="mt-4 flex items-start gap-2.5 rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[13.5px] text-[#EDEEF0]">
+          <label className="mt-4 flex cursor-pointer items-start gap-2.5 rounded-lg border border-white/[0.09] bg-[#0E1013] px-3.5 py-2.5 text-[13.5px] text-[#EDEEF0]">
             <input
               id="key-can-read"
               name="canRead"
               type="checkbox"
               checked={canRead}
               onChange={(event) => setCanRead(event.target.checked)}
+              aria-labelledby="key-can-read-label"
               aria-describedby="key-can-read-use key-can-read-risk key-can-read-final"
               className="mt-1 accent-[#5B7CFA]"
             />
             <div className="min-w-0">
-              <label htmlFor="key-can-read" className="cursor-pointer">
-                Autoriser la lecture
-              </label>
-              <p
+              <span id="key-can-read-label">Autoriser la lecture</span>
+              <span
                 id="key-can-read-use"
-                className="mt-1 text-[12.5px] leading-relaxed text-[#70767D]"
+                className="mt-1 block text-[12.5px] leading-relaxed text-[#70767D]"
               >
                 Journal des envois et domaines. Utile pour le serveur MCP et
                 les tableaux de bord qui consultent vos envois et vos domaines.
-              </p>
-              <p
+              </span>
+              <span
                 id="key-can-read-risk"
-                className="mt-1 text-[12.5px] leading-relaxed text-[#F5C177]"
+                className="mt-1 block text-[12.5px] leading-relaxed text-[#F5C177]"
               >
                 Si une clé avec lecture fuit, les destinataires et les sujets
                 des envois de sa portée sont exposés.
-              </p>
-              <p
+              </span>
+              <span
                 id="key-can-read-final"
-                className="mt-1 text-[12.5px] leading-relaxed text-[#70767D]"
+                className="mt-1 block text-[12.5px] leading-relaxed text-[#70767D]"
               >
                 Ce réglage est définitif : il ne pourra plus être modifié
                 après la création.
-              </p>
+              </span>
             </div>
-          </div>
+          </label>
           {createForbidden && (
             <p className="mt-3 rounded-lg border border-[#F5A623]/30 bg-[#F5A623]/10 px-3.5 py-2.5 text-[13.5px] text-[#F5C177]">
               Confirmez votre adresse email avant de créer une clé API.{" "}

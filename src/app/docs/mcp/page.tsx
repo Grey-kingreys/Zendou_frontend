@@ -195,7 +195,7 @@ export default function McpPage() {
             Pour que l&rsquo;assistant puisse lire le journal des envois et
             les domaines, cochez{" "}
             <strong>
-              Autoriser la lecture (journal des envois et domaines)
+              Autoriser la lecture
             </strong>
             . Sans cette case, la clé permet seulement d&rsquo;envoyer des
             emails et de lire le solde.
@@ -225,10 +225,10 @@ export default function McpPage() {
         Configuration des clients
       </h2>
       <p className="mb-2 text-[15px] leading-[1.7] text-[#9BA1A8]">
-        Remplacez <code>zd_live_VOTRE_CLE</code> par votre clé. Une variable
-        facultative, <code>ZENDOU_API_URL</code>, permet de changer
+        Remplacez <code className="[overflow-wrap:anywhere]">zd_live_VOTRE_CLE</code> par votre clé. Une variable
+        facultative, <code className="[overflow-wrap:anywhere]">ZENDOU_API_URL</code>, permet de changer
         l&rsquo;adresse de l&rsquo;API ; par défaut, le serveur utilise{" "}
-        <code>https://api.zendou.app</code>. Ne la renseignez que pour
+        <code className="[overflow-wrap:anywhere]">https://api.zendou.app</code>. Ne la renseignez que pour
         l&rsquo;API Zendou (voir la section Sécurité).
       </p>
       <p className="mb-6 text-[13px] leading-relaxed text-[#70767D]">
@@ -243,17 +243,17 @@ export default function McpPage() {
             système (et non dans les réglages de la fenêtre), choisissez{" "}
             <strong>Settings...</strong>, onglet <strong>Developer</strong>,
             puis le bouton <strong>Edit Config</strong>. Le fichier{" "}
-            <code>claude_desktop_config.json</code> se trouve à&nbsp;:
+            <code className="[overflow-wrap:anywhere]">claude_desktop_config.json</code> se trouve à&nbsp;:
             <ul className="mt-2 mb-2 list-disc pl-5">
               <li>
                 macOS&nbsp;:{" "}
-                <code>
+                <code className="[overflow-wrap:anywhere]">
                   ~/Library/Application Support/Claude/claude_desktop_config.json
                 </code>
               </li>
               <li>
                 Windows&nbsp;:{" "}
-                <code>%APPDATA%\Claude\claude_desktop_config.json</code>
+                <code className="[overflow-wrap:anywhere]">%APPDATA%\Claude\claude_desktop_config.json</code>
               </li>
             </ul>
             Ajoutez&nbsp;:
@@ -267,8 +267,8 @@ export default function McpPage() {
         <p className="text-[15px] leading-[1.7] text-[#9BA1A8]">
           Quittez complètement Claude Desktop, puis relancez-le. En cas de
           souci, consultez les journaux <code>mcp*.log</code> dans{" "}
-          <code>~/Library/Logs/Claude</code> (macOS) ou{" "}
-          <code>%APPDATA%\Claude\logs</code> (Windows).
+          <code className="[overflow-wrap:anywhere]">~/Library/Logs/Claude</code> (macOS) ou{" "}
+          <code className="[overflow-wrap:anywhere]">%APPDATA%\Claude\logs</code> (Windows).
         </p>
       </ConfigBlock>
 
@@ -359,7 +359,7 @@ export default function McpPage() {
           <span className="text-[#35D07F]">✓</span>
           <span>
             <strong>
-              <code>ZENDOU_API_URL</code> reçoit votre clé.
+              <code className="[overflow-wrap:anywhere]">ZENDOU_API_URL</code> reçoit votre clé.
             </strong>{" "}
             Ne la renseignez que pour l&rsquo;API Zendou, en{" "}
             <code>https://</code> seulement : le paquet refuse{" "}
